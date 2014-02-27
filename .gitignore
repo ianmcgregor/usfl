@@ -1,0 +1,35 @@
+# OS
+
+.*
+!/.gitignore
+!/.bowerrc
+
+Icon?
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# VCS
+
+.svn
+*.orig
+!.gitinclude
+
+# IDE
+
+.settings/
+.project
+user.properties
+.idea?
+.metadata/*
+*.ignore
+*.sublime-*
+*~
+*.swp
+*.swo
+
+# FOLDERS
+
+node_modules/
+tmp/
+js/vendors/
