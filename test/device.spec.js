@@ -18,7 +18,7 @@ define(
 				expect(device.android).to.be.false;
 				expect(device.androidOld).to.be.false;
 				expect(device.androidStock).to.be.false;
-				expect(device.ieVersion).to.be.false;
+				expect(device.ieVersion).to.eql(-1);
 				expect(device.ie9down).to.be.false;
 				expect(device.ie8down).to.be.false;
 				expect(device.screenWidth).to.eql(window.screen.width);

@@ -23,12 +23,25 @@ define(
 					item = item.next;
 				}
 			*/
+			function add(item) {
+				if(!first) {
+					first = last = item;
+				}
+				else {
+					var i = first;
+					while(i.next) {
+						i = i.next;
+					}
+					insertAfter(item, i);
+				}
+				return item;
+			}
 
 			function remove(item) {
-				if (null !== item.next) {
+				if (item.next) {
 					item.next.prev = item.prev;
 				}
-				if (null !== item.prev) {
+				if (item.prev) {
 					item.prev.next = item.next;
 				}
 				if (item === first) {
@@ -38,6 +51,7 @@ define(
 					last = item.prev;
 				}
 				item.next = item.prev = null;
+
 				return item;
 			}
 
@@ -45,26 +59,32 @@ define(
 				item.prev = after;
 				item.next = after.next;
 				
-				if (after.next === null) {
+				if (!after.next) {
 					last = item;
-				} else {
+				}
+				else {
 					after.next.prev = item;
 				}
-				
+
 				after.next = item;
+
+				return item;
 			}
 
 			function insertBefore(item, before) {
 				item.prev = before.prev;
 				item.next = before;
 
-				if (before.prev === null) {
+				if (!before.prev) {
 					first = item;
-				} else {
+				}
+				else {
 					before.prev.next = item;
 				}
-				
+
 				before.prev = item;
+
+				return item;
 			}
 
 			return {
@@ -74,6 +94,16 @@ define(
 				getLast: function() {
 					return last;
 				},
+				getCount: function() {
+					var count = 0;
+					var i = first;
+					while(i) {
+						count ++;
+						i = i.next;
+					}
+					return count;
+				},
+				'add': add,
 				'remove': remove,
 				'insertAfter': insertAfter,
 				'insertBefore': insertBefore

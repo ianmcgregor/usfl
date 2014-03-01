@@ -36,7 +36,7 @@ define(
 
 			var play = function() {
 				if(!buffer && !audioElement) {
-					return;
+					return false;
 				}
 				stop();
 				// using webaudio
@@ -71,6 +71,8 @@ define(
 					}
 				}
 				setVolume(volume);
+
+				return true;
 			};
 
 			var pause = function() {

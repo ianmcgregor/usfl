@@ -1,4 +1,4 @@
-/* console.js */
+/* console-patch.js */
 
 define(
 	[],

@@ -8,12 +8,12 @@ define(
 
 		describe('asset loader', function() {
 			var assetLoader = new AssetLoader(),
-				el = createElement('audio'),
+				el = document.createElement('audio'),
 				ext = (el.canPlayType('audio/mpeg;') ? 'mp3' : 'ogg'),
 				files = {
 					'image': 'http://placekitten.com/g/200/300',
 					'audio': ('http://www.google.com/logos/2013/debussy/clairdelune.' + ext),
-					'json': 'https://raw.github.com/karma-runner/karma/master/package.json'
+					'json': 'http://graph.facebook.com/facebook'
 				},
 				complete = false;
 
@@ -22,7 +22,7 @@ define(
 			
 			assetLoader.add(files.image, 'jpg');
 			assetLoader.add(files.audio);
-			assetLoader.add(files.json);
+			assetLoader.add(files.json, 'json');
 			
 			beforeEach(function(done) {
 				assetLoader.onComplete.add(function() {
