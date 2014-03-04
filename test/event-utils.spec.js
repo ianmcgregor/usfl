@@ -13,7 +13,8 @@ define(
 			function simulateClick(el) {
 				var e = document.createEvent('MouseEvents');
 				e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-				var canceled = el.dispatchEvent(e);
+				var cancelled = el.dispatchEvent(e);
+				return cancelled;
 			}
 
 			EventUtils.addEvent(el, 'click', function() {

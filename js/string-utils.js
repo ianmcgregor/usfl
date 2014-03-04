@@ -207,7 +207,7 @@ define(
 
 		// reverse word order
 		function reverseWords(str) {
-			return str.split(/\s+/).reverse().join('');
+			return str.split(' ').reverse().join(' ');
 		}
 
 		// percentage of similiarity, based on editDistance

@@ -1,4 +1,4 @@
-/* storage.js */
+/* storage-utils.js */
 
 define(
     [],
@@ -7,11 +7,12 @@ define(
         'use strict';
 
         var self = {
-            saveJSON: function(key) {
+            saveJSON: function(key, object) {
                 if(localStorage) {
-                    localStorage.setItem(key, JSON.stringify(this.model));
-                    //console.log(localStorage.getItem('game'));
+                    localStorage.setItem(key, JSON.stringify(object));
+                    return true;
                 }
+                return false;
             },
             loadJSON: function(key) {
                 if(localStorage && localStorage.getItem(key)) {
@@ -24,13 +25,12 @@ define(
                 if(!this.canvas) {
                     this.canvas = document.createElement('canvas');
                     this.context = this.canvas.getContext('2d');
-                    //document.body.appendChild(canvas);
                 }
-                this.canvas.width = width;
-                this.canvas.height = height;
+                this.canvas.width = width || img.width;
+                this.canvas.height = height || img.height;
                 this.context.drawImage(img, 0, 0);
                 var dataURL = this.canvas.toDataURL('image/png');
-                this.context.clearRect (0, 0, width, height);
+                this.context.clearRect(0, 0, width, height);
                 return dataURL;
             }
         };
