@@ -14,5 +14,8 @@ define(
 				expect(ArrayUtils.sortRandom([3,2,1,0])).to.be.instanceof(Array);
 				expect(ArrayUtils.sortRandom([3,2,1,0])).to.have.property('length', 4);
 			});
+			it('should return random element', function() {
+				expect(ArrayUtils.random([3,2,1,0])).to.be.a('number');
+			});
 		});
 });

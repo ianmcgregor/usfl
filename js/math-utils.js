@@ -73,6 +73,17 @@ define(
 					diff = (diff < 0) ? diff + 360 : diff - 360;
 				}
 				return start + diff;
+			},
+			rotateToRAD: function(start, end) {
+				var PI2 = Math.PI * 2;
+				var diff = (end - start) % PI2;
+				if (diff !== diff % Math.PI) {
+					diff = diff < 0 ? diff + PI2 : diff - PI2;
+				}
+				return start + diff;
+			},
+			dotProduct: function(aX, aY, bX, bY) {
+				return aX * bX + aY * bY;
 			}
 		};
 

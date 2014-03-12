@@ -81,6 +81,15 @@ define(
         SubClass.prototype.foo = function() {
         };
 
+        Object.defineProperty(SubClass.prototype, 'foo', {
+            get: function() {
+                return this.foo;
+            },
+            set: function(value) {
+                this.foo = value;
+            }
+        });
+
         return SubClass;
     }
 );

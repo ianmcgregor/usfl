@@ -16,6 +16,9 @@ define(
 				return arr.sort(function(){
 					return Math.random() > 0.5 ? -1 : 1;
 				});
+			},
+			random: function(arr) {
+				return arr[Math.floor(Math.random() * arr.length)];
 			}
 		};
 	}

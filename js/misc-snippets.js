@@ -11,35 +11,6 @@ define(
 		// Fix Chrome text cursor on drag
 		document.onselectstart = function(){ return false; };
 
-		// randomPick
-
-		var randomPick = function() {
-			return arguments[Math.floor(Math.random() * arguments.length)];
-		};
-
-		// pad zeros
-
-		var padZeros = function(i, l) {
-			var n = i.toString();
-			while(n.length < l) {
-				n = '0' + n;
-			}
-			return n;
-		};
-
-		var selectEls = function (selector, context) {
-			if (!selector || typeof selector !== 'string') { return; }
-			if (selector[0] === '#') {
-				return document.getElementById(selector.substring(1));
-			} else {
-				if (context) {
-					return context.querySelectorAll(selector);
-				} else {
-					return document.querySelectorAll(selector);
-				}
-			}
-		};
-
 		var getScrollTop = function () {
 			return document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset || 0;
 		};
@@ -54,11 +25,43 @@ define(
 			});
 		};
 
+		// Get current browser viewpane heigtht
+		function getWindowHeight() {
+			return window.innerHeight ||
+					document.documentElement.clientHeight ||
+					document.body.clientHeight || 0;
+		}
+
+		// Get current absolute window scroll position
+		function getWindowScrollY() {
+			return window.pageYOffset ||
+				document.body.scrollTop ||
+				document.documentElement.scrollTop || 0;
+		}
+
+		// Get current absolute document height
+		function getDocHeight() {
+			return Math.max(
+				document.body.scrollHeight || 0,
+				document.documentElement.scrollHeight || 0,
+				document.body.offsetHeight || 0,
+				document.documentElement.offsetHeight || 0,
+				document.body.clientHeight || 0,
+				document.documentElement.clientHeight || 0
+			);
+		}
+
+		// Get current vertical scroll percentage
+		function getScrollPercentage() {
+			return ((getWindowScrollY() + getWindowHeight()) / getDocHeight()) * 100;
+		}
+
 		return {
-			'randomPick': randomPick,
-			'padZeros': padZeros,
-			'selectEls': selectEls,
 			'getScrollTop': getScrollTop,
-			'leftWindow': leftWindow
+			'leftWindow': leftWindow,
+			'getWindowHeight': getWindowHeight,
+			'getWindowScrollY': getWindowScrollY,
+			'getDocHeight': getDocHeight,
+			'getScrollPercentage': getScrollPercentage
 		};
 });
