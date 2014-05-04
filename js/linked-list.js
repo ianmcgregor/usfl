@@ -18,7 +18,7 @@ define(
 				}
 
 				var item = linkedList.getFirst();
-				while(item !== null) {
+				while(item) {
 					// do stuff
 					item = item.next;
 				}
@@ -56,6 +56,8 @@ define(
 			}
 
 			function insertAfter(item, after) {
+				remove(item);
+
 				item.prev = after;
 				item.next = after.next;
 				
@@ -72,6 +74,8 @@ define(
 			}
 
 			function insertBefore(item, before) {
+				remove(item);
+
 				item.prev = before.prev;
 				item.next = before;
 
@@ -85,6 +89,21 @@ define(
 				before.prev = item;
 
 				return item;
+			}
+
+			function forEach(callback, callbackContext) {
+				if(!first) {
+					return;
+				}
+				var args = Array.prototype.splice.call(arguments, 2);
+				args.unshift(null); // make space for item
+
+				var item = first;
+				while(item) {
+					args[0] = item;
+					callback.apply(callbackContext, args);
+					item = item.next;
+				}
 			}
 
 			return {
@@ -106,7 +125,8 @@ define(
 				'add': add,
 				'remove': remove,
 				'insertAfter': insertAfter,
-				'insertBefore': insertBefore
+				'insertBefore': insertBefore,
+				'forEach': forEach
 			};
 		}
 
