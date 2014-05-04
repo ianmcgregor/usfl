@@ -11,6 +11,7 @@ define(
 		function AssetLoader() {
 			this.onChildComplete = new signals.Signal();
 			this.onComplete = new signals.Signal();
+			this.onProgress = new signals.Signal();
 			this.onError = new signals.Signal();
 
 			this.queue = [];
@@ -21,6 +22,8 @@ define(
 			this.webAudioContext = null;
 			this.crossOrigin = false;
 			this.touchLocked = false;
+			this.numTotal = 0;
+			this.numLoaded = 0;
 		}
 
 		function createXHR() {
@@ -47,9 +50,11 @@ define(
 				loader.crossOrigin = this.crossOrigin;
 				loader.touchLocked = this.touchLocked;
 				this.queue.push(loader);
+				this.numTotal++;
 				return loader;
 			},
 			start: function() {
+				this.numTotal = this.queue.length;
 				this.next();
 			},
 			next: function() {
@@ -61,6 +66,10 @@ define(
 				var loader = this.queue.pop();
 				var self = this;
 				loader.onComplete.addOnce(function(){
+					self.numLoaded++;
+					if(self.onProgress.getNumListeners() > 0) {
+						self.onProgress.dispatch(self.numLoaded/self.numTotal);
+					}
 					self.loaders[loader.url] = loader;
 					self.onChildComplete.dispatch(loader);
 					self.next();
@@ -124,6 +133,14 @@ define(
 				request.open('GET', this.url, true);
 				request.responseType = 'arraybuffer';
 				var self = this;
+				/*request.onprogress = function(event) {
+					if (event.lengthComputable) {
+						var percentComplete = event.loaded / event.total;
+						console.log('percentComplete:', percentComplete);
+					} else {
+						console.log('Unable to compute progress information since the total size is unknown');
+					}
+				};*/
 				request.onload = function() {
 					webAudioContext.decodeAudioData(request.response, function(buffer) {
 						self.data = buffer;
@@ -170,7 +187,9 @@ define(
 				request.onerror = function () {
 					self.onError.dispatch();
 				};
-				request.crossOrigin = !!crossOrigin;
+				if(crossOrigin) {
+					request.crossOrigin = 'anonymous';
+				}
 				request.src = this.url;
 			},
 			loadJSON: function() {
