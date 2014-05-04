@@ -67,6 +67,12 @@ define(
 				var overlapY = Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
 				return overlapX * overlapY;
 			},
+			getOverlapX: function(aX, aW, bX, bW) {
+				return Math.max(0, Math.min(aX + aW, bX + bW) - Math.max(aX, bX));
+			},
+			getOverlapY: function(aY, aH, bY, bH) {
+				return Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
+			},
 			rotateTo: function(start, end) {
 				var diff = (end - start) % 360;
 				if (diff !== diff % 180) {
