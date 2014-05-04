@@ -15,7 +15,9 @@ define(
 					'audio': ('http://www.google.com/logos/2013/debussy/clairdelune.' + ext),
 					'json': 'http://graph.facebook.com/facebook'
 				},
-				complete = false;
+				complete = false,
+				loadProgress,
+				childrenLoaded = 0;
 
 			assetLoader.webAudioContext = null;
 			assetLoader.crossOrigin = true;
@@ -23,8 +25,14 @@ define(
 			assetLoader.add(files.image, 'jpg');
 			assetLoader.add(files.audio);
 			assetLoader.add(files.json, 'json');
-			
+
 			beforeEach(function(done) {
+				assetLoader.onProgress.add(function(progress) {
+					loadProgress = progress;
+				});
+				assetLoader.onChildComplete.add(function() {
+					childrenLoaded++;
+				});
 				assetLoader.onComplete.add(function() {
 					complete = true;
 					done();
@@ -34,8 +42,11 @@ define(
 
 			it('should have finished loading', function(){
 				expect(complete).equals(true);
+				expect(childrenLoaded).to.eql(assetLoader.numTotal);
+				expect(assetLoader.numLoaded/assetLoader.numTotal).to.eql(1);
 				expect(assetLoader.get(files.image)).to.exist;
 				expect(assetLoader.get(files.audio)).to.exist;
+				expect(assetLoader.get(files.json)).to.exist;
 				expect(assetLoader.get(files.json)).to.exist;
 			});
 		});
