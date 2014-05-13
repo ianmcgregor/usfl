@@ -7,6 +7,9 @@ define(
 		'use strict';
 
 		var self = {
+			getProfileImageUrl: function(id, width, height) {
+				return 'http://graph.facebook.com/' + id + '/picture?width=' + width + '&height=' + height;
+			},
 			resizeCanvas: function(height) {
 				FB.Canvas.setSize({ 'height': height });
 				setTimeout(function(){
@@ -31,6 +34,14 @@ define(
 						console.log(response.data);
 					}
 				});
+			},
+			sortFriendsByMutual: function(userData) {
+				var friends = userData.friends.data.sort(function(a,b){
+                    var x = a.mutualfriends ? a.mutualfriends.data.length : 0;
+                    var y = b.mutualfriends ? b.mutualfriends.data.length : 0;
+                    return y - x;
+                });
+                return friends;
 			},
 			/* publish status message to feed. requires publish_stream permission */
 			statusPublish: function(message) {

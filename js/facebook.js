@@ -1,4 +1,23 @@
-/* facebook.js */
+/* 
+    facebook.js
+
+    example usage:
+
+    var fb = new Facebook(fbId);
+    fb.onInit.add(function() {
+        var permissions = 'user_relationships,user_relationship_details';
+        var fields = 'id, name, first_name, last_name, gender, picture, picture.type(square)' +
+        ', significant_other, significant_other.name, significant_other.picture, significant_other.gender' +
+        ', friends, friends.id, friends.name, friends.gender, friends.picture, friends.mutualfriends, friends.limit(100)';
+
+        fb.getInfo(permissions, fields);
+    });
+    fb.onInfo.add(function(data) {
+        console.log(data.id, data.first_name, data.gender);
+    });
+    fb.init();
+
+ */
 
 define(
     [
@@ -11,25 +30,22 @@ define(
         function Facebook(appId) {
 
             var onInit = new signals.Signal(),
-                onInfo = new signals.Signal();
+                onInfo = new signals.Signal(),
+                loadScriptTimeout;
 
             // initialize FB app
             function init() {
                 if(window.FB !== undefined) {
-                    FB.Event.subscribe('auth.statusChange', function(response) {
-                        console.log('auth.statusChange:', response.status);
-                        if (response.status === 'connected') {
-                            //the user is logged and has granted permissions
-                        } else if (response.status === 'not_authorized') {
-                            //ask for permissions
-                        } else {
-                            //ask the user to login to facebook
+                    /*FB.Event.subscribe('auth.statusChange', function(response) {
+                        console.log('auth.statusChange', response);
+                        if(response.status === 'connected') {
                         }
-                    });
+                    });*/
                     FB.init({appId: appId, status: true, cookie: true, logging: true, xfbml: true});
                     FB.getLoginStatus(function(response) {
                         onInit.dispatch(response.status);
                     });
+                    clearTimeout(loadScriptTimeout);
                 }
                 else {
                     // called by FBs JS when finished loading
@@ -65,14 +81,6 @@ define(
                         }
                         else {
                             login(callback, permissions);
-                            /*login(function(response) {
-                                if(response && response.scope){
-                                    callback();
-                                } else {
-                                    console.log('FB user didn\'t grant permission:', permissions);
-                                    onPermissionSkip.dispatch(permissions);
-                                }
-                            }, permissions);*/
                         }
                     });
                 }
@@ -90,8 +98,10 @@ define(
             }
 
             // create FB container and load script
-            (function() {
-                console.log('load fb');
+            function loadScript() {
+                if(window.FB !== undefined) {
+                    return;
+                }
                 var fbroot = document.getElementById('fb-root');
                 if(!fbroot) {
                     fbroot = document.createElement('div');
@@ -103,7 +113,11 @@ define(
                 fb.async = true;
                 fb.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
                 fbroot.appendChild(fb);
-            }());
+
+                loadScriptTimeout = setTimeout(loadScript, 6000);
+            }
+
+            loadScript();
 
             // public
             var self = {
@@ -112,14 +126,6 @@ define(
 
                 'onInit': onInit,
                 'onInfo': onInfo,
-
-                /*
-            var permissions = 'user_relationships,user_relationship_details';
-            var fields = 'id, name, first_name, last_name, gender, picture, picture.type(square)' +
-            ', significant_other, significant_other.name, significant_other.picture, significant_other.gender' + 
-            ', friends, friends.id, friends.name, friends.gender, friends.picture, friends.mutualfriends, friends.limit(100)';
-            
-                */
 
                 getInfo: function(permissions, fields) {
                     checkAuth(function() {
