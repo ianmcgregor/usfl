@@ -44,12 +44,10 @@
         }());
 
         var smallViewport = (function() {
-            return !(Math.max( window.screen.width, window.screen.height, window.outerWidth, window.outerHeight ) > 480);
+            return Math.max( window.screen.width, window.screen.height, window.outerWidth, window.outerHeight ) <= 480;
         }());
 
         return !!(canvas && es5 && !(ios5 || androidOld || androidStock || ie9Down || smallViewport));
-
-        //return !!(canvas && es5 && !(ios5 || androidOld || androidStock || ie9Down));
 
     }());
 
