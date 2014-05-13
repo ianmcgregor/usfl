@@ -45,7 +45,8 @@ module.exports = function (grunt) {
 					'beforeEach',
 					'afterEach',
 					'FB',
-					'ga'
+					'ga',
+					'Modernizr'
 				]
 			}
 		}
