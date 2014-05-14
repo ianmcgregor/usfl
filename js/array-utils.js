@@ -7,6 +7,9 @@ define(
 		'use strict';
 
 		return {
+			isArray: function(arr) {
+				return arr instanceof Array;
+			},
 			sortNumeric: function(arr) {
 				return arr.sort(function(a,b){
 					return a - b;
@@ -17,7 +20,7 @@ define(
 					return Math.random() > 0.5 ? -1 : 1;
 				});
 			},
-			random: function(arr) {
+			getRandom: function(arr) {
 				return arr[Math.floor(Math.random() * arr.length)];
 			}
 		};
