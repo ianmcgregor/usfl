@@ -40,7 +40,7 @@ module.exports = function(config) {
       // transform: ['coffeeify'],
       // debug: true,
       // noParse: ['jquery'],
-      watch: true,
+      watch: true
     },
 
     // Add browserify to preprocessors
