@@ -2,6 +2,13 @@
 
 var popup = require('popup');
 
+// warnBadURL - helper to warn on relative URLs supplied for images etc
+function warnBadURL(url) {
+	if(url.substr(0,4) !== 'http') {
+		console.warn('URL: ' + url + ' should start with http');
+	}
+}
+
 var self = {
 	// Standard FB share (uses og tags)
 	facebook: function(url) {
@@ -54,12 +61,5 @@ var self = {
 		return popup(url, 'shareFacebook', 550, 380);
 	}
 };
-
-// warnBadURL - helper to warn on relative URLs supplied for images etc
-function warnBadURL(url) {
-	if(url.substr(0,4) !== 'http') {
-		console.warn('URL: ' + url + ' should start with http');
-	}
-}
 
 module.exports = self;

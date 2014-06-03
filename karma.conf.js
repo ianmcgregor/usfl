@@ -10,21 +10,20 @@ module.exports = function(config) {
     plugins: [
       'karma-mocha',
       'karma-chai',
-      'karma-browserfy',
+      //'karma-browserifast',
+      'karma-browserify',
       'karma-chrome-launcher',
       'karma-firefox-launcher'
     ],
 
-
     // frameworks to use
     frameworks: ['browserify', 'mocha', 'chai'],
 
-
     // list of files / patterns to load in the browser
     files: [
-      'test/test-main.js',
-      {pattern: 'js/**/*.js', included: false},
-      {pattern: 'test/**/*.js', included: false}
+      //'test/*'
+      // todo: replace when fixed in karma-browserify
+      'test/bundle-tests.js'
     ],
 
 

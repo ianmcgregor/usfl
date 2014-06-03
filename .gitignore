@@ -30,6 +30,6 @@ user.properties
 
 # FOLDERS
 
-node_modules/
+/node_modules/
 tmp/
-js/vendors/
+/vendors/

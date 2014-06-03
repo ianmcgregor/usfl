@@ -1,105 +1,106 @@
+/* jshint strict: false */
 var gulp = require('gulp'),
+    clean = require('gulp-clean'),
+    browserify = require('browserify'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
+    gulpIf = require('gulp-if'),
     strip = require('gulp-strip-debug'),
-	 browserify = require('gulp-browserify'),
-	jshint = require('gulp-jshint');
+    streamify = require('gulp-streamify'),
+    source = require('vinyl-source-stream'),
+    jshint = require('gulp-jshint'),
+    glob = require('glob');
 
+// paths and file names
+var src = './src',
+    dist = './dist',
+    test = './test',
+    jsSrc = src+'/',
+    jsIndex = 'index.js',
+    jsDist = dist,
+    jsBundle = 'bundle.js',
+    vendors = './vendors/';
 
-// build
+// alias libs to short names
+var alias = {
+  //signals: vendors+'js-signals/dist/signals.js'
+};
 
-gulp.task('build', function() {
-    // Single entry point to browserify
-    gulp.src('public/js/main.js')
-        .pipe(browserify({
-          insertGlobals : false,
-          debug : true, //!gulp.env.production
-          /*,
-          shim: {
-            libName: {
-                path: '',
-                exports: ''
-            }
-          }*/
-        }).on('prebundle', function(bundler) {
-        	// create aliases relative to the entry point js file
-			bundler.require('./vendor/js-signals/dist/signals.js', { expose: 'signals' });
-			bundler.require('./vendor/lodash/dist/lodash.js', { expose: 'lodash' });
-			//bundler.require('./vendor/js-lib/js/.js', { expose: 'lodash' });
-		}))
-        .pipe(rename({suffix: '.min'}))
-        //.pipe(strip())
-        //.pipe(uglify())
-        .pipe(gulp.dest('public/js'))
-        .pipe(connect.reload());
+// build test bundle
+gulp.task('bundle-tests', function() {
+    var testFiles = glob.sync(test+'/**/*.js');
+    var bundleStream = browserify(testFiles).bundle({debug: true});
+    return bundleStream
+        .pipe(clean())
+        //.pipe(source('bundle-tests.js'))
+        .pipe(rename('bundle-tests.js'))
+        .pipe(gulp.dest(test));
 });
 
-// release
+// build bundled js using browserify
+function buildJS(debug) {
+  var bundler = browserify(jsSrc+jsIndex);
+  // alias libs to short names
+  for(var key in alias) {
+    bundler.require(alias[key], { expose: key });
+  }
+  var bundleStream = bundler.bundle({ debug: debug });
+  bundleStream
+    .pipe(source(jsSrc+jsIndex))
+    .pipe(gulpIf(!debug, streamify(strip())))
+    .pipe(streamify(uglify())) 
+    //.pipe(rename({suffix: '.min'}))
+    .pipe(rename(jsBundle))
+    .pipe(gulp.dest(jsDist));
+}
+gulp.task('js-bundle', function() {
+  buildJS(true);
+});
+gulp.task('js-bundle-release', function() {
+  buildJS(false);
+});
 
-gulp.task('release', function() {
-    gulp.src('public/js/main.js')
-        .pipe(browserify({
-          insertGlobals : false,
-          debug : false,
-          /*,
-          shim: {
-            libName: {
-                path: '',
-                exports: ''
-            }
-          }*/
-        }).on('prebundle', function(bundler) {
-        	// create aliases relative to the entry point js file
-			bundler.require('./vendor/js-signals/dist/signals.js', { expose: 'signals' });
-			bundler.require('./vendor/lodash/dist/lodash.js', { expose: 'lodash' });
-		}))
-        .pipe(rename({suffix: '.min'}))
-        .pipe(strip())
-        .pipe(uglify())
-        .pipe(gulp.dest('public/js'))
+// js hint - ignore libraries and bundled
+gulp.task('jshint', function() {
+  return gulp.src([
+      './gulpfile.js',
+      jsSrc+'/**/*.js',
+      '!'+vendors+'**/*.js',
+      '!'+jsDist+jsBundle
+    ])
+    .pipe(jshint({
+      'node': true,
+      'browser': true,
+      'es5': false,
+      'esnext': true,
+      'bitwise': false,
+      'camelcase': false,
+      'curly': true,
+      'eqeqeq': true,
+      'immed': true,
+      'latedef': true,
+      'newcap': true,
+      'noarg': true,
+      'quotmark': 'single',
+      'regexp': true,
+      'undef': true,
+      'unused': true,
+      'strict': true,
+      'trailing': true,
+
+      'predef': [
+          'Modernizr',
+          'ga',
+          'FB'
+      ]
+  }))
+  .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // watch
-
 gulp.task('watch', function() {
-	gulp.watch('public/js/app/**/*.js', ['build']);
-	gulp.watch('public/js/main.js', ['build']);
-});
-
-// jshint
-
-gulp.task('jshint', function() {
-  return gulp.src(['public/js/**/*.js', '!public/js/vendor/**/*.js', '!public/js/lib/**/*.js', '!public/js/main.min.js'])
-    .pipe(jshint({
-	    'node': true,
-	    'browser': true,
-	    'es5': false,
-	    'esnext': true,
-	    'bitwise': false,
-	    'camelcase': false,
-	    'curly': true,
-	    'eqeqeq': true,
-	    'immed': true,
-	    'latedef': true,
-	    'newcap': true,
-	    'noarg': true,
-	    'quotmark': 'single',
-	    'regexp': true,
-	    'undef': true,
-	    'unused': true,
-	    'strict': true,
-	    'trailing': true,
-
-	    'predef': [
-	        'define',
-	        'Modernizr',
-	        'requirejs',
-	        'ga'
-	    ]
-	}))
-    .pipe(jshint.reporter('jshint-stylish'));
+  gulp.watch(jsSrc+'**/*.js', ['jshint', 'bundle-tests']);
 });
 
 // default
-
-gulp.task('default', ['connect', 'watch']);
+gulp.task('default', ['watch']);

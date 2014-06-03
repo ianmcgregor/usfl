@@ -2,7 +2,8 @@
 
 var signals = require('signals');
 
-var el = document.documentElement,
+var self,
+	el = document.documentElement,
 	isSupported = !!( el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen ),
 	onChange = new signals.Signal();
 
@@ -17,7 +18,7 @@ if(isSupported) {
 	//document.addEventListener('msfullscreenchange', onFullscreenChange);
 }
 
-var self = {
+self = {
 	'isSupported': isSupported,
 	'onChange': onChange,
 

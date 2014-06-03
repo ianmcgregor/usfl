@@ -9,15 +9,6 @@ var hasClass = function(el, className) {
 	}
 };
 
-var addClass = function(el, className) {
-	removeClass(el, className);
-	if (el.classList) {
-		el.classList.add(className);
-	} else {
-		el.className += ' ' + className;
-	}
-};
-
 var removeClass = function(el, className) {
 	if (el.classList) {
 		el.classList.remove(className);
@@ -25,6 +16,15 @@ var removeClass = function(el, className) {
 	else if (hasClass(el, className)) {
 		var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
 		el.className = el.className.replace(reg, ' ');
+	}
+};
+
+var addClass = function(el, className) {
+	removeClass(el, className);
+	if (el.classList) {
+		el.classList.add(className);
+	} else {
+		el.className += ' ' + className;
 	}
 };
 
