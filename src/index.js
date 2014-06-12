@@ -1,16 +1,45 @@
 'use strict';
 
-require('./utils/array-utils.js');
-require('./utils/asset-loader.js');
-require('./utils/console-patch.js');
-require('./utils/css-utils.js');
-require('./utils/device.js');
-require('./utils/event-utils.js');
-require('./utils/fullscreen.js');
-require('./utils/linked-list.js');
-require('./utils/math-utils.js');
-require('./utils/object-pool.js');
-require('./utils/ready.js');
-require('./utils/string-utils.js');
-require('./utils/url-params.js');
+require('./lib/console-patch.js');
+require('./lib/raf-polyfill.js');
 
+var Lib = {};
+
+Lib.ArrayUtils = require('./lib/array-utils.js');
+Lib.AssetLoader = require('./lib/asset-loader.js');
+Lib.AudioManager = require('./lib/audio-manager.js');
+//Lib.CssUtils = require('./lib/css-utils.js'); // for IE 9, Android 2
+Lib.Device = require('./lib/device.js');
+//Lib.EventUtils = require('./lib/event-utils.js'); // for IE 8
+//Lib.FacebookUtils = require('./lib/facebook-utils.js');
+//Lib.Facebook = require('./lib/facebook.js');
+//Lib.Flash = require('./lib/flash.js');
+Lib.FPS = require('./lib/fps.js');
+Lib.Fullscreen = require('./lib/fullscreen.js');
+Lib.HTMLAudio = require('./lib/html-audio.js');
+Lib.InputCoords = require('./lib/input-coords.js');
+Lib.Keyboard = require('./lib/keyboard.js');
+Lib.LinkedList = require('./lib/linked-list.js');
+Lib.MathUtils = require('./lib/math-utils.js');
+Lib.ObjectPool = require('./lib/object-pool.js');
+Lib.PageVisibility = require('./lib/page-visibility.js');
+Lib.popup = require('./lib/popup.js');
+Lib.ready = require('./lib/ready.js');
+Lib.resize = require('./lib/resize.js');
+Lib.Share = require('./lib/share.js');
+Lib.StorageUtils = require('./lib/storage-utils.js');
+Lib.StringUtils = require('./lib/string-utils.js');
+Lib.UrlParams = require('./lib/url-params.js');
+Lib.VideoObject = require('./lib/video-object.js');
+Lib.Viewport = require('./lib/viewport.js');
+Lib.WebAudio = require('./lib/web-audio.js');
+
+// track, modern, webkitaudiomonkeypatch are omitted
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = Lib;
+} else if(typeof define === 'function' && define.amd) {
+    define(function () { return Lib; });
+} else {
+	window.Lib = Lib;
+}

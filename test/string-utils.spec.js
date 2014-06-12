@@ -1,6 +1,6 @@
 'use strict';
 
-var StringUtils = require('../src/utils/string-utils.js');
+var StringUtils = require('../src/lib/string-utils.js');
 
 describe('string utils', function() {
 

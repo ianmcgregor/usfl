@@ -1,6 +1,6 @@
 'use strict';
 
-var ObjectPool = require('../src/utils/object-pool.js');
+var ObjectPool = require('../src/lib/object-pool.js');
 
 describe('object pool', function() {
 	var newlyCreated = 0;

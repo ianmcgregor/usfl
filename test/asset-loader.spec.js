@@ -1,8 +1,10 @@
 'use strict';
 
-var AssetLoader = require('../src/utils/asset-loader.js');
+var AssetLoader = require('../src/lib/asset-loader.js');
 
 describe('asset loader', function() {
+	this.timeout(5000);
+
 	var assetLoader = new AssetLoader(),
 		el = document.createElement('audio'),
 		ext = (el.canPlayType('audio/mpeg;') ? 'mp3' : 'ogg'),

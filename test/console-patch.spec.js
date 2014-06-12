@@ -1,6 +1,6 @@
 'use strict';
 
-require('../src/utils/console-patch.js');
+require('../src/lib/console-patch.js');
 
 describe('console patch', function() {
 

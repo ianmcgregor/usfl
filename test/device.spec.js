@@ -1,6 +1,6 @@
 'use strict';
 
-var device = require('../src/utils/device.js');
+var device = require('../src/lib/device.js');
 
 describe('device', function() {
 	

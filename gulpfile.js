@@ -1,6 +1,5 @@
 /* jshint strict: false */
 var gulp = require('gulp'),
-    clean = require('gulp-clean'),
     browserify = require('browserify'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
@@ -9,7 +8,7 @@ var gulp = require('gulp'),
     streamify = require('gulp-streamify'),
     source = require('vinyl-source-stream'),
     jshint = require('gulp-jshint'),
-    glob = require('glob');
+    chalk = require('chalk');
 
 // paths and file names
 var src = './src',
@@ -18,7 +17,7 @@ var src = './src',
     jsSrc = src+'/',
     jsIndex = 'index.js',
     jsDist = dist,
-    jsBundle = 'bundle.js',
+    jsBundle = 'lib.js',
     vendors = './vendors/';
 
 // alias libs to short names
@@ -26,16 +25,10 @@ var alias = {
   //signals: vendors+'js-signals/dist/signals.js'
 };
 
-// build test bundle
-gulp.task('bundle-tests', function() {
-    var testFiles = glob.sync(test+'/**/*.js');
-    var bundleStream = browserify(testFiles).bundle({debug: true});
-    return bundleStream
-        .pipe(clean())
-        //.pipe(source('bundle-tests.js'))
-        .pipe(rename('bundle-tests.js'))
-        .pipe(gulp.dest(test));
-});
+//log
+function logError(msg) {
+  console.log(chalk.bold.red('[ERROR]'), msg);
+}
 
 // build bundled js using browserify
 function buildJS(debug) {
@@ -44,19 +37,22 @@ function buildJS(debug) {
   for(var key in alias) {
     bundler.require(alias[key], { expose: key });
   }
-  var bundleStream = bundler.bundle({ debug: debug });
+  var bundleStream = bundler.bundle({ debug: debug, standalone: 'JSLib' });
   bundleStream
+    .on('error', function(err){
+      logError(err);
+    })
     .pipe(source(jsSrc+jsIndex))
     .pipe(gulpIf(!debug, streamify(strip())))
-    .pipe(streamify(uglify())) 
+    .pipe(gulpIf(!debug, streamify(uglify()))) 
     //.pipe(rename({suffix: '.min'}))
     .pipe(rename(jsBundle))
     .pipe(gulp.dest(jsDist));
 }
-gulp.task('js-bundle', function() {
+gulp.task('bundle', function() {
   buildJS(true);
 });
-gulp.task('js-bundle-release', function() {
+gulp.task('bundle-release', function() {
   buildJS(false);
 });
 
@@ -91,7 +87,48 @@ gulp.task('jshint', function() {
       'predef': [
           'Modernizr',
           'ga',
-          'FB'
+          'FB',
+          'define'
+      ]
+  }))
+  .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('jshint-tests', function() {
+  return gulp.src([
+      test+'/**/*.js'
+    ])
+    .pipe(jshint({
+      'node': true,
+      'browser': true,
+      'es5': false,
+      'esnext': true,
+      'bitwise': false,
+      'camelcase': false,
+      'curly': true,
+      'eqeqeq': true,
+      'immed': true,
+      'latedef': true,
+      'newcap': true,
+      'noarg': true,
+      'quotmark': 'single',
+      'regexp': true,
+      'undef': true,
+      'unused': true,
+      'strict': true,
+      'trailing': true,
+      'expr':true, // stops complaints about 'to.be.true' etc
+
+      'predef': [
+          'Modernizr',
+          'ga',
+          'FB',
+          'define',
+          'expect',
+          'it',
+          'beforeEach',
+          'afterEach',
+          'describe'
       ]
   }))
   .pipe(jshint.reporter('jshint-stylish'));

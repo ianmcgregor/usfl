@@ -1,6 +1,6 @@
 'use strict';
 
-var resize = require('../src/utils/resize.js');
+var resize = require('../src/lib/resize.js');
 
 describe('resize', function() {
 	var rect = {

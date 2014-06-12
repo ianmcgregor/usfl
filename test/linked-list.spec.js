@@ -1,6 +1,6 @@
 'use strict';
 
-var LinkedList = require('../src/utils/linked-list.js');
+var LinkedList = require('../src/lib/linked-list.js');
 
 describe('linked list', function() {
 	var linkedList = new LinkedList();

@@ -1,7 +1,7 @@
 'use strict';
 
-var AssetLoader = require('../src/utils/asset-loader.js'),
-	StorageUtils = require('../src/utils/storage-utils.js');
+var AssetLoader = require('../src/lib/asset-loader.js'),
+	StorageUtils = require('../src/lib/storage-utils.js');
 
 describe('storage utils', function() {
 	var key = 'testData',

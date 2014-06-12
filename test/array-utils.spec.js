@@ -1,6 +1,6 @@
 'use strict';
 
-var ArrayUtils = require('../src/utils/array-utils.js');
+var ArrayUtils = require('../src/lib/array-utils.js');
 
 describe('array utils', function() {
 	it('should return [] is array true', function() {
