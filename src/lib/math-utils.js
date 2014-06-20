@@ -3,7 +3,7 @@
 var DEG = 180 / Math.PI;
 var RAD = Math.PI / 180;
 
-var self = {
+var MathUtils = {
     map: function(v, a, b, x, y) {
         return (v === a) ? x : (v - a) * (y - x) / (b - a) + x;
     },
@@ -40,7 +40,7 @@ var self = {
         return dx * dx + dy * dy;
     },
     distance: function(x1, y1, x2, y2) {
-        var sq = self.distanceSQ(x1, y1, x2, y2);
+        var sq = MathUtils.distanceSQ(x1, y1, x2, y2);
         return Math.sqrt(sq);
     },
     coinToss: function() {
@@ -109,5 +109,5 @@ var self = {
 };
 
 if (typeof module === 'object' && module.exports) {
-    module.exports = self;
+    module.exports = MathUtils;
 }

@@ -1,8 +1,11 @@
 {
   "name": "js-lib",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A collection of tested, reuasable JS modules and snippets.",
-  "keywords": ["js", "lib"],
+  "keywords": [
+    "js",
+    "lib"
+  ],
   "author": "ianmcgregor",
   "license": "MIT",
   "main": "src/js/main.js",
@@ -31,6 +34,8 @@
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.1.4",
     "karma-firefox-launcher": "^0.1.3",
+    "karma-ievms": "0.0.4",
+    "karma-ios-launcher": "0.0.3",
     "karma-mocha": "^0.1.3",
     "mocha": "^1.20.1",
     "signals": "^1.0.0",

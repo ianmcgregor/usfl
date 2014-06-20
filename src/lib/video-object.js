@@ -99,7 +99,7 @@ function VideoObject() {
         if(videoElement === null) {
             create();
         }
-        //videoElement.setAttribute('preload', 'auto');
+        videoElement.setAttribute('preload', 'auto');
         //videoElement.setAttribute('autoplay', false);
         //videoElement.setAttribute('poster', 'assets/img/wallpapers/test-medium.jpg');
         videoElement.setAttribute('src', url);

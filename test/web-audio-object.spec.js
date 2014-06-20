@@ -13,6 +13,10 @@ describe('web audio', function() {
 		file = ('http://ianmcgregor.me/prototypes/assets/audio/music' + ext),
 		playing = false;
 
+	if(!audio.context) {
+		return;
+	}
+
 	assetLoader.crossOrigin = 'anonymous';
 	assetLoader.webAudioContext = audio.context;
 	assetLoader.add(file);

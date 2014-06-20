@@ -11,6 +11,7 @@ describe('video object', function() {
 		ready = false;
 
 	beforeEach(function(done) {
+
 		videoObject.onReady.add(function() {
 			ready = true;
 			done();

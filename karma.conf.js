@@ -13,6 +13,8 @@ module.exports = function(config) {
       'karma-bro',
       'karma-chrome-launcher',
       'karma-firefox-launcher'
+      //,'karma-ievms'
+      //,'karma-ios-launcher'
     ],
 
     // frameworks to use
@@ -74,9 +76,11 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
     browsers: [
-        'Chrome'
-        //,
-        //'Firefox'
+        //'iOS',
+        'Chrome',
+        'Firefox'
+        //,'IE11 - Win7'
+        //,'IE10 - Win7'
     ],
 
 

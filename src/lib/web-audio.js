@@ -2,6 +2,7 @@
 
 function WebAudio(context) {
     this.context = context || WebAudio.createContext();
+    if(!this.context) { return; }
     this._sound = [];
     this._node = [];
     this._gain = this.context.createGain();

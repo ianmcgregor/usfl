@@ -1,6 +1,6 @@
 'use strict';
 
-var self = {
+var FacebookUtils = {
     getProfileImageUrl: function(id, width, height) {
         return document.location.protocol + '//graph.facebook.com/' + id + '/picture?width=' + width + '&height=' + height;
     },
@@ -118,5 +118,5 @@ var self = {
 };
 
 if (typeof module === 'object' && module.exports) {
-    module.exports = self;
+    module.exports = FacebookUtils;
 }

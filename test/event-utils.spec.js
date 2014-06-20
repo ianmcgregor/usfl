@@ -19,7 +19,7 @@ describe('event utils', function() {
 
 	simulateClick(el);
 	
-	it('should have recived click event', function() {
+	it('should have received click event', function() {
 		expect(complete).to.be.true;
 	});
 });

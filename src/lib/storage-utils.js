@@ -1,6 +1,6 @@
 'use strict';
 
-var self = {
+var StorageUtils = {
     saveJSON: function(key, object) {
         if(localStorage) {
             localStorage.setItem(key, JSON.stringify(object));
@@ -30,5 +30,5 @@ var self = {
 };
 
 if (typeof module === 'object' && module.exports) {
-    module.exports = self;
+    module.exports = StorageUtils;
 }
