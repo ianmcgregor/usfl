@@ -2,7 +2,7 @@
 
 var signals = require('signals'),
     resizeUtil = require('./resize.js'),
-    EventUtils = require('./event-utils.js');
+    EventUtils = require('./legacy/event-utils.js');
 
 var ViewPort = {
     rect: {
