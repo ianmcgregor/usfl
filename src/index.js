@@ -1,16 +1,16 @@
 'use strict';
 
 require('./lib/console-patch.js');
-require('./lib/raf-polyfill.js');
+//require('./lib/legacy/raf-polyfill.js');
 
 var Lib = {};
 
 Lib.ArrayUtils = require('./lib/array-utils.js');
 Lib.AssetLoader = require('./lib/asset-loader.js');
 Lib.AudioManager = require('./lib/audio-manager.js');
-//Lib.CssUtils = require('./lib/css-utils.js'); // for IE 9, Android 2
+//Lib.CssUtils = require('./lib/legacy/css-utils.js'); // for IE 9, Android 2
 Lib.Device = require('./lib/device.js');
-//Lib.EventUtils = require('./lib/event-utils.js'); // for IE 8
+//Lib.EventUtils = require('./lib/legacy/event-utils.js'); // for IE 8
 //Lib.FacebookUtils = require('./lib/facebook-utils.js');
 //Lib.Facebook = require('./lib/facebook.js');
 //Lib.Flash = require('./lib/flash.js');
@@ -33,8 +33,6 @@ Lib.UrlParams = require('./lib/url-params.js');
 Lib.VideoObject = require('./lib/video-object.js');
 Lib.Viewport = require('./lib/viewport.js');
 Lib.WebAudio = require('./lib/web-audio.js');
-
-// track, modern, webkitaudiomonkeypatch are omitted
 
 if (typeof module === 'object' && module.exports) {
     module.exports = Lib;

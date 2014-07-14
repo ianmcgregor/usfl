@@ -1,3 +1,7 @@
+/*
+ * ie8, ie9, safari 6 (osx and ios)
+ */
+
 'use strict';
 
 (function() {

@@ -44,6 +44,7 @@ var SuperClass = require('subclass.js');
 
 function SubClass() {
     SuperClass.call(this);
+    //SuperClass.apply(this, arguments);
 }
 
 SubClass.prototype = Object.create(SuperClass.prototype);

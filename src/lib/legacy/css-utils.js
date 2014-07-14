@@ -1,3 +1,7 @@
+/*
+ * ie8, ie9
+ */
+
 'use strict';
 
 var hasClass = function(el, className) {

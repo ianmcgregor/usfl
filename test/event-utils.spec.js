@@ -1,6 +1,6 @@
 'use strict';
 
-var EventUtils = require('../src/lib/event-utils.js');
+var EventUtils = require('../src/lib/legacy/event-utils.js');
 
 describe('event utils', function() {
 	var el = document.createElement('div'),

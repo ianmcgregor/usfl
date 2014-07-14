@@ -1,3 +1,7 @@
+/*
+ * ie8
+ */
+
 'use strict';
 
 var getEvent = function (e, el) {

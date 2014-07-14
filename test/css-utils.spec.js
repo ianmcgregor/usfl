@@ -1,6 +1,6 @@
 'use strict';
 
-var CssUtils = require('../src/lib/css-utils.js');
+var CssUtils = require('../src/lib/legacy/css-utils.js');
 
 describe('css utils', function() {
 	var el = document.createElement('div');
