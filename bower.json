@@ -1,23 +1,23 @@
 {
   "name": "usfl",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "homepage": "https://github.com/ianmcgregor/usfl",
   "authors": [
     "Ian McGregor <imcgrgr@gmail.com>"
   ],
-  "description": "Reusable JS",
-  "main": "test/test-main.js",
+  "description": "A collection of tested, reuasable JS utilities and snippets.",
+  "main": "dist/usfl.js",
   "moduleType": [
-    "amd"
+    "node",
+    "amd",
+    "globals"
   ],
   "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "js/vendors/",
-    "test",
-    "tests"
+    "test"
   ],
   "dependencies": {
     "js-signals": "1.0.0"

@@ -1,68 +1,52 @@
 /* jshint strict: false */
-var gulp = require('gulp'),
-    browserify = require('browserify'),
-    rename = require('gulp-rename'),
-    uglify = require('gulp-uglify'),
+var browserify = require('browserify'),
+    chalk = require('chalk'),
+    gulp = require('gulp'),
     gulpIf = require('gulp-if'),
-    strip = require('gulp-strip-debug'),
-    streamify = require('gulp-streamify'),
-    source = require('vinyl-source-stream'),
     jshint = require('gulp-jshint'),
-    chalk = require('chalk');
+    source = require('vinyl-source-stream'),
+    streamify = require('gulp-streamify'),
+    strip = require('gulp-strip-debug'),
+    uglify = require('gulp-uglify');
 
 // paths and file names
-var src = './src',
-    dist = './dist',
-    test = './test',
-    jsSrc = src+'/',
-    jsIndex = 'index.js',
-    jsDist = dist,
-    jsBundle = 'lib.js',
-    vendors = './vendors/';
-
-// alias libs to short names
-var alias = {
-  //signals: vendors+'js-signals/dist/signals.js'
-};
+var src = './src/',
+    dist = './dist/',
+    index = 'usfl.js',
+    bundle = 'usfl.js',
+    bundleMin = 'usfl.min.js';
 
 //log
 function logError(msg) {
-  console.log(chalk.bold.red('[ERROR]'), msg);
+  console.log(chalk.bold.red('[ERROR] ' + msg.toString()));
 }
 
 // build bundled js using browserify
-function buildJS(debug) {
-  var bundler = browserify(jsSrc+jsIndex);
-  // alias libs to short names
-  for(var key in alias) {
-    bundler.require(alias[key], { expose: key });
-  }
-  var bundleStream = bundler.bundle({ debug: debug, standalone: 'JSLib' });
-  bundleStream
-    .on('error', function(err){
-      logError(err);
-    })
-    .pipe(source(jsSrc+jsIndex))
-    .pipe(gulpIf(!debug, streamify(strip())))
-    .pipe(gulpIf(!debug, streamify(uglify()))) 
-    //.pipe(rename({suffix: '.min'}))
-    .pipe(rename(jsBundle))
-    .pipe(gulp.dest(jsDist));
+function buildJS(debug, minify) {
+  var bundleName = minify ? bundleMin : bundle;
+
+  var bundler = browserify(src + index);
+  return bundler.bundle({debug: debug, standalone: 'usfl'})
+    .on('error', logError)
+    .pipe(source(bundleName))
+    .pipe(gulpIf(minify, streamify(strip())))
+    .pipe(gulpIf(minify, streamify(uglify())))
+    .pipe(gulp.dest(dist));
 }
 gulp.task('bundle', function() {
-  buildJS(true);
+  buildJS(true, false);
 });
 gulp.task('bundle-release', function() {
-  buildJS(false);
+  buildJS(false, false);
+  buildJS(false, true);
 });
 
 // js hint - ignore libraries and bundled
 gulp.task('jshint', function() {
   return gulp.src([
       './gulpfile.js',
-      jsSrc+'/**/*.js',
-      '!'+vendors+'**/*.js',
-      '!'+jsDist+jsBundle
+      src+'/**/*.js',
+      'test/**/*.js'
     ])
     .pipe(jshint({
       'node': true,
@@ -83,52 +67,18 @@ gulp.task('jshint', function() {
       'unused': true,
       'strict': true,
       'trailing': true,
-
-      'predef': [
-          'Modernizr',
-          'ga',
-          'FB',
-          'define'
-      ]
-  }))
-  .pipe(jshint.reporter('jshint-stylish'));
-});
-
-gulp.task('jshint-tests', function() {
-  return gulp.src([
-      test+'/**/*.js'
-    ])
-    .pipe(jshint({
-      'node': true,
-      'browser': true,
-      'es5': false,
-      'esnext': true,
-      'bitwise': false,
-      'camelcase': false,
-      'curly': true,
-      'eqeqeq': true,
-      'immed': true,
-      'latedef': true,
-      'newcap': true,
-      'noarg': true,
-      'quotmark': 'single',
-      'regexp': true,
-      'undef': true,
-      'unused': true,
-      'strict': true,
-      'trailing': true,
-      'expr':true, // stops complaints about 'to.be.true' etc
+      'expr': true, // stops complaints about 'to.be.true' etc in tests
 
       'predef': [
           'Modernizr',
           'ga',
           'FB',
           'define',
-          'expect',
+          'describe',
           'it',
+          'expect',
           'beforeEach',
-          'afterEach',
-          'describe'
+          'afterEach'
       ]
   }))
   .pipe(jshint.reporter('jshint-stylish'));
@@ -136,7 +86,7 @@ gulp.task('jshint-tests', function() {
 
 // watch
 gulp.task('watch', function() {
-  gulp.watch(jsSrc+'**/*.js', ['jshint', 'bundle-tests']);
+  gulp.watch(src+'**/*.js', ['jshint']);
 });
 
 // default

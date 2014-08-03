@@ -2,7 +2,7 @@
 
 .*
 !/.gitignore
-!/.bowerrc
+!/.travis.yml
 
 Icon?
 ehthumbs.db
@@ -30,6 +30,6 @@ user.properties
 
 # FOLDERS
 
-/node_modules/
+bower_components/
+node_modules/
 tmp/
-/vendors/

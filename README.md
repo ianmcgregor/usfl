@@ -1,8 +1,15 @@
 # usfl
 
-A collection of tested, reuasable JS modules and snippets.
+[![Build Status](https://secure.travis-ci.org/ianmcgregor/usfl.png)](https://travis-ci.org/ianmcgregor/usfl)
 
-### Setup:
+A collection of tested, reuasable JS utilities and snippets.
+
+### Installation
+
+* Npm ```npm install usfl --save-dev```
+* Bower ```bower install usfl --save```
+
+### Dev setup
 
 To install dependencies:
 
@@ -19,11 +26,11 @@ $ npm install
 $ karma start
 ```
 
-### Usage:
+### Usage
 
-Use individual modules from `src/lib/` or the bundle `dist/lib.js`.
+Use individual modules from `src/lib/` or the bundle `dist/usfl.js`.
 
-To create your own custom bundle, edit `src/index.js` and run `gulp js-bundle-release`.
+To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-release`.
 
 ### Contents:
 

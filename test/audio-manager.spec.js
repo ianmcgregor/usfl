@@ -1,3 +1,5 @@
+'use strict';
+
 var AssetLoader = require('../src/lib/asset-loader.js'),
 	AudioManager = require('../src/lib/audio-manager.js');
 

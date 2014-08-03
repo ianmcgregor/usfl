@@ -1,16 +1,20 @@
 {
   "name": "usfl",
-  "version": "0.2.3",
-  "description": "A collection of tested, reuasable JS modules and snippets.",
+  "version": "0.2.4",
+  "description": "A collection of tested, reuasable JS utilities and snippets.",
   "keywords": [
-    "js",
-    "lib"
+    "lib",
+    "utility",
+    "util",
+    "utilities",
+    "javascript",
+    "js"
   ],
   "author": "ianmcgregor",
   "license": "MIT",
-  "main": "src/js/main.js",
+  "main": "dist/usfl.js",
   "scripts": {
-    "test": "karma start"
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   },
   "readmeFilename": "README.md",
   "repository": {
