@@ -1,6 +1,6 @@
 {
   "name": "usfl",
-  "version": "0.2.4",
+  "version": "0.2.43",
   "description": "A collection of tested, reuasable JS utilities and snippets.",
   "keywords": [
     "lib",
@@ -14,7 +14,7 @@
   "license": "MIT",
   "main": "dist/usfl.js",
   "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start --single-run --browsers Firefox"
   },
   "readmeFilename": "README.md",
   "repository": {
