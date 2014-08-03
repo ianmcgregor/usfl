@@ -1,5 +1,5 @@
 {
-  "name": "js-lib",
+  "name": "usfl",
   "version": "0.2.2",
   "description": "A collection of tested, reuasable JS modules and snippets.",
   "keywords": [
@@ -15,7 +15,7 @@
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ianmcgregor/js-lib"
+    "url": "https://github.com/ianmcgregor/usfl"
   },
   "devDependencies": {
     "browserify": "^4.2.0",
