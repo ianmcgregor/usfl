@@ -1,7 +1,7 @@
 {
-  "name": "js-lib",
+  "name": "usfl",
   "version": "0.2.2",
-  "homepage": "https://github.com/ianmcgregor/js-lib",
+  "homepage": "https://github.com/ianmcgregor/usfl",
   "authors": [
     "Ian McGregor <imcgrgr@gmail.com>"
   ],
