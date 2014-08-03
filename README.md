@@ -1,4 +1,4 @@
-# js-lib
+# usfl
 
 A collection of tested, reuasable JS modules and snippets.
 
