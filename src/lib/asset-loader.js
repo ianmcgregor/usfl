@@ -90,6 +90,7 @@ AssetLoader.Loader = function(url, type) {
 
     this.onComplete = new signals.Signal();
     this.onError = new signals.Signal();
+    this.onProgress = new signals.Signal();
 
     this.webAudioContext = null;
     this.crossOrigin = false;
@@ -127,14 +128,12 @@ AssetLoader.Loader.prototype = {
         request.open('GET', this.url, true);
         request.responseType = 'arraybuffer';
         var self = this;
-        /*request.onprogress = function(event) {
+        request.onprogress = function(event) {
             if (event.lengthComputable) {
                 var percentComplete = event.loaded / event.total;
-                console.log('percentComplete:', percentComplete);
-            } else {
-                console.log('Unable to compute progress information since the total size is unknown');
+                self.onProgress.dispatch(percentComplete);
             }
-        };*/
+        };
         request.onload = function() {
             webAudioContext.decodeAudioData(request.response, function(buffer) {
                 self.data = buffer;
@@ -147,6 +146,7 @@ AssetLoader.Loader.prototype = {
             self.onError.dispatch();
         };
         request.send();
+        this.request = request;
     },
     loadHTML5Audio: function(touchLocked) {
         var request = new Audio();
@@ -154,21 +154,28 @@ AssetLoader.Loader.prototype = {
         request.name = this.url;
         request.preload = 'auto';
         var self = this;
-        request.onerror = function() {
-            self.onError.dispatch();
-        };
         request.src = this.url;
         if (!!touchLocked) {
+            this.onProgress.dispatch(1);
             this.onComplete.dispatch(this.data);
         }
         else {
-            /*request.addEventListener('canplaythrough', function(){
-                console.log('audio canplaythrough');
+            var ready = function(){
+                request.removeEventListener('canplaythrough', ready);
+                clearTimeout(timeout);
+                self.onProgress.dispatch(1);
                 self.onComplete.dispatch(self.data);
-            }, false);*/
+            };
+            // timeout because sometimes canplaythrough doesn't fire
+            var timeout = setTimeout(ready, 2000);
+            request.addEventListener('canplaythrough', ready, false);
+            request.onerror = function() {
+                clearTimeout(timeout);
+                self.onError.dispatch();
+            };
             request.load();
-            this.onComplete.dispatch(this.data);
         }
+        this.request = request;
     },
     loadImage: function(crossOrigin) {
         var request = new Image();
@@ -185,6 +192,7 @@ AssetLoader.Loader.prototype = {
             request.crossOrigin = 'anonymous';
         }
         request.src = this.url;
+        this.request = request;
     },
     loadJSON: function() {
 
@@ -228,6 +236,12 @@ AssetLoader.Loader.prototype = {
         }
 
         request.send();
+        this.request = request;
+    },
+    cancel: function() {
+      if(this.request && this.request.readyState !== 4) {
+          this.request.abort();
+      }
     }
 };
 
