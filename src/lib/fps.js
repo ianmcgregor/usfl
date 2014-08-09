@@ -1,9 +1,8 @@
 'use strict';
 
-function FPS() {
+function FPS(el) {
 
-    var el = document.getElementById('fps'),
-        ms = 0,
+    var ms = 0,
         fps = 0,
         currentFps = 0,
         averageFps = 0,

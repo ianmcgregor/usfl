@@ -22,14 +22,14 @@ var getEvent = function (e, el) {
 
 var addEvent = (function () {
     if (document.addEventListener) {
-        return function (el, type, func) {
-            el.addEventListener(type, func, false);
+        return function (el, type, fn) {
+            el.addEventListener(type, fn, false);
         };
     } else {
-        return function (el, type, func) {
+        return function (el, type, fn) {
             el.attachEvent('on' + type, function (e) {
                 e = getEvent(e, el);
-                func(e);
+                fn(e);
             });
         };
     }
@@ -37,12 +37,12 @@ var addEvent = (function () {
 
 var removeEvent = (function () {
     if (document.addEventListener) {
-        return function (el, type, func) {
-            el.removeEventListener(type, func, false);
+        return function (el, type, fn) {
+            el.removeEventListener(type, fn, false);
         };
     } else {
-        return function (el, type, func) {
-            el.detachEvent('on' + type, func);
+        return function (el, type, fn) {
+            el.detachEvent('on' + type, fn);
         };
     }
 }());

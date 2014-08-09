@@ -175,7 +175,6 @@ AssetLoader.Loader.prototype = {
             };
             request.load();
         }
-        this.request = request;
     },
     loadImage: function(crossOrigin) {
         var request = new Image();

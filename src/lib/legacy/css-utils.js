@@ -46,8 +46,8 @@ var toggleClass = function(el, className) {
 };
 
 var CssUtils = {
-    'hasClass': hasClass,
     'addClass': addClass,
+    'hasClass': hasClass,
     'removeClass': removeClass,
     'toggleClass': toggleClass
 };

@@ -1,16 +1,25 @@
 'use strict';
 
-var Graphics = {
-  init: function() {
-    if(document.getElementsByTagName('canvas').length > 0) {
-      this.canvas = document.getElementsByTagName('canvas')[0];
+function Graphics(canvas) {
+  this.init(canvas);
+}
+
+Graphics.prototype = {
+  init: function(canvas) {
+    if(canvas) {
+      this.canvas = canvas;
+      this.size(this.canvas.width, this.canvas.height);
+    }
+    else if(document.querySelector('canvas')) {
+      this.canvas = document.querySelector('canvas');
+      this.size(this.canvas.width, this.canvas.height);
     }
     else {
       this.canvas = document.createElement('canvas');
       document.body.appendChild(this.canvas);
+      this.size();
     }
     this.context = this.canvas.getContext('2d');
-    this.size();
 
     this._textFont = 'Times';
     this._textSize = 12;

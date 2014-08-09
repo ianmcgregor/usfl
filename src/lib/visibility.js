@@ -14,7 +14,7 @@ function onVisibilityChange() {
     }
 }
 
-if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support 
+if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
     hidden = 'hidden';
     visibilityChange = 'visibilitychange';
 } else if (typeof document.mozHidden !== 'undefined') {
@@ -32,11 +32,11 @@ if(visibilityChange !== undefined) {
     document.addEventListener(visibilityChange, onVisibilityChange, false);
 }
 
-var PageVisibility = {
+var Visibility = {
     onPageShown: onPageShown,
     onPageHidden: onPageHidden
 };
 
 if (typeof module === 'object' && module.exports) {
-    module.exports = PageVisibility;
+    module.exports = Visibility;
 }

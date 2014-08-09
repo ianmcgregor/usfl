@@ -5,7 +5,7 @@
 
 var WebAudio = require('./web-audio.js'),
     HTMLAudio = require('./html-audio.js'),
-    PageVisibility = require('./page-visibility.js');
+    PageVisibility = require('./visibility.js');
 
 function AudioManager() {
     this.webAudioContext = WebAudio.createContext();

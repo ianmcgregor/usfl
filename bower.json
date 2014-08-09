@@ -5,7 +5,7 @@
   "authors": [
     "Ian McGregor <imcgrgr@gmail.com>"
   ],
-  "description": "A collection of tested, reuasable JS utilities and snippets.",
+  "description": "A collection of tested, reusable JS utilities and snippets.",
   "main": "dist/usfl.js",
   "moduleType": [
     "node",

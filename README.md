@@ -2,12 +2,101 @@
 
 [![Build Status](https://secure.travis-ci.org/ianmcgregor/usfl.png)](https://travis-ci.org/ianmcgregor/usfl)
 
-A collection of tested, reuasable JS utilities and snippets.
+A collection of tested, reusable JS utilities and snippets.
 
 ### Installation
 
-* Npm ```npm install usfl --save-dev```
-* Bower ```bower install usfl --save```
+* npm: ```npm install usfl --save-dev```
+* bower: ```bower install usfl --save```
+
+### Usage
+
+Use individual modules from `src/lib/` or the bundles `dist/usfl.js` or `dist/usfl.min.js`.
+
+To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-release`.
+
+### Api
+
+#### Instances
+
+[usfl.array](docs/README.md#array)
+
+[usfl.css](docs/README.md#css) (for ie9, Android 2)
+
+[usfl.device](docs/README.md#device)
+
+[usfl.event](docs/README.md#event) (for ie8)
+
+[usfl.fullscreen](docs/README.md#fullscreen)
+
+[usfl.keyboard](docs/README.md#keyboard)
+
+[usfl.math](docs/README.md#math)
+
+[usfl.visibility](docs/README.md#visibility)
+
+[usfl.share](docs/README.md#share)
+
+[usfl.storage](docs/README.md#storage)
+
+[usfl.string](docs/README.md#string)
+
+[usfl.urlParams](docs/README.md#urlparams)
+
+
+#### Constructors
+
+[usfl.AssetLoader](docs/README.md#assetloader)
+
+[usfl.AudioManager](docs/README.md#audiomanager)
+
+[usfl.Boid](docs/README.md#boid)
+
+[usfl.FPS](docs/README.md#fps)
+
+[usfl.Graphics](docs/README.md#graphics)
+
+[usfl.HTMLAudio](docs/README.md#htmlaudio)
+
+[usfl.InputCoords](docs/README.md#inputcoords)
+
+[usfl.LinkedList](docs/README.md#linkedlist)
+
+[usfl.ObjectPool](docs/README.md#objectpool)
+
+[usfl.Vec2](docs/README.md#vec2)
+
+[usfl.VideoObject](docs/README.md#videoobject)
+
+[usfl.Viewport](docs/README.md#viewport)
+
+[usfl.WebAudio](docs/README.md#webaudio)
+
+
+#### Functions
+
+[usfl.popup](docs/README.md#popup)
+
+[usfl.ready](docs/README.md#ready)
+
+[usfl.resize](docs/README.md#resize)
+
+[lib/legacy/console-patch.js](docs/README.md#console-patch) for IE 8
+
+[lib/raf-polyfill.js](docs/README.md#raf-polyfill) for iOS6 (prefix), ie9, iOS5, Android < 4.4
+
+
+### Not included in bundle
+
+[lib/facebook.js](docs/README.md#facebook) Login/Graph API wrapper
+
+[lib/flash.js](docs/README.md#flash) Flash SWF wrapper
+
+[lib/modern.js](docs/README.md#modern) Detect modern browser via feature detection
+
+[lib/stub-objects.js](docs/README.md#stub-objects) Reference
+
+[lib/track.js](docs/README.md#track) Google Anaytics wrapper
 
 ### Dev setup
 
@@ -21,57 +110,6 @@ $ bower install
 To run tests:
 
 ```
-$ npm install -g karma
-$ npm install
+$ npm install -g karma-cli
 $ karma start
 ```
-
-### Usage
-
-Use individual modules from `src/lib/` or the bundle `dist/usfl.js`.
-
-To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-release`.
-
-### Contents:
-
-* array-utils (mainly sorting helpers)
-* asset-loader (batch loads images, audio and json files)
-* audio-manager (detect support and fallback from WebAudio to Audio tag)
-* boid (steering behaviours)
-* console-patch (for old IE)
-* device (userAgent things for when Modernizr isn't enough)
-* facebook-utils
-* facebook
-* flash (wrapper for flash swfs)
-* fps
-* fullscreen
-* graphics (canvas drawing abstraction)
-* html-audio (wrapper for Audio tag)
-* input-coords (keeps track of user input position)
-* key-input (check if keys are down)
-* keyboard (constants for keyCodes)
-* linked-list
-* math-utils
-* modern (detect features that define a 'modern' browser in context of the specific project)
-* object-pool (reuse objects for performance)
-* page-visibility
-* popup
-* ready (simple 'document.ready' replacement)
-* resize (util for proportional resizing)
-* share (various social media share options)
-* state-machine (finite state machine)
-* storage-utils (local storage wrapper, including image to dataUrl)
-* string-utils
-* stub-objects (just for reference)
-* track (Google Analytics wrapper)
-* url-params (query string parameters to object)
-* vec2 (2d vector)
-* video-object (wrapper for HTML Video tag)
-* viewport (manager for browser viewport)
-* web-audio (wrapper for WebAudio API)
-
-#### /legacy (only needed if supporting older than latest-1 browsers)
-
-* css-utils (for old IE)
-* event-utils (for old IE)
-* raf-polyfill (for old IE and Safari)

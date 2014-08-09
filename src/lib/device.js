@@ -2,34 +2,6 @@
 
 var ua = navigator.userAgent;
 
-/* mobile */
-
-function mobile() {
-    return !!ua.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i);
-}
-
-/* ios */
-
-function ipad() {
-    return !!ua.match(/iPad/i);
-}
-
-function iphone() {
-    return !!ua.match(/iPhone/i);
-}
-
-function ipod() {
-    return !!ua.match(/iPod/i);
-}
-
-function ios() {
-    return (ipad() || ipod() || iphone());
-}
-
-function ios5() {
-    return !!(ua.match(/OS 5(_\d)+ like Mac OS X/i));
-}
-
 /* android */
 
 function android() {
@@ -51,7 +23,25 @@ function androidStock() {
     return isAndroidBrowser;
 }
 
+/* dpr */
+
+function dpr() {
+    return window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+}
+
 /* ie */
+
+function ie8down() {
+    var div = document.createElement('div');
+    div.innerHTML = '<!--[if lte IE 8]><i></i><![endif]-->';
+    return (div.getElementsByTagName('i').length === 1);
+}
+
+function ie9down() {
+    var div = document.createElement('div');
+    div.innerHTML = '<!--[if IE]><i></i><![endif]-->';
+    return (div.getElementsByTagName('i').length === 1);
+}
 
 function ieVersion() {
     var rv = -1,
@@ -75,47 +65,61 @@ function ieVersion() {
     return rv;
 }
 
-function ie9down() {
-    var div = document.createElement('div');
-    div.innerHTML = '<!--[if IE]><i></i><![endif]-->';
-    return (div.getElementsByTagName('i').length === 1);
+/* ios */
+
+function ios5() {
+    return !!(ua.match(/OS 5(_\d)+ like Mac OS X/i));
 }
 
-function ie8down() {
-    var div = document.createElement('div');
-    div.innerHTML = '<!--[if lte IE 8]><i></i><![endif]-->';
-    return (div.getElementsByTagName('i').length === 1);
+function ipad() {
+    return !!ua.match(/iPad/i);
 }
 
-function dpr() {
-    return window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+function iphone() {
+    return !!ua.match(/iPhone/i);
+}
+
+function ipod() {
+    return !!ua.match(/iPod/i);
+}
+
+function ios() {
+    return (ipad() || ipod() || iphone());
+}
+
+/* mobile */
+
+function mobile() {
+    return !!ua.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i);
+}
+
+// screen.width / screen.height is often wrong in Android
+
+function screenHeight() {
+    return  Math.max(window.outerHeight, window.screen.height);
 }
 
 function screenWidth() {
-    return (android() ? window.outerWidth : window.screen.width) * dpr();
-}
-
-function screenHeight() {
-    return  (android() ? window.outerHeight : window.screen.height) * dpr();
+    return Math.max(window.outerWidth, window.screen.width);
 }
 
 var Device = {
-    'mobile': mobile(),
-    'ipad': ipad(),
-    'iphone': iphone(),
-    'ipod': ipod(),
-    'ios': ios(),
-    'ios5': ios5(),
     'android': android(),
     'androidOld': androidOld(),
     'androidStock': androidStock(),
-    'ieVersion': ieVersion(),
-    'ie9down': ie9down(),
-    'ie8down': ie8down(),
-    'screenWidth': screenWidth(),
-    'screenHeight': screenHeight(),
     'dpr': dpr(),
-    'retina': (dpr() > 1)
+    'ie8down': ie8down(),
+    'ie9down': ie9down(),
+    'ieVersion': ieVersion(),
+    'ios': ios(),
+    'ios5': ios5(),
+    'ipad': ipad(),
+    'iphone': iphone(),
+    'ipod': ipod(),
+    'mobile': mobile(),
+    'retina': (dpr() > 1),
+    'screenHeight': screenHeight(),
+    'screenWidth': screenWidth()
 };
 
 if (typeof module === 'object' && module.exports) {

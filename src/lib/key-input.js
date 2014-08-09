@@ -1,6 +1,6 @@
 'use strict';
 
-var Keyboard = require('keyboard');
+var Keyboard = require('./keyboard.js');
 
 function KeyInput() {
     var keys = [];
@@ -54,5 +54,5 @@ function KeyInput() {
 }
 
 if (typeof module === 'object' && module.exports) {
-    module.exports = new KeyInput();
+    module.exports = KeyInput;
 }

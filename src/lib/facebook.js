@@ -1,6 +1,7 @@
 'use strict';
 
-var signals = require('signals');
+var signals = require('signals'),
+    utils = require('./facebook-utils.js');
 
 function Facebook(appId) {
 
@@ -101,6 +102,8 @@ function Facebook(appId) {
 
         'onInit': onInit,
         'onInfo': onInfo,
+
+        'utils': utils,
 
         getInfo: function(permissions, fields) {
             checkAuth(function() {

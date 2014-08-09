@@ -564,6 +564,7 @@ AssetLoader.Loader = function(url, type) {
 
     this.onComplete = new signals.Signal();
     this.onError = new signals.Signal();
+    this.onProgress = new signals.Signal();
 
     this.webAudioContext = null;
     this.crossOrigin = false;
@@ -601,14 +602,12 @@ AssetLoader.Loader.prototype = {
         request.open('GET', this.url, true);
         request.responseType = 'arraybuffer';
         var self = this;
-        /*request.onprogress = function(event) {
+        request.onprogress = function(event) {
             if (event.lengthComputable) {
                 var percentComplete = event.loaded / event.total;
-                console.log('percentComplete:', percentComplete);
-            } else {
-                console.log('Unable to compute progress information since the total size is unknown');
+                self.onProgress.dispatch(percentComplete);
             }
-        };*/
+        };
         request.onload = function() {
             webAudioContext.decodeAudioData(request.response, function(buffer) {
                 self.data = buffer;
@@ -621,6 +620,7 @@ AssetLoader.Loader.prototype = {
             self.onError.dispatch();
         };
         request.send();
+        this.request = request;
     },
     loadHTML5Audio: function(touchLocked) {
         var request = new Audio();
@@ -628,20 +628,26 @@ AssetLoader.Loader.prototype = {
         request.name = this.url;
         request.preload = 'auto';
         var self = this;
-        request.onerror = function() {
-            self.onError.dispatch();
-        };
         request.src = this.url;
         if (!!touchLocked) {
+            this.onProgress.dispatch(1);
             this.onComplete.dispatch(this.data);
         }
         else {
-            /*request.addEventListener('canplaythrough', function(){
-                console.log('audio canplaythrough');
+            var ready = function(){
+                request.removeEventListener('canplaythrough', ready);
+                clearTimeout(timeout);
+                self.onProgress.dispatch(1);
                 self.onComplete.dispatch(self.data);
-            }, false);*/
+            };
+            // timeout because sometimes canplaythrough doesn't fire
+            var timeout = setTimeout(ready, 2000);
+            request.addEventListener('canplaythrough', ready, false);
+            request.onerror = function() {
+                clearTimeout(timeout);
+                self.onError.dispatch();
+            };
             request.load();
-            this.onComplete.dispatch(this.data);
         }
     },
     loadImage: function(crossOrigin) {
@@ -659,6 +665,7 @@ AssetLoader.Loader.prototype = {
             request.crossOrigin = 'anonymous';
         }
         request.src = this.url;
+        this.request = request;
     },
     loadJSON: function() {
 
@@ -702,6 +709,12 @@ AssetLoader.Loader.prototype = {
         }
 
         request.send();
+        this.request = request;
+    },
+    cancel: function() {
+      if(this.request && this.request.readyState !== 4) {
+          this.request.abort();
+      }
     }
 };
 
@@ -717,7 +730,7 @@ if (typeof module === 'object' && module.exports) {
 
 var WebAudio = _dereq_('./web-audio.js'),
     HTMLAudio = _dereq_('./html-audio.js'),
-    PageVisibility = _dereq_('./page-visibility.js');
+    PageVisibility = _dereq_('./visibility.js');
 
 function AudioManager() {
     this.webAudioContext = WebAudio.createContext();
@@ -868,45 +881,353 @@ if (typeof module === 'object' && module.exports) {
     module.exports = AudioManager;
 }
 
-},{"./html-audio.js":9,"./page-visibility.js":16,"./web-audio.js":26}],5:[function(_dereq_,module,exports){
+},{"./html-audio.js":10,"./visibility.js":32,"./web-audio.js":33}],5:[function(_dereq_,module,exports){
 'use strict';
 
-(function(fn) {
-    window.console = window.console || {log:fn,warn:fn,error:fn,table:fn};
-    window.console.table = window.console.table || fn;
-}(function(){}));
-},{}],6:[function(_dereq_,module,exports){
+var Vec2 = _dereq_('./vec2.js');
+
+function Boid()
+{
+    this._position = Vec2.get();
+    this._velocity = Vec2.get();    
+    this._steeringForce = Vec2.get();
+    this._bounds = {x:0, y:0, width:640, height:480};
+    this._edgeBehavior = Boid.EDGE_BOUNCE;
+    this._mass = 1.0;
+    this._maxSpeed = 10;
+    this._maxForce = 1;
+    // arrive
+    this._arrivalThreshold = 50;
+    // wander
+    this._wanderDistance = 10;
+    this._wanderRadius = 5;
+    this._wanderAngle = 0;
+    this._wanderRange = 1;
+    // avoid
+    this._avoidDistance = 300;
+    this._avoidBuffer = 20;
+    // follow path
+    this._pathIndex = 0;
+    this._pathThreshold = 20;
+    // flock
+    this._inSightDistance = 300;
+    this._tooCloseDistance = 60;
+}
+
+// edge behaviors
+
+Boid.EDGE_WRAP = 'wrap';
+Boid.EDGE_BOUNCE = 'bounce';
+
+Boid.prototype.setBounds = function(width, height, x, y) {
+    this._bounds.width = width;
+    this._bounds.height = height;
+    this._bounds.x = x || 0;
+    this._bounds.y = y || 0;
+};
+
+Boid.prototype.update = function() {
+    // steer
+    this._steeringForce.truncate(this._maxForce);
+    //this._steeringForce = this._steeringForce.divide(this._mass, true);
+    this._steeringForce.divideBy(this._mass);
+    this._velocity = this._velocity.add(this._steeringForce, true);
+    this._steeringForce.reset();
+    // make sure velocity stays within max speed.
+    this._velocity.truncate(this._maxSpeed);
+    // add velocity to position
+    this._position = this._position.add(this._velocity, true);
+    // handle any edge behavior
+    if(this._edgeBehavior === Boid.EDGE_WRAP) {
+        this.wrap();
+    }
+    else if(this._edgeBehavior === Boid.EDGE_BOUNCE) {
+        this.bounce();
+    }
+};
+
+// Causes boid to bounce off edge if edge is hit
+Boid.prototype.bounce = function() {
+    if(this._position.x > this._bounds.width) {
+        this._position.x = this._bounds.width;
+        this._velocity.x *= -1;
+    }
+    else if(this._position.x < this._bounds.x) {
+        this._position.x = this._bounds.x;
+        this._velocity.x *= -1;
+    }
+    if(this._position.y > this._bounds.height) {
+        this._position.y = this._bounds.height;
+        this._velocity.y *= -1;
+    }
+    else if(this._position.y < this._bounds.y) {
+        this._position.y = this._bounds.y;
+        this._velocity.y *= -1;
+    }
+};
+
+// Causes boid to wrap around to opposite edge if edge is hit
+Boid.prototype.wrap = function() {
+    if(this._position.x > this._bounds.width) {
+        this._position.x = this._bounds.x;
+    }
+    else if(this._position.x < this._bounds.x) {
+        this._position.x = this._bounds.width;
+    }
+    if(this._position.y > this._bounds.height) {
+        this._position.y = this._bounds.y;
+    }
+    else if(this._position.y < this._bounds.y) {
+        this._position.y = this._bounds.height;
+    }
+};
+
+Boid.prototype.seek = function(targetVec) {
+    var desiredVelocity = targetVec.subtract(this._position);
+    desiredVelocity.normalize();
+    desiredVelocity.scaleBy(this._maxSpeed);
+    //desiredVelocity = desiredVelocity.multiply(this._maxSpeed, true);
+    var force = desiredVelocity.subtract(this._velocity, true);
+    this._steeringForce = this._steeringForce.add(force, true);
+
+    force.dispose();
+};
+
+Boid.prototype.flee = function(targetVec) {
+    var desiredVelocity = targetVec.subtract(this._position);
+    desiredVelocity.normalize();
+    desiredVelocity.scaleBy(this._maxSpeed);
+    //desiredVelocity = desiredVelocity.multiply(this._maxSpeed, true);
+    var force = desiredVelocity.subtract(this._velocity, true);
+    // only this line different from seek:
+    this._steeringForce = this._steeringForce.subtract(force, true);
+
+    force.dispose();
+};
+
+// seek until withing arrivalThreshold
+Boid.prototype.arrive = function(targetVec) {
+    var desiredVelocity = targetVec.subtract(this._position);
+    desiredVelocity.normalize();
+
+    var distance = this._position.distance(targetVec);
+    if(distance > this._arrivalThreshold) {
+        desiredVelocity.scaleBy(this._maxSpeed);
+        //desiredVelocity = desiredVelocity.multiply(this._maxSpeed, true);
+    }
+    else {
+        var mul = this._maxSpeed * distance / this._arrivalThreshold;
+        desiredVelocity.scaleBy(mul);
+        //desiredVelocity = desiredVelocity.multiply(mul, true);
+    }
+    var force = desiredVelocity.subtract(this._velocity, true);
+    this._steeringForce = this._steeringForce.add(force, true);
+
+    force.dispose();
+};
+
+// look at velocity of boid and try to predict where it's going
+Boid.prototype.pursue = function(targetBoid) {
+    var lookAheadTime = this._position.distance(targetBoid._position) / this._maxSpeed;
+    // e.g. of where new vec should be returned:
+    var scaledVelocity = targetBoid._velocity.clone().scaleBy(lookAheadTime);
+    var predictedTarget = targetBoid._position.add(scaledVelocity);
+    //var predictedTarget = targetBoid._position.add(targetBoid._velocity.multiply(lookAheadTime));
+    this.seek(predictedTarget);
+
+    scaledVelocity.dispose();
+    predictedTarget.dispose();
+};
+
+// look at velocity of boid and try to predict where it's going
+Boid.prototype.evade = function(targetBoid) {
+    var lookAheadTime = this._position.distance(targetBoid._position) / this._maxSpeed;
+    // e.g. of where new vec should be returned:
+    var scaledVelocity = targetBoid._velocity.clone().scaleBy(lookAheadTime);
+    var predictedTarget = targetBoid._position.add(scaledVelocity);
+    //var predictedTarget = targetBoid._position.add(targetBoid._velocity.multiply(lookAheadTime));
+    // only this line diff from pursue:
+    this.flee(predictedTarget);
+
+    predictedTarget.dispose();
+};
+
+// wander around, changing angle by a limited amount each tick
+Boid.prototype.wander = function() {
+    var center = this._velocity.clone().normalize().scaleBy(this._wanderDistance);
+    //var center = this._velocity.clone().normalize().multiply(this._wanderDistance, true);
+    var offset = Vec2.get();
+    offset.length = this._wanderRadius;
+    offset.angle = this._wanderAngle;
+    this._wanderAngle += Math.random() * this._wanderRange - this._wanderRange * 0.5;
+    var force = center.add(offset, true);
+    this._steeringForce = this._steeringForce.add(force, true);
+
+    offset.dispose();
+    force.dispose();
+};
+
+// gets a bit rough used in combination with seeking as the vehicle attempts 
+// to seek straight through an object while simultaneously trying to avoid it
+Boid.prototype.avoid = function(circles) {
+    var l = circles.length;
+    for (var i = 0; i < l; i++) {
+        var circle = circles[i];
+        var heading = this._velocity.clone().normalize();
+
+        // vec between circle and boid
+        var difference = circle.position.subtract(this._position);
+        var dotProd = difference.dotProduct(heading);
+
+        // if circle in front of boid
+        if(dotProd > 0) {
+            // vec to represent 'feeler' arm
+            //var feeler = heading.multiply(this._avoidDistance);
+            var feeler = heading.clone().scaleBy(this._avoidDistance);
+            // project differebce onto feeler
+            //var projection = heading.multiply(dotProd);
+            var projection = heading.clone().scaleBy(dotProd);
+            // distance from circle to feeler
+            var vecDistance = projection.subtract(difference);
+            var distance = vecDistance.length;
+            // if feeler intersects circle (plus buffer), and projection
+            // less than feeler length, will collide
+            if(distance < circle.radius + this._avoidBuffer && projection.length < feeler.length) {
+                // calc a force +/- 90 deg from vec to circ
+                //var force = heading.multiply(this._maxSpeed);
+                var force = heading.clone().scaleBy(this._maxSpeed);
+                force.angle += difference.sign(this._velocity) * Math.PI / 2;
+                // scale force by distance (further = smaller force)
+                //force = force.multiply(1 - projection.length / feeler.length, true);
+                force.scaleBy(1 - projection.length / feeler.length);
+                // add to steering force
+                this._steeringForce = this._steeringForce.add(force, true);
+                // braking force - slows boid down so it has time to turn (closer = harder)
+                //this._velocity = this._velocity.multiply(projection.length / feeler.length, true);
+                this._velocity.scaleBy(projection.length / feeler.length);
+
+                force.dispose();
+            }
+            feeler.dispose();
+            projection.dispose();
+            vecDistance.dispose();
+        }
+        heading.dispose();
+        difference.dispose();
+    }
+};
+
+// for defining obstacles or areas to avoid
+Boid.Circle = function(radius, x, y) {
+    console.log(radius, x, y);
+    this.radius = radius;
+    this.position = Vec2.get(x, y);
+};
+
+// follow a path made up of an array or vectors
+Boid.prototype.followPath = function(path, loop) {
+    loop = loop === undefined ? false : loop;
+    var wayPoint = path[this._pathIndex];
+    //console.log(wayPoint);
+    if(!wayPoint) { return; }
+    if(this._position.distance(wayPoint) < this._pathThreshold) {
+        if(this._pathIndex >= path.length-1) {
+            if(loop) { this._pathIndex = 0; }   
+        }
+        else {
+            this._pathIndex++;
+        }
+    }
+    if(this._pathIndex >= path.length-1 && !loop) {
+        this.arrive(wayPoint);
+    }
+    else {
+        this.seek(wayPoint);
+    }
+};
+
+// flock - group of boids loosely move together
+Boid.prototype.flock = function(boids) {
+    var averageVelocity = this._velocity.clone();
+    var averagePosition = Vec2.get();
+    var inSightCount = 0;
+    var l = boids.length;
+    for (var i = 0; i < l; i++) {
+        var boid = boids[i];
+        if(boid !== this && this._inSight(boid)) {
+            averageVelocity = averageVelocity.add(boid._velocity, true);
+            averagePosition = averagePosition.add(boid._position, true);
+            if(this._tooClose(boid)) {
+                this.flee(boid._position);
+            }
+            inSightCount++;
+        }
+    }
+    if(inSightCount > 0) {
+        //averageVelocity = averageVelocity.divide(inSightCount, true);
+        //averagePosition = averagePosition.divide(inSightCount, true);
+        averageVelocity.divideBy(inSightCount);
+        averagePosition.divideBy(inSightCount);
+        this.seek(averagePosition);
+        this._steeringForce.add(averageVelocity.subtract(this._velocity, true), true);
+    }
+    averageVelocity.dispose();
+    averagePosition.dispose();
+};
+
+// is boid close enough to be in sight? for use with flock
+Boid.prototype._inSight = function(boid) {
+    if(this._position.distance(boid._position) > this._inSightDistance) {
+        return false;
+    }
+    var heading = this._velocity.clone().normalize();
+    var difference = boid._position.subtract(this._position);
+    var dotProd = difference.dotProduct(heading);
+
+    heading.dispose();
+    difference.dispose();
+
+    if(dotProd < 0) {
+        return false;
+    }
+    return true;
+};
+
+// is boid too close? for use with flock
+Boid.prototype._tooClose = function(boid) {
+    return this._position.distance(boid._position) < this._tooCloseDistance;
+};
+
+// getters / setters
+Object.defineProperty(Boid.prototype, 'position', {
+    get: function() {
+        return this._position;
+    }
+});
+
+Object.defineProperty(Boid.prototype, 'velocity', {
+    get: function() {
+        return this._velocity;
+    }
+});
+
+Object.defineProperty(Boid.prototype, 'edgeBehavior', {
+    get: function() {
+        return this.__edgeBehavior;
+    },
+    set: function(value) {
+        this._edgeBehavior = value;
+    }
+});
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = Boid;
+}
+
+},{"./vec2.js":29}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var ua = navigator.userAgent;
-
-/* mobile */
-
-function mobile() {
-    return !!ua.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i);
-}
-
-/* ios */
-
-function ipad() {
-    return !!ua.match(/iPad/i);
-}
-
-function iphone() {
-    return !!ua.match(/iPhone/i);
-}
-
-function ipod() {
-    return !!ua.match(/iPod/i);
-}
-
-function ios() {
-    return (ipad() || ipod() || iphone());
-}
-
-function ios5() {
-    return !!(ua.match(/OS 5(_\d)+ like Mac OS X/i));
-}
 
 /* android */
 
@@ -929,7 +1250,25 @@ function androidStock() {
     return isAndroidBrowser;
 }
 
+/* dpr */
+
+function dpr() {
+    return window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+}
+
 /* ie */
+
+function ie8down() {
+    var div = document.createElement('div');
+    div.innerHTML = '<!--[if lte IE 8]><i></i><![endif]-->';
+    return (div.getElementsByTagName('i').length === 1);
+}
+
+function ie9down() {
+    var div = document.createElement('div');
+    div.innerHTML = '<!--[if IE]><i></i><![endif]-->';
+    return (div.getElementsByTagName('i').length === 1);
+}
 
 function ieVersion() {
     var rv = -1,
@@ -953,47 +1292,61 @@ function ieVersion() {
     return rv;
 }
 
-function ie9down() {
-    var div = document.createElement('div');
-    div.innerHTML = '<!--[if IE]><i></i><![endif]-->';
-    return (div.getElementsByTagName('i').length === 1);
+/* ios */
+
+function ios5() {
+    return !!(ua.match(/OS 5(_\d)+ like Mac OS X/i));
 }
 
-function ie8down() {
-    var div = document.createElement('div');
-    div.innerHTML = '<!--[if lte IE 8]><i></i><![endif]-->';
-    return (div.getElementsByTagName('i').length === 1);
+function ipad() {
+    return !!ua.match(/iPad/i);
 }
 
-function dpr() {
-    return window.devicePixelRatio !== undefined ? window.devicePixelRatio : 1;
+function iphone() {
+    return !!ua.match(/iPhone/i);
+}
+
+function ipod() {
+    return !!ua.match(/iPod/i);
+}
+
+function ios() {
+    return (ipad() || ipod() || iphone());
+}
+
+/* mobile */
+
+function mobile() {
+    return !!ua.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i);
+}
+
+// screen.width / screen.height is often wrong in Android
+
+function screenHeight() {
+    return  Math.max(window.outerHeight, window.screen.height);
 }
 
 function screenWidth() {
-    return (android() ? window.outerWidth : window.screen.width) * dpr();
-}
-
-function screenHeight() {
-    return  (android() ? window.outerHeight : window.screen.height) * dpr();
+    return Math.max(window.outerWidth, window.screen.width);
 }
 
 var Device = {
-    'mobile': mobile(),
-    'ipad': ipad(),
-    'iphone': iphone(),
-    'ipod': ipod(),
-    'ios': ios(),
-    'ios5': ios5(),
     'android': android(),
     'androidOld': androidOld(),
     'androidStock': androidStock(),
-    'ieVersion': ieVersion(),
-    'ie9down': ie9down(),
-    'ie8down': ie8down(),
-    'screenWidth': screenWidth(),
-    'screenHeight': screenHeight(),
     'dpr': dpr(),
-    'retina': (dpr() > 1)
+    'ie8down': ie8down(),
+    'ie9down': ie9down(),
+    'ieVersion': ieVersion(),
+    'ios': ios(),
+    'ios5': ios5(),
+    'ipad': ipad(),
+    'iphone': iphone(),
+    'ipod': ipod(),
+    'mobile': mobile(),
+    'retina': (dpr() > 1),
+    'screenHeight': screenHeight(),
+    'screenWidth': screenWidth()
 };
 
 if (typeof module === 'object' && module.exports) {
@@ -1003,10 +1356,9 @@ if (typeof module === 'object' && module.exports) {
 },{}],7:[function(_dereq_,module,exports){
 'use strict';
 
-function FPS() {
+function FPS(el) {
 
-    var el = document.getElementById('fps'),
-        ms = 0,
+    var ms = 0,
         fps = 0,
         currentFps = 0,
         averageFps = 0,
@@ -1127,6 +1479,179 @@ if (typeof module === 'object' && module.exports) {
 },{"signals":1}],9:[function(_dereq_,module,exports){
 'use strict';
 
+function Graphics(canvas) {
+  this.init(canvas);
+}
+
+Graphics.prototype = {
+  init: function(canvas) {
+    if(canvas) {
+      this.canvas = canvas;
+      this.size(this.canvas.width, this.canvas.height);
+    }
+    else if(document.querySelector('canvas')) {
+      this.canvas = document.querySelector('canvas');
+      this.size(this.canvas.width, this.canvas.height);
+    }
+    else {
+      this.canvas = document.createElement('canvas');
+      document.body.appendChild(this.canvas);
+      this.size();
+    }
+    this.context = this.canvas.getContext('2d');
+
+    this._textFont = 'Times';
+    this._textSize = 12;
+    this.context.font = this._textSize + 'px ' + this._textFont;
+  },
+  size: function(width, height) {
+    this.width = this.canvas.width = width || window.innerWidth;
+    this.height = this.canvas.height = height || window.innerHeight;
+  },
+  clear: function(color) {
+    if(color) {
+      this.context.fillStyle = color;
+      this.context.fillRect(0, 0, this.width, this.height);
+    }
+    else {
+      this.context.clearRect(0, 0, this.width, this.height);
+    }
+  },
+  background: function(r, g, b) {
+    this.clear('rgb('+r+', '+b+', '+g+')');
+  },
+  fill: function(r, g, b, a) {
+    if(typeof r === 'string') {
+      this.context.fillStyle = r;
+      return;  
+    }
+    a = a === undefined ? 1 : a;
+    this.context.fillStyle = 'rgba('+r+', '+b+', '+g+', '+a+')';
+  },
+  stroke: function(r, g, b, a) {
+    a = a === undefined ? 1 : a;
+    this.context.strokeStyle = 'rgba('+r+', '+b+', '+g+', '+a+')';
+  },
+  strokeWeight: function(w) {
+    this.context.lineWidth = w;
+  },
+  move: function(x, y) {
+    this.context.moveTo(x, y);
+  },
+  line: function(x1, y1, x2, y2) {
+    this.context.beginPath();
+    this.context.moveTo(x1, y1);
+    this.context.lineTo(x2, y2);
+    this.context.stroke();
+  },
+  rect: function(x, y, width, height, angle) {
+    if(angle !== undefined && angle !== 0) {
+      this.context.save();
+      this.context.translate(x + width/2, y + height/2);
+      this.context.rotate(angle);
+      this.context.rect(-width/2, -height/2, width, height);
+      this.context.fill();
+      this.context.stroke();
+      this.context.restore();
+    }
+    else {
+      this.context.rect(x, y, width, height);
+      this.context.fill();
+      this.context.stroke();
+    }
+  },
+  circle: function(x, y, radius) {
+    this.context.beginPath();
+    this.context.arc(x, y, radius, 0, Math.PI * 2, false);
+    this.context.fill();
+    this.context.stroke();
+  },
+  triangle: function(x, y, width, height, angle) {
+    if(angle !== undefined && angle !== 0) {
+      this.context.save();
+      this.context.translate(x, y);
+      this.context.rotate(angle);
+      this.context.beginPath();
+      this.context.moveTo(0 - width/2, 0 + height/2);
+      this.context.lineTo(0, 0 - height/2);
+      this.context.lineTo(0 + width/2, 0 + height/2);
+      this.context.closePath();
+      this.context.stroke();
+      this.context.fill();
+      this.context.restore();
+    }
+    else {
+      this.context.beginPath();
+      this.context.moveTo(x - width/2, y + height/2);
+      this.context.lineTo(x, y - height/2);
+      this.context.lineTo(x + width/2, y + height/2);
+      this.context.closePath();
+      this.context.stroke();
+      this.context.fill();
+    }
+  },
+  triangleABC: function(x1, y1, x2, y2, x3, y3) {
+    this.context.beginPath();
+    this.context.moveTo(x1, y1);
+    this.context.lineTo(x2, y2);
+    this.context.lineTo(x3, y3);
+    this.context.closePath();
+    this.context.stroke();
+    this.context.fill();
+  },
+  image: function(img, x, y, angle) {
+    if(angle !== undefined && angle !== 0) {
+      var offsetX = img.width/2,
+          offsetY = img.height/2;
+      this.context.save();
+      this.context.translate(x + offsetX, y + offsetY);
+      this.context.rotate(angle);
+      this.context.drawImage(img, -offsetX, -offsetY);
+      this.context.restore();
+    }
+    else {
+      this.context.drawImage(img, x, y);
+    }
+  },
+  cross: function(radius) {
+    this.context.beginPath();
+    this.context.moveTo(-radius, -radius);
+    this.context.lineTo(radius, radius);
+    this.context.moveTo(-radius, radius);
+    this.context.lineTo(radius, -radius);
+    this.context.stroke();
+  },
+  text: function(str, x, y) {
+    this.context.fillText(str, x, y);
+  },
+  textFont: function(font) {
+    this._textFont = font;
+    this.context.font = this._textSize + 'px ' + font;
+  },
+  textSize: function(size) {
+    this._textSize = size;
+    this.context.font = size + 'px ' + this._textFont;
+  },
+  openImage: function() {
+    var win = window.open('', 'Canvas Image'),
+        src = this.canvas.toDataURL('image/png');
+    win.document.write('<img src="' + src +
+                      '" width="' + this.width +
+                      '" height="' + this.height + '" />');
+  },
+  downloadImage: function() {
+    var src = this.canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+    window.location.href = src;
+  }
+};
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = Graphics;
+}
+
+},{}],10:[function(_dereq_,module,exports){
+'use strict';
+
 function HTMLAudio() {
     this._sound = null;
     this._loop = false;
@@ -1217,7 +1742,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = HTMLAudio;
 }
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 'use strict';
 
 function InputCoords() {
@@ -1281,7 +1806,67 @@ if (typeof module === 'object' && module.exports) {
     module.exports = InputCoords;
 }
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
+'use strict';
+
+var Keyboard = _dereq_('./keyboard.js');
+
+function KeyInput() {
+    var keys = [];
+
+    for (var i = 0; i < 256; i++) {
+        keys.push(false);
+    }
+
+    function onKeyDown(event) {
+        event.preventDefault();
+        keys[event.keyCode] = true;
+    }
+
+    function onKeyUp(event) {
+        event.preventDefault();
+        keys[event.keyCode] = false;
+    }
+
+    var self = {
+        on: function() {
+            document.addEventListener('keydown', onKeyDown, false);
+            document.addEventListener('keyup', onKeyUp, false);
+        },
+        off: function() {
+            document.removeEventListener('keydown', onKeyDown, false);
+            document.removeEventListener('keyup', onKeyUp, false);
+        },
+        isDown: function(key) {
+            return keys[key];
+        },
+        left: function() {
+            return keys[Keyboard.LEFT] || keys[Keyboard.A];
+        },
+        right: function() {
+            return keys[Keyboard.RIGHT] || keys[Keyboard.D];
+        },
+        up: function() {
+            return keys[Keyboard.UP] || keys[Keyboard.W];
+        },
+        down: function() {
+            return keys[Keyboard.DOWN] || keys[Keyboard.S];
+        },
+        space: function() {
+            return keys[Keyboard.SPACEBAR];
+        }
+    };
+
+    self.on();
+
+    return self;
+}
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = KeyInput;
+}
+
+},{"./keyboard.js":13}],13:[function(_dereq_,module,exports){
 var Keyboard = {
 	A: 'A'.charCodeAt(0),
 	B: 'B'.charCodeAt(0),
@@ -1387,7 +1972,73 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Keyboard;
 }
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],14:[function(_dereq_,module,exports){
+'use strict';
+
+(function(fn) {
+    window.console = window.console || {log:fn,warn:fn,error:fn,table:fn};
+    window.console.table = window.console.table || fn;
+}(function(){}));
+},{}],15:[function(_dereq_,module,exports){
+/*
+ * ie8, ie9
+ */
+
+'use strict';
+
+var hasClass = function(el, className) {
+    if (el.classList) {
+        return el.classList.contains(className);
+    }
+    else {
+        return el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+    }
+};
+
+var removeClass = function(el, className) {
+    if (el.classList) {
+        el.classList.remove(className);
+    }
+    else if (hasClass(el, className)) {
+        var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+        el.className = el.className.replace(reg, ' ');
+    }
+};
+
+var addClass = function(el, className) {
+    removeClass(el, className);
+    if (el.classList) {
+        el.classList.add(className);
+    } else {
+        el.className += ' ' + className;
+    }
+};
+
+var toggleClass = function(el, className) {
+    if (el.classList) {
+        el.classList.toggle(className);
+    }
+    else {
+        if (hasClass(el, className)) {
+            removeClass(el, className);
+        } else {
+            addClass(el, className);
+        }
+    }
+};
+
+var CssUtils = {
+    'addClass': addClass,
+    'hasClass': hasClass,
+    'removeClass': removeClass,
+    'toggleClass': toggleClass
+};
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = CssUtils;
+}
+
+},{}],16:[function(_dereq_,module,exports){
 /*
  * ie8
  */
@@ -1412,14 +2063,14 @@ var getEvent = function (e, el) {
 
 var addEvent = (function () {
     if (document.addEventListener) {
-        return function (el, type, func) {
-            el.addEventListener(type, func, false);
+        return function (el, type, fn) {
+            el.addEventListener(type, fn, false);
         };
     } else {
-        return function (el, type, func) {
+        return function (el, type, fn) {
             el.attachEvent('on' + type, function (e) {
                 e = getEvent(e, el);
-                func(e);
+                fn(e);
             });
         };
     }
@@ -1427,12 +2078,12 @@ var addEvent = (function () {
 
 var removeEvent = (function () {
     if (document.addEventListener) {
-        return function (el, type, func) {
-            el.removeEventListener(type, func, false);
+        return function (el, type, fn) {
+            el.removeEventListener(type, fn, false);
         };
     } else {
-        return function (el, type, func) {
-            el.detachEvent('on' + type, func);
+        return function (el, type, fn) {
+            el.detachEvent('on' + type, fn);
         };
     }
 }());
@@ -1446,7 +2097,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = EventUtils;
 }
 
-},{}],13:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
 'use strict';
 
 function LinkedList() {
@@ -1577,18 +2228,17 @@ if (typeof module === 'object' && module.exports) {
     module.exports = LinkedList;
 }
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var DEG = 180 / Math.PI;
 var RAD = Math.PI / 180;
 
 var MathUtils = {
-    map: function(v, a, b, x, y) {
-        return (v === a) ? x : (v - a) * (y - x) / (b - a) + x;
-    },
-    lerp: function(from, to, percent) {
-        return from + ( to - from ) * percent;
+    angle: function(x1, y1, x2, y2) {
+        var dx = x2 - x1;
+        var dy = y2 - y1;
+        return Math.atan2(dy, dx);
     },
     clamp: function(value, min, max) {
         if(min > max) {
@@ -1604,73 +2254,42 @@ var MathUtils = {
         }
         return value;
     },
-    random: function(min, max) {
-        if ( isNaN(max) ) {
-            max = min;
-            min = 0;
-        }
-        return min + Math.random() * (max - min);
+    coinToss: function() {
+        return Math.random() > 0.5;
+    },
+    crossProduct: function(aX, aY, bX, bY) {
+        /*
+        The sign tells us if a is to the left (-) or the right (+) of b
+        */
+        return aX * bY - aY * bX;
+    },
+    degrees: function(radians) {
+        return radians * DEG;
     },
     difference: function(a, b) {
         return Math.abs(a - b);
+    },
+    distance: function(x1, y1, x2, y2) {
+        var sq = MathUtils.distanceSQ(x1, y1, x2, y2);
+        return Math.sqrt(sq);
     },
     distanceSQ: function(x1, y1, x2, y2) {
         var dx = x1 - x2;
         var dy = y1 - y2;
         return dx * dx + dy * dy;
     },
-    distance: function(x1, y1, x2, y2) {
-        var sq = MathUtils.distanceSQ(x1, y1, x2, y2);
-        return Math.sqrt(sq);
-    },
-    coinToss: function() {
-        return Math.random() > 0.5;
-    },
-    angle: function(x1, y1, x2, y2) {
-        var dx = x2 - x1;
-        var dy = y2 - y1;
-        return Math.atan2(dy, dx);
-    },
-    degrees: function(radians) {
-        return radians * DEG;
-    },
-    radians: function(degrees) {
-        return degrees * RAD;
-    },
-    roundToNearest: function(value, amount) {
-        return Math.round(value / amount) * amount;
-    },
-    getIntersectionArea: function(aX, aY, aW, aH, bX, bY, bW, bH) {
-        var overlapX = Math.max(0, Math.min(aX + aW, bX + bW) - Math.max(aX, bX));
-        var overlapY = Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
-        return overlapX * overlapY;
-    },
-    getOverlapX: function(aX, aW, bX, bW) {
-        return Math.max(0, Math.min(aX + aW, bX + bW) - Math.max(aX, bX));
-    },
-    getOverlapY: function(aY, aH, bY, bH) {
-        return Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
-    },
-    rotateToDEG: function(start, end) {
-        var diff = (end - start) % 360;
-        if (diff !== diff % 180) {
-            diff = (diff < 0) ? diff + 360 : diff - 360;
-        }
-        return start + diff;
-    },
-    rotateToRAD: function(start, end) {
-        var PI2 = Math.PI * 2;
-        var diff = (end - start) % PI2;
-        if (diff !== diff % Math.PI) {
-            diff = diff < 0 ? diff + PI2 : diff - PI2;
-        }
-        return start + diff;
-    },
     dotProduct: function(aX, aY, bX, bY) {
+        /*
+        - If A and B are perpendicular (at 90 degrees to each other), the result
+          of the dot product will be zero, because cos(Θ) will be zero.
+        - If the angle between A and B are less than 90 degrees, the dot product
+          will be positive (greater than zero), as cos(Θ) will be positive, and
+          the vector lengths are always positive values.
+        - If the angle between A and B are greater than 90 degrees, the dot
+          product will be negative (less than zero), as cos(Θ) will be negative,
+          and the vector lengths are always positive values
+        */
         return aX * bX + aY * bY;
-    },
-    crossProduct: function(aX, aY, bX, bY) {
-        return aX * bY - aY * bX;
     },
     getCirclePoints: function(originX, originY, radius, count, start, Class) {
         start = start === undefined ? -Math.PI/2 : start;
@@ -1685,6 +2304,56 @@ var MathUtils = {
             points.push(ob);
         }
         return points;
+    },
+    getIntersectionArea: function(aX, aY, aW, aH, bX, bY, bW, bH) {
+        var overlapX = Math.max(0, Math.min(aX + aW, bX + bW) - Math.max(aX, bX));
+        var overlapY = Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
+        return overlapX * overlapY;
+    },
+    getOverlapX: function(aX, aW, bX, bW) {
+        return Math.max(0, Math.min(aX + aW, bX + bW) - Math.max(aX, bX));
+    },
+    getOverlapY: function(aY, aH, bY, bH) {
+        return Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
+    },
+    lerp: function(from, to, percent) {
+        return from + ( to - from ) * percent;
+    },
+    map: function(v, a, b, x, y) {
+        // value, min expected, max expected, map min, map max
+        // e.g. map some value between 0 to 100 to -50 to 50
+        // map(50, 0, 100, -50, 50) // 0
+        // map(25, 0, 100, -50, 50) // -25
+        return (v === a) ? x : (v - a) * (y - x) / (b - a) + x;
+    },
+    radians: function(degrees) {
+        return degrees * RAD;
+    },
+    random: function(min, max) {
+        if ( isNaN(max) ) {
+            max = min;
+            min = 0;
+        }
+        return min + Math.random() * (max - min);
+    },
+    rotateToDEG: function(start, end) {
+        var diff = (end - start) % 360;
+        if (diff !== diff % 180) {
+            diff = (diff < 0) ? diff + 360 : diff - 360;
+        }
+        return start + diff;
+    },
+    rotateToRAD: function(start, end) {
+        var PI2 = Math.PI * 2;
+        var diff = (end - start) % PI2;
+        console.log('diff:',diff);
+        if (diff !== diff % Math.PI) {
+            diff = diff < 0 ? diff + PI2 : diff - PI2;
+        }
+        return start + diff;
+    },
+    roundToNearest: function(value, unit) {
+        return Math.round(value / unit) * unit;
     }
 };
 
@@ -1692,7 +2361,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = MathUtils;
 }
 
-},{}],15:[function(_dereq_,module,exports){
+},{}],19:[function(_dereq_,module,exports){
 'use strict';
 
 function ObjectPool(Type) {
@@ -1728,51 +2397,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ObjectPool;
 }
 
-},{}],16:[function(_dereq_,module,exports){
-'use strict';
-
-var signals = _dereq_('signals');
-
-var onPageHidden = new signals.Signal(),
-    onPageShown = new signals.Signal(),
-    hidden, visibilityChange;
-
-function onVisibilityChange() {
-    if (document[hidden]) {
-        onPageHidden.dispatch();
-    } else {
-        onPageShown.dispatch();
-    }
-}
-
-if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support 
-    hidden = 'hidden';
-    visibilityChange = 'visibilitychange';
-} else if (typeof document.mozHidden !== 'undefined') {
-    hidden = 'mozHidden';
-    visibilityChange = 'mozvisibilitychange';
-} else if (typeof document.msHidden !== 'undefined') {
-    hidden = 'msHidden';
-    visibilityChange = 'msvisibilitychange';
-} else if (typeof document.webkitHidden !== 'undefined') {
-    hidden = 'webkitHidden';
-    visibilityChange = 'webkitvisibilitychange';
-}
-
-if(visibilityChange !== undefined) {
-    document.addEventListener(visibilityChange, onVisibilityChange, false);
-}
-
-var PageVisibility = {
-    onPageShown: onPageShown,
-    onPageHidden: onPageHidden
-};
-
-if (typeof module === 'object' && module.exports) {
-    module.exports = PageVisibility;
-}
-
-},{"signals":1}],17:[function(_dereq_,module,exports){
+},{}],20:[function(_dereq_,module,exports){
 'use strict';
 
 var popup = function (url, name, width, height) {
@@ -1801,7 +2426,41 @@ if (typeof module === 'object' && module.exports) {
     module.exports = popup;
 }
 
-},{}],18:[function(_dereq_,module,exports){
+},{}],21:[function(_dereq_,module,exports){
+/*
+ * ie8, ie9, safari 6 (osx and ios)
+ */
+
+'use strict';
+
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] ||
+        window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() {
+                callback(currTime + timeToCall);
+            }, timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+ 
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+}());
+},{}],22:[function(_dereq_,module,exports){
 'use strict';
 
 var ready;
@@ -1834,7 +2493,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ready;
 }
 
-},{}],19:[function(_dereq_,module,exports){
+},{}],23:[function(_dereq_,module,exports){
 'use strict';
 
 var resize = function (rect, areaWidth, areaHeight, autoCenter, method) {
@@ -1873,7 +2532,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = resize;
 }
 
-},{}],20:[function(_dereq_,module,exports){
+},{}],24:[function(_dereq_,module,exports){
 'use strict';
 
 var popup = _dereq_('./popup.js');
@@ -1942,7 +2601,365 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Share;
 }
 
-},{"./popup.js":17}],21:[function(_dereq_,module,exports){
+},{"./popup.js":20}],25:[function(_dereq_,module,exports){
+'use strict';
+
+var signals = signals || _dereq_('signals');
+
+/*
+ * StateMachine
+ */
+
+function StateMachine() {
+	this._states = {};
+	this._initial = null;
+	this._currentState = null;
+	this._previousState = null;
+	this._cancelled = null;
+	this._hasChanged = false;
+	this._actionQueue = [];
+	this._history = [];
+	this._factory = new StateMachine.Factory(this);
+	this._onChange = new signals.Signal();
+}
+
+StateMachine.prototype = {
+	start: function() {
+		if ( !this._initial ) {
+			throw 'State Machine cannot start. No states defined.';
+		}
+		this._transitionTo( this._initial, null );
+	},
+	action: function(action, data) {
+		// Check if current action transition is complete
+		if(!this._hasChanged) {
+			// Queue the new action and exit
+			this._actionQueue.push({
+				'action': action,
+				'data': data
+			});
+			return;
+		}
+		// Check if we're already in the correct state
+		if (this._currentState && this._currentState.getTarget(action) === this._currentState.name) {
+			return;
+		}
+		var newStateTarget = this._currentState.getTarget( action );
+		var newState = this._states[ newStateTarget ];
+		// Only transition if there's a state associated with the action
+		if( newState ) {
+			this._transitionTo( newState, data );
+		}
+	},
+	_transitionTo: function( nextState, data ) {
+		this._hasChanged = false;
+
+		if ( nextState === null ) {
+			return;
+		}
+
+		this._cancelled = false;
+
+		// Exit current
+		if ( this._currentState && this._currentState.onExit.getNumListeners() > 0 ) {
+			this._currentState.onExit.dispatch(data);
+		}
+
+		// Has transition been been cancelled on Exit guard?
+		if ( this._cancelled ) {
+			this._cancelled = false;
+			return;
+		}
+		
+		// Enter next State
+		if ( nextState.onEnter.getNumListeners() > 0 ) {
+			nextState.onEnter.dispatch(data);
+		}
+		
+		// Has transition been been cancelled on Enter guard?
+		if ( this._cancelled ) {
+			this._cancelled = false;
+			return;
+		}
+
+		// Set previous state and save name in history array
+		if(this._currentState) {
+			this._previousState = this._currentState;
+			this._history.push(this._previousState.name);
+		}
+
+		// Update current state now both guards have been passed
+		this._currentState = nextState;
+		
+		// Dispatch specific Change notification for this State 
+		if ( nextState.onChange.getNumListeners() > 0 ) {
+			nextState.onChange.dispatch(data);
+		}
+
+		// Dispatch general Change notification 
+		this._onChange.dispatch(this._currentState.name, data);
+
+		// Set hasChanged flag to true
+		this._hasChanged = true;
+
+		// Process action queue
+		this._processActionQueue();
+	},
+	_processActionQueue: function() {
+		if(this._actionQueue.length > 0) {
+			var stateEvent = this._actionQueue.shift();
+
+			// If currentState has no state for that action go to the next one
+			if(!this._currentState.getTarget(stateEvent.action)) {
+				this._processActionQueue();
+			}
+			else {
+				this.action(stateEvent.action, stateEvent.data);
+			}
+		}
+	},
+	cancel: function() {
+		this._cancelled = true;
+	},
+	addState: function( state, isInitial ) {
+		if ( state === null || this._states[ state.name ]) {
+			return null;
+		}
+		this._states[ state.name ] = state;
+		if ( isInitial ) {
+			this._initial = state;
+		}
+		return state;
+	},
+	removeState: function( stateName ) {
+		var state = this._states[ stateName ];
+		if ( state === null ) {
+			return;
+		}
+		this._states[ stateName ] = null;
+	},
+	getState: function(stateName) {
+		return this._states[stateName];
+	}
+};
+
+Object.defineProperty(StateMachine.prototype, 'onChange', {
+	get: function() {
+		return this._onChange;
+	}
+});
+
+Object.defineProperty(StateMachine.prototype, 'currentState', {
+	get: function() {
+		return this._currentState;
+	}
+});
+
+Object.defineProperty(StateMachine.prototype, 'previousState', {
+	get: function() {
+		return this._previousState;
+	}
+});
+
+Object.defineProperty(StateMachine.prototype, 'states', {
+	get: function() {
+		return this._states;
+	}
+});
+
+Object.defineProperty(StateMachine.prototype, 'initial', {
+	get: function() {
+		return this._initial;
+	}
+});
+
+Object.defineProperty(StateMachine.prototype, 'history', {
+	get: function() {
+		return this._history;
+	}
+});
+
+Object.defineProperty(StateMachine.prototype, 'factory', {
+	get: function() {
+		return this._factory;
+	}
+});
+
+/*
+ * State
+ */
+
+StateMachine.State = function(name) {
+	this._transitions = {};
+	this._name = name;
+	this._onChange = new signals.Signal();
+	this._onEnter = new signals.Signal();
+	this._onExit = new signals.Signal();
+};
+
+StateMachine.State.prototype = {
+	addTransition: function(action, target) {
+		if ( this.getTarget( action ) ) {
+			return;
+		}
+		this._transitions[ action ] = target;
+	},
+	removeTransition: function(action) {
+		this._transitions[ action ] = null;
+	},
+	getTarget: function(action)	{
+		return this._transitions[ action ];
+	}
+};
+
+Object.defineProperty(StateMachine.State.prototype, 'name', {
+	get: function() {
+		return this._name;
+	}
+});
+
+Object.defineProperty(StateMachine.State.prototype, 'transitions', {
+	get: function() {
+		return this._transitions;
+	}
+});
+
+Object.defineProperty(StateMachine.State.prototype, 'onChange', {
+	get: function() {
+		return this._onChange;
+	}
+});
+
+Object.defineProperty(StateMachine.State.prototype, 'onEnter', {
+	get: function() {
+		return this._onEnter;
+	}
+});
+
+Object.defineProperty(StateMachine.State.prototype, 'onExit', {
+	get: function() {
+		return this._onExit;
+	}
+});
+
+/*
+ * Factory
+ */
+
+StateMachine.Factory = function(fsm) {
+	this.fsm = fsm;
+};
+
+StateMachine.Factory.prototype = {
+	add: function(config) {
+		var state = new StateMachine.State(config.name);
+		var transitions = config.transitions;
+		if(transitions) {
+			for (var i = 0; i < transitions.length; i++) {
+				state.addTransition(transitions[i].action, transitions[i].target);
+				if(typeof config.onChange === 'function') {
+					state.onChange.add(config.onChange);
+				}
+				if(typeof config.onEnter === 'function') {
+					state.onEnter.add(config.onEnter);
+				}
+				if(typeof config.onExit === 'function') {
+					state.onExit.add(config.onExit);
+				}
+			}
+		}
+		var isInitial = this.getTotal() === 0 || config.initial;
+		this.fsm.addState(state, isInitial);
+	},
+	addMultiple: function(arr) {
+		for (var i = 0; i < arr.length; i++) {
+			this.add(arr[i]);
+		}
+	},
+	create: function(name, transitions, isInitial) {
+		var state = new StateMachine.State(name);
+		if(transitions !== undefined) {
+			for (var i = 0; i < transitions.length; i++) {
+				state.addTransition(transitions[i].action, transitions[i].target);
+			}
+		}
+		this.fsm.addState(state, isInitial);
+		return state;
+	},
+	getTotal: function() {
+		var i = 0;
+		for(var key in this.fsm.states) {
+			if(this.fsm.states.hasOwnProperty(key) && this.fsm.states[key] !== null){
+				i++;
+			}
+		}
+		return i;
+	}
+};
+
+/*
+ * Debug View
+ */
+
+StateMachine.DebugView = function(fsm) {
+
+	var container = document.createElement('div');
+
+	function updateState(name) {
+		var all = container.querySelectorAll('div');
+		for (var i = 0; i < all.length; i++) {
+			all[i].style.display = all[i].getAttribute('data-state') === name ? 'block' : 'none';
+		}
+	}
+
+	function createButton(action) {
+		var b = document.createElement('button');
+		b.setAttribute('data-action', action);
+		b.addEventListener('click', function() {
+			var a = this.getAttribute('data-action');
+			fsm.action(a);
+		});
+		b.innerHTML = action;
+		return b;
+	}
+
+	for(var key in fsm.states) {
+		var s = fsm.states[key];
+		var d = document.createElement('div');
+		d.setAttribute('data-state', s.name);
+		d.style.display = 'none';
+		
+		var h = document.createElement('h3');
+		h.innerHTML = 'State: ' + s.name;
+		d.appendChild(h);
+
+		var transitions = s.transitions;
+		if(transitions) {
+			for(var a in transitions) {
+				if(transitions.hasOwnProperty(a)) {
+					d.appendChild(createButton(a));
+				}
+			}
+		}
+		container.appendChild(d);
+	}
+
+	fsm.onChange.add(function(name) {
+		updateState(name);
+	});
+
+	if(fsm.currentState) {
+		updateState(fsm.currentState.name);
+	}
+
+	return container;
+};
+
+if(typeof module === 'object' && module.exports) {
+	module.exports = StateMachine;
+}
+
+},{"signals":1}],26:[function(_dereq_,module,exports){
 'use strict';
 
 var StorageUtils = {
@@ -1978,7 +2995,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = StorageUtils;
 }
 
-},{}],22:[function(_dereq_,module,exports){
+},{}],27:[function(_dereq_,module,exports){
 'use strict';
 
 /*
@@ -2326,7 +3343,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = StringUtils;
 }
 
-},{}],23:[function(_dereq_,module,exports){
+},{}],28:[function(_dereq_,module,exports){
 'use strict';
 
 var urlParams = {};
@@ -2349,7 +3366,194 @@ if (typeof module === 'object' && module.exports) {
     module.exports = urlParams;
 }
 
-},{}],24:[function(_dereq_,module,exports){
+},{}],29:[function(_dereq_,module,exports){
+'use strict';
+
+function Vec2(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+}
+
+Vec2.prototype = {
+    add: function(vec, overwrite) {
+        if(overwrite) {
+            this.x = this.x + vec.x;
+            this.y = this.y + vec.y;
+            return this;
+        }
+        return Vec2.get(this.x + vec.x, this.y + vec.y);
+    },
+    subtract: function(vec, overwrite) {
+        if(overwrite) {
+            this.x = this.x - vec.x;
+            this.y = this.y - vec.y;
+            return this;
+        }
+        return Vec2.get(this.x - vec.x, this.y - vec.y);
+    },
+    multiply: function(vec, overwrite) {
+        if(overwrite) {
+            this.x = this.x * vec.x;
+            this.y = this.y * vec.y;
+            return this;
+        }
+        return Vec2.get(this.x * vec.x, this.y * vec.y);
+    },
+    divide: function(vec, overwrite) {
+        if(overwrite) {
+            this.x = this.x / vec.x;
+            this.y = this.y / vec.y;
+            return this;
+        }
+        return Vec2.get(this.x / vec.x, this.y / vec.y);
+    },
+    normalize: function() {
+        var l = this.length;
+        if(l === 0) {
+            this.x = 1;
+            return this;
+        }
+        this.x /= l;
+        this.y /= l;
+        return this;
+    },
+    isNormalized: function() {
+        return this.length === 1;
+    },
+    truncate:  function(max) {
+        if(this.length > max) {
+            this.length = max;
+        }
+        return this;
+    },
+    scaleBy: function(mul) {
+        this.x *= mul;
+        this.y *= mul;
+        return this;
+    },
+    divideBy: function(div) {
+        this.x /= div;
+        this.y /= div;
+        return this;
+    },
+    equals: function(vec) {
+        return this.x === vec.x &&
+            this.y === vec.y;
+    },
+    negate: function() {
+        this.x = -this.x;
+        this.y = -this.y;
+        return this;
+    },
+    reverse: function() {
+        this.negate();
+        return this;
+    },
+    dotProduct: function(vec) {
+        /*
+        If A and B are perpendicular (at 90 degrees to each other), the result of the dot product will be zero, because cos(Θ) will be zero.
+        If the angle between A and B are less than 90 degrees, the dot product will be positive (greater than zero), as cos(Θ) will be positive, and the vector lengths are always positive values.
+        If the angle between A and B are greater than 90 degrees, the dot product will be negative (less than zero), as cos(Θ) will be negative, and the vector lengths are always positive values
+        */
+        return this.x * vec.x + this.y * vec.y;
+    },
+    crossProduct: function(vec) {
+        /*
+        The sign tells us if vec to the left (-) or the right (+) of this vec
+        */
+        return this.x * vec.y - this.y * vec.x;
+    },
+    distanceSquared: function(vec) {
+        var dx = vec.x - this.x;
+        var dy = vec.y - this.y;
+        return dx * dx + dy * dy;
+    },
+    distance: function(vec) {
+        return Math.sqrt(this.distanceSquared(vec));
+    },
+    clone: function() {
+        return Vec2.get(this.x, this.y);
+    },
+    zero: function() {
+        this.x = 0;
+        this.y = 0;
+        return this;
+    },
+    isZero: function() {
+        return this.x === 0 && this.y === 0;
+    },
+    reset: function() {
+        return this.zero();
+    },
+    perpendicular: function() {
+        return Vec2.get(-this.y, this.x);
+    },
+    sign: function(vec) {
+        // Determines if a given vector is to the right or left of this vector.
+        // If to the left, returns -1. If to the right, +1.
+        var p = this.perpendicular();
+        var s = p.dotProduct(vec) < 0 ? -1 : 1;
+        p.dispose();
+        return s;
+    },
+    set: function(x, y) {
+        this.x = x || 0;
+        this.y = y || 0;
+        return this;
+    },
+    dispose: function() {
+        Vec2.pool.push(this.zero());
+    }
+};
+
+// static
+Vec2.pool = [];
+Vec2.get = function(x, y) {
+    var v = Vec2.pool.length > 0 ? Vec2.pool.pop() : new Vec2();
+    v.set(x, y);
+    return v;
+};
+
+Vec2.angleBetween = function(a, b) {
+    if(!a.isNormalized()) { a = a.clone().normalize(); }
+    if(!b.isNormalized()) { b = b.clone().normalize(); }
+    return Math.acos(a.dotProduct(b));
+};
+
+// getters / setters
+Object.defineProperty(Vec2.prototype, 'lengthSquared', {
+    get: function() {
+        return this.x * this.x + this.y * this.y;
+    }
+});
+
+Object.defineProperty(Vec2.prototype, 'length', {
+    get: function() {
+        return Math.sqrt(this.lengthSquared);
+    },
+    set: function(value) {
+        var a = this.angle;
+        this.x = Math.cos(a) * value;
+        this.y = Math.sin(a) * value;
+    }
+});
+
+Object.defineProperty(Vec2.prototype, 'angle', {
+    get: function() {
+        return Math.atan2(this.y, this.x);
+    },
+    set: function(value) {
+        var l = this.length;
+        this.x = Math.cos(value) * l;
+        this.y = Math.sin(value) * l;
+    }
+});
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = Vec2;
+}
+
+},{}],30:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals');
@@ -2572,7 +3776,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = VideoObject;
 }
 
-},{"signals":1}],25:[function(_dereq_,module,exports){
+},{"signals":1}],31:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals'),
@@ -2673,7 +3877,51 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ViewPort;
 }
 
-},{"./legacy/event-utils.js":12,"./resize.js":19,"signals":1}],26:[function(_dereq_,module,exports){
+},{"./legacy/event-utils.js":16,"./resize.js":23,"signals":1}],32:[function(_dereq_,module,exports){
+'use strict';
+
+var signals = _dereq_('signals');
+
+var onPageHidden = new signals.Signal(),
+    onPageShown = new signals.Signal(),
+    hidden, visibilityChange;
+
+function onVisibilityChange() {
+    if (document[hidden]) {
+        onPageHidden.dispatch();
+    } else {
+        onPageShown.dispatch();
+    }
+}
+
+if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
+    hidden = 'hidden';
+    visibilityChange = 'visibilitychange';
+} else if (typeof document.mozHidden !== 'undefined') {
+    hidden = 'mozHidden';
+    visibilityChange = 'mozvisibilitychange';
+} else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden';
+    visibilityChange = 'msvisibilitychange';
+} else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden';
+    visibilityChange = 'webkitvisibilitychange';
+}
+
+if(visibilityChange !== undefined) {
+    document.addEventListener(visibilityChange, onVisibilityChange, false);
+}
+
+var Visibility = {
+    onPageShown: onPageShown,
+    onPageHidden: onPageHidden
+};
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = Visibility;
+}
+
+},{"signals":1}],33:[function(_dereq_,module,exports){
 'use strict';
 
 function WebAudio(context) {
@@ -2983,45 +4231,63 @@ if (typeof module === 'object' && module.exports) {
     module.exports = WebAudio;
 }
 
-},{}],27:[function(_dereq_,module,exports){
+},{}],34:[function(_dereq_,module,exports){
 'use strict';
 
-_dereq_('./lib/console-patch.js');
-//require('./lib/legacy/raf-polyfill.js');
+_dereq_('./lib/legacy/console-patch.js'); // ie8
+_dereq_('./lib/raf-polyfill.js'); // iOS6 (prefix), ie9, iOS5, Android < 4.4
 
 var usfl = {};
 
-usfl.ArrayUtils = _dereq_('./lib/array-utils.js');
+/*
+ * instance
+ */
+
+usfl.array = _dereq_('./lib/array-utils.js');
+usfl.css = _dereq_('./lib/legacy/css-utils.js'); // for ie9, Android 2
+usfl.device = _dereq_('./lib/device.js');
+usfl.event = _dereq_('./lib/legacy/event-utils.js'); // for ie8
+usfl.fullscreen = _dereq_('./lib/fullscreen.js');
+usfl.keyboard = _dereq_('./lib/keyboard.js');
+usfl.math = _dereq_('./lib/math-utils.js');
+usfl.share = _dereq_('./lib/share.js');
+usfl.storage = _dereq_('./lib/storage-utils.js');
+usfl.string = _dereq_('./lib/string-utils.js');
+usfl.urlParams = _dereq_('./lib/url-params.js');
+usfl.visibility = _dereq_('./lib/visibility.js');
+
+/*
+ * constructor
+ */
+
 usfl.AssetLoader = _dereq_('./lib/asset-loader.js');
 usfl.AudioManager = _dereq_('./lib/audio-manager.js');
-//usfl.CssUtils = require('./lib/legacy/css-utils.js'); // for IE 9, Android 2
-usfl.Device = _dereq_('./lib/device.js');
-//usfl.EventUtils = require('./lib/legacy/event-utils.js'); // for IE 8
-//usfl.FacebookUtils = require('./lib/facebook-utils.js');
+usfl.Boid = _dereq_('./lib/boid.js');
 //usfl.Facebook = require('./lib/facebook.js');
 //usfl.Flash = require('./lib/flash.js');
 usfl.FPS = _dereq_('./lib/fps.js');
-usfl.Fullscreen = _dereq_('./lib/fullscreen.js');
+usfl.Graphics = _dereq_('./lib/graphics.js');
 usfl.HTMLAudio = _dereq_('./lib/html-audio.js');
-usfl.InputCoords = _dereq_('./lib/input-coords.js');
-usfl.Keyboard = _dereq_('./lib/keyboard.js');
+usfl.InputCoords = _dereq_('./lib/input-coords.js'); // should be instance?
+usfl.KeyInput = _dereq_('./lib/key-input.js');
 usfl.LinkedList = _dereq_('./lib/linked-list.js');
-usfl.MathUtils = _dereq_('./lib/math-utils.js');
 usfl.ObjectPool = _dereq_('./lib/object-pool.js');
-usfl.PageVisibility = _dereq_('./lib/page-visibility.js');
-usfl.popup = _dereq_('./lib/popup.js');
-usfl.ready = _dereq_('./lib/ready.js');
-usfl.resize = _dereq_('./lib/resize.js');
-usfl.Share = _dereq_('./lib/share.js');
-usfl.StorageUtils = _dereq_('./lib/storage-utils.js');
-usfl.StringUtils = _dereq_('./lib/string-utils.js');
-usfl.UrlParams = _dereq_('./lib/url-params.js');
+usfl.StateMachine = _dereq_('./lib/state-machine.js');
+usfl.Vec2 = _dereq_('./lib/vec2.js');
 usfl.VideoObject = _dereq_('./lib/video-object.js');
 usfl.Viewport = _dereq_('./lib/viewport.js');
 usfl.WebAudio = _dereq_('./lib/web-audio.js');
 
+/*
+ * function
+ */
+
+usfl.popup = _dereq_('./lib/popup.js');
+usfl.ready = _dereq_('./lib/ready.js');
+usfl.resize = _dereq_('./lib/resize.js');
+
 module.exports = usfl;
 
-},{"./lib/array-utils.js":2,"./lib/asset-loader.js":3,"./lib/audio-manager.js":4,"./lib/console-patch.js":5,"./lib/device.js":6,"./lib/fps.js":7,"./lib/fullscreen.js":8,"./lib/html-audio.js":9,"./lib/input-coords.js":10,"./lib/keyboard.js":11,"./lib/linked-list.js":13,"./lib/math-utils.js":14,"./lib/object-pool.js":15,"./lib/page-visibility.js":16,"./lib/popup.js":17,"./lib/ready.js":18,"./lib/resize.js":19,"./lib/share.js":20,"./lib/storage-utils.js":21,"./lib/string-utils.js":22,"./lib/url-params.js":23,"./lib/video-object.js":24,"./lib/viewport.js":25,"./lib/web-audio.js":26}]},{},[27])
-(27)
+},{"./lib/array-utils.js":2,"./lib/asset-loader.js":3,"./lib/audio-manager.js":4,"./lib/boid.js":5,"./lib/device.js":6,"./lib/fps.js":7,"./lib/fullscreen.js":8,"./lib/graphics.js":9,"./lib/html-audio.js":10,"./lib/input-coords.js":11,"./lib/key-input.js":12,"./lib/keyboard.js":13,"./lib/legacy/console-patch.js":14,"./lib/legacy/css-utils.js":15,"./lib/legacy/event-utils.js":16,"./lib/linked-list.js":17,"./lib/math-utils.js":18,"./lib/object-pool.js":19,"./lib/popup.js":20,"./lib/raf-polyfill.js":21,"./lib/ready.js":22,"./lib/resize.js":23,"./lib/share.js":24,"./lib/state-machine.js":25,"./lib/storage-utils.js":26,"./lib/string-utils.js":27,"./lib/url-params.js":28,"./lib/vec2.js":29,"./lib/video-object.js":30,"./lib/viewport.js":31,"./lib/visibility.js":32,"./lib/web-audio.js":33}]},{},[34])
+(34)
 });
