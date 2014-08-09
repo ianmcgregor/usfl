@@ -33,15 +33,17 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 
 [usfl.math](docs/README.md#math)
 
-[usfl.visibility](docs/README.md#visibility)
-
 [usfl.share](docs/README.md#share)
 
 [usfl.storage](docs/README.md#storage)
 
 [usfl.string](docs/README.md#string)
 
+[usfl.track](docs/README.md#track)
+
 [usfl.urlParams](docs/README.md#urlparams)
+
+[usfl.visibility](docs/README.md#visibility)
 
 
 #### Constructors

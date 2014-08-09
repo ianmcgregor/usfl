@@ -19,6 +19,7 @@ usfl.math = require('./lib/math-utils.js');
 usfl.share = require('./lib/share.js');
 usfl.storage = require('./lib/storage-utils.js');
 usfl.string = require('./lib/string-utils.js');
+usfl.track = require('./lib/track.js');
 usfl.urlParams = require('./lib/url-params.js');
 usfl.visibility = require('./lib/visibility.js');
 

@@ -128,10 +128,10 @@ function onKeyDown(event) {
 `coinToss()` returns boolean  
 `crossProduct(aX, aY, bX, bY)` returns (2d) cross product  
 `degrees(radians)` returns angle converted to degrees  
-`difference(a, b)` returns difference between a and b
+`difference(a, b)` returns difference between a and b  
 `distance(x1, y1, x2, y2)` returns distance between a and b  
 `distanceSQ(x1, y1, x2, y2)` returns square distance between a and b  
-`dotProduct(aX, aY, bX, bY)` returns dot product of a and b
+`dotProduct(aX, aY, bX, bY)` returns dot product of a and b  
 `getCirclePoints(originX, originY, radius, count, start, Class)` returns array of points  
 `getIntersectionArea(aX, aY, aW, aH, bX, bY, bW, bH)` returns area of overlap  
 `getOverlapX(aX, aW, bX, bW)` returns amount of horizontal overlap  
@@ -179,6 +179,23 @@ Local storage wrapper, including image to dataUrl
 ## string
 
 String utils
+
+
+## track
+
+Google Analytics util
+
+>`init(gaAccount)`  
+`page(value)`  
+`page(category, action, label, value)`
+
+#### Examples
+
+```javascript
+usfl.track.init('UA-XXX-YYY');
+usfl.track.page('Home');
+usfl.track.event('Foo', 'Bar');
+```
 
 
 ## urlParams

@@ -881,7 +881,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = AudioManager;
 }
 
-},{"./html-audio.js":10,"./visibility.js":32,"./web-audio.js":33}],5:[function(_dereq_,module,exports){
+},{"./html-audio.js":10,"./visibility.js":33,"./web-audio.js":34}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var Vec2 = _dereq_('./vec2.js');
@@ -1224,7 +1224,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Boid;
 }
 
-},{"./vec2.js":29}],6:[function(_dereq_,module,exports){
+},{"./vec2.js":30}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var ua = navigator.userAgent;
@@ -3346,6 +3346,57 @@ if (typeof module === 'object' && module.exports) {
 },{}],28:[function(_dereq_,module,exports){
 'use strict';
 
+var track = {
+    init: function(gaAccount) {
+        console.log('Initialize Google Analytics with account Id:', gaAccount);
+
+        /* jshint ignore:start */
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments);},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m);
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        /* jshint ignore:end */
+
+        ga('create', gaAccount, 'auto');
+        ga('send', 'pageview');
+    },
+    page: function(value) {
+        console.log('track.page:', value);
+        ga('send', {
+            'hitType': 'pageview',
+            'page': value,
+            'title': value
+        });
+    },
+    event: function(category, action, label, value) {
+        console.log('track.event:', category, action, label, value);
+        if (label) {
+            console.log('track with label:', category, action, label, value);
+            ga('send', {
+                'hitType': 'event',
+                'eventCategory': category,
+                'eventAction': action,
+                'eventLabel': label,
+                'eventValue': value
+            });
+        } else {
+            console.log('track without label:', category, action);
+            ga('send', {
+                'hitType': 'event',
+                'eventCategory': category,
+                'eventAction': action
+            });
+        }
+    }
+};
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = track;
+}
+
+},{}],29:[function(_dereq_,module,exports){
+'use strict';
+
 var urlParams = {};
 
 (function () {
@@ -3366,7 +3417,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = urlParams;
 }
 
-},{}],29:[function(_dereq_,module,exports){
+},{}],30:[function(_dereq_,module,exports){
 'use strict';
 
 function Vec2(x, y) {
@@ -3553,7 +3604,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Vec2;
 }
 
-},{}],30:[function(_dereq_,module,exports){
+},{}],31:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals');
@@ -3776,7 +3827,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = VideoObject;
 }
 
-},{"signals":1}],31:[function(_dereq_,module,exports){
+},{"signals":1}],32:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals'),
@@ -3877,7 +3928,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ViewPort;
 }
 
-},{"./legacy/event-utils.js":16,"./resize.js":23,"signals":1}],32:[function(_dereq_,module,exports){
+},{"./legacy/event-utils.js":16,"./resize.js":23,"signals":1}],33:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals');
@@ -3921,7 +3972,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Visibility;
 }
 
-},{"signals":1}],33:[function(_dereq_,module,exports){
+},{"signals":1}],34:[function(_dereq_,module,exports){
 'use strict';
 
 function WebAudio(context) {
@@ -4231,7 +4282,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = WebAudio;
 }
 
-},{}],34:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 'use strict';
 
 _dereq_('./lib/legacy/console-patch.js'); // ie8
@@ -4253,6 +4304,7 @@ usfl.math = _dereq_('./lib/math-utils.js');
 usfl.share = _dereq_('./lib/share.js');
 usfl.storage = _dereq_('./lib/storage-utils.js');
 usfl.string = _dereq_('./lib/string-utils.js');
+usfl.track = _dereq_('./lib/track.js');
 usfl.urlParams = _dereq_('./lib/url-params.js');
 usfl.visibility = _dereq_('./lib/visibility.js');
 
@@ -4288,6 +4340,6 @@ usfl.resize = _dereq_('./lib/resize.js');
 
 module.exports = usfl;
 
-},{"./lib/array-utils.js":2,"./lib/asset-loader.js":3,"./lib/audio-manager.js":4,"./lib/boid.js":5,"./lib/device.js":6,"./lib/fps.js":7,"./lib/fullscreen.js":8,"./lib/graphics.js":9,"./lib/html-audio.js":10,"./lib/input-coords.js":11,"./lib/key-input.js":12,"./lib/keyboard.js":13,"./lib/legacy/console-patch.js":14,"./lib/legacy/css-utils.js":15,"./lib/legacy/event-utils.js":16,"./lib/linked-list.js":17,"./lib/math-utils.js":18,"./lib/object-pool.js":19,"./lib/popup.js":20,"./lib/raf-polyfill.js":21,"./lib/ready.js":22,"./lib/resize.js":23,"./lib/share.js":24,"./lib/state-machine.js":25,"./lib/storage-utils.js":26,"./lib/string-utils.js":27,"./lib/url-params.js":28,"./lib/vec2.js":29,"./lib/video-object.js":30,"./lib/viewport.js":31,"./lib/visibility.js":32,"./lib/web-audio.js":33}]},{},[34])
-(34)
+},{"./lib/array-utils.js":2,"./lib/asset-loader.js":3,"./lib/audio-manager.js":4,"./lib/boid.js":5,"./lib/device.js":6,"./lib/fps.js":7,"./lib/fullscreen.js":8,"./lib/graphics.js":9,"./lib/html-audio.js":10,"./lib/input-coords.js":11,"./lib/key-input.js":12,"./lib/keyboard.js":13,"./lib/legacy/console-patch.js":14,"./lib/legacy/css-utils.js":15,"./lib/legacy/event-utils.js":16,"./lib/linked-list.js":17,"./lib/math-utils.js":18,"./lib/object-pool.js":19,"./lib/popup.js":20,"./lib/raf-polyfill.js":21,"./lib/ready.js":22,"./lib/resize.js":23,"./lib/share.js":24,"./lib/state-machine.js":25,"./lib/storage-utils.js":26,"./lib/string-utils.js":27,"./lib/track.js":28,"./lib/url-params.js":29,"./lib/vec2.js":30,"./lib/video-object.js":31,"./lib/viewport.js":32,"./lib/visibility.js":33,"./lib/web-audio.js":34}]},{},[35])
+(35)
 });
