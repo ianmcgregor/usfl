@@ -90,4 +90,4 @@ gulp.task('watch', function() {
 });
 
 // default
-gulp.task('default', ['watch']);
+gulp.task('default', ['jshint', 'watch']);
