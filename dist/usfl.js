@@ -2346,7 +2346,6 @@ var MathUtils = {
     rotateToRAD: function(start, end) {
         var PI2 = Math.PI * 2;
         var diff = (end - start) % PI2;
-        console.log('diff:',diff);
         if (diff !== diff % Math.PI) {
             diff = diff < 0 ? diff + PI2 : diff - PI2;
         }
