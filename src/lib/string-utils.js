@@ -139,6 +139,11 @@ function timeCode(seconds, delim) {
  * Query
  */
 
+// whether str begins with substr
+function beginsWith(str, substr) {
+    return str.indexOf(substr) === 0;
+}
+
 // whether str contains any instances of substr
 function contains(str, substr) {
     return str.indexOf(substr) !== -1;
@@ -198,11 +203,6 @@ function afterLast(str, substr) {
     return str.substr(index);
 }
 
-// whether str begins with substr
-function beginsWith(str, substr) {
-    return str.indexOf(substr) === 0;
-}
-
 // everything before the first occurrence of substr in str
 function beforeFirst(str, substr) {
     var index = str.indexOf(substr);
@@ -224,7 +224,9 @@ function between(str, start, end) {
     if (startIndex !== -1) {
         startIndex += start.length;
         var endIndex = str.indexOf(end, startIndex);
-        if (endIndex !== -1) { substr = str.substr(startIndex, endIndex-startIndex); }
+        if (endIndex !== -1) {
+            substr = str.substr(startIndex, endIndex-startIndex);
+        }
     }
     return substr;
 }
@@ -332,6 +334,7 @@ var StringUtils = {
     'timeCode': timeCode,
 
     // query:
+    'beginsWith': beginsWith,
     'contains': contains,
     'countOf': countOf,
     'endsWith': endsWith,
@@ -343,7 +346,6 @@ var StringUtils = {
     // substring:
     'afterFirst': afterFirst,
     'afterLast': afterLast,
-    'beginsWith': beginsWith,
     'beforeFirst': beforeFirst,
     'beforeLast': beforeLast,
     'between': between,

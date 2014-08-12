@@ -170,15 +170,108 @@ usfl.math.roundToNearest(96.5, 10); // 100
 
 Various social media share options
 
+>`facebook(url)`  
+`twitter(url, text, hashtags, related)`  
+`googlePlus(url)`  
+`pinterest(url, picture, text)`  
+`vkontakte(url, title, description, image)`  
+`renren(url, title)`  
+`weibo(url, title, image)`  
+`facebookFeedDialog(appId, title, link, picture, source, caption, description, redirectURL)`
+
+#### Examples
+
+```javascript
+usfl.share.facebook('http://www.example.com');
+```
+
 
 ## storage
 
 Local storage wrapper, including image to dataUrl
 
+>`saveJSON(key, object)`  
+`loadJSON(key)` returns object  
+`getImageDataURL(img, width, height)` returns dataURL string
+
+#### Examples
+
+```javascript
+usfl.storage.saveJSON('user', {
+  level: 2,
+  score: 500,
+  lives: 2
+});
+
+var user = usfl.storage.loadJSON('user');
+console.log(user.level); // 2
+
+// save images in localstorage
+var img = new Image();
+img.src = 'http://www.example.com/foo.jpg';
+img.onload = function() {
+  var user = {
+    name: 'foo',
+    offlineImage: usfl.storage.getImageDataURL(img);
+  };
+  usfl.storage.saveJSON('user', user);
+};
+```
+
 
 ## string
 
-String utils
+Utilities for working with strings
+
+>Helper:  
+`escapePattern(pattern)` returns escaped string  
+Format:  
+`trim(str)` returns string  
+`trimLeft(str)` returns string  
+`trimRight(str)` returns string  
+`padLeft(str, substr, length)` returns string  
+`padRight(str, substr, length)` returns string  
+`removeExtraWhitespace(str)` returns string  
+`remove(str, substr, caseSensitive)` returns string  
+`truncate(str, len, suffix)` returns string  
+`capitalize(str, all)` returns string  
+`properCase(str)` returns string  
+`reverse(str)` returns string  
+`reverseWords(str)` returns string  
+`stripTags(str)` returns string  
+`swapCase(str)` returns string  
+`timeCode(seconds, delim)` returns string  
+Query:  
+`beginsWith(str, substr)` returns boolean  
+`contains(str, substr)` returns boolean  
+`countOf(str, substr, caseSensitive)` returns number  
+`endsWith(str, substr)` returns boolean  
+`hasText(str)` returns boolean  
+`isEmpty(str)` returns boolean  
+`isNumeric(str)` returns boolean  
+`wordCount(str)` returns number  
+Substring:  
+`afterFirst(str, substr)` returns string  
+`afterLast(str, substr)` returns string  
+`beforeFirst(str, substr)` returns string  
+`beforeLast(str, substr)` returns string  
+`between(str, start, end)` returns string  
+Utility:  
+`block(str, len, delim)` returns array  
+`editDistance(source, target)` returns number  
+`similarity(a, b)` returns number
+
+#### Examples
+
+```javascript
+usfl.string.capitalize('hello world', true); // 'Hello World'
+usfl.string.padLeft('1', 4); // '0001'
+usfl.string.stripTags('<p>Hello</p>'); // 'Hello'
+usfl.string.contains('Hello World', 'World'); // true
+usfl.string.isNumeric('8797865'); // true
+usfl.string.between('Hello [World]', '[', ']'); // World
+usfl.string.editDistance('Hello', 'Helllo'); // 1
+```
 
 
 ## track
@@ -202,10 +295,40 @@ usfl.track.event('Foo', 'Bar');
 
 Query string parameters to object
 
+#### Examples
+
+```javascript
+// Browser address is: http://www.example.com/?debug=true&level=2
+
+if(usfl.urlParams.debug) {
+  // do something
+}
+
+var level = usfl.urlParams.level; // 2
+```
+
 
 ## visibility
 
 Wrapper for browser visibility API
+
+>`onPageHidden` // returns Signal  
+`onPageShown` // returns Signal
+
+
+#### Examples
+
+```javascript
+usfl.visibility.onPageHidden.add(function() {
+  videoPlayer.pause();
+  audio.mute();
+});
+
+usfl.visibility.onPageShown.add(function() {
+  videoPlayer.play();
+  audio.unmute();
+});
+```
 
 
 # Constructors

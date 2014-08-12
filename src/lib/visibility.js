@@ -33,8 +33,8 @@ if(visibilityChange !== undefined) {
 }
 
 var Visibility = {
-    onPageShown: onPageShown,
-    onPageHidden: onPageHidden
+    onPageHidden: onPageHidden,
+    onPageShown: onPageShown
 };
 
 if (typeof module === 'object' && module.exports) {
