@@ -96,7 +96,7 @@ function mobile() {
 // screen.width / screen.height is often wrong in Android
 
 function screenHeight() {
-    return  Math.max(window.outerHeight, window.screen.height);
+    return Math.max(window.outerHeight, window.screen.height);
 }
 
 function screenWidth() {

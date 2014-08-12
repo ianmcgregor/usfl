@@ -48,5 +48,6 @@ describe('string utils', function() {
 		expect(StringUtils.swapCase(str)).to.eql('hello World');
 		//expect(StringUtils.block(str)).to.eql('Hello World');
 		expect(StringUtils.escapePattern(str + '.')).to.eql('Hello World\\.');
+		expect(StringUtils.timeCode(217.8)).to.eql('03:37');
 	});
 });
