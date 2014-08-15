@@ -12,6 +12,7 @@ describe('asset loader', function() {
 		extVideo = (elVideo.canPlayType('video/ogg; codecs="theora"') ? 'ogv' : 'mp4'),
 		files = {
 			'image': 'http://placekitten.com/g/200/300',
+			'imageXHR': 'http://placekitten.com/1000/1000',
 			'audio': ('http://www.google.com/logos/2013/debussy/clairdelune.' + extAudio),
 			'video': ('http://techslides.com/demos/sample-videos/small.' + extVideo),
 			'json': 'http://graph.facebook.com/facebook'
@@ -24,6 +25,8 @@ describe('asset loader', function() {
 	assetLoader.crossOrigin = true;
 
 	assetLoader.add(files.image, 'jpg');
+	var imgXHR = assetLoader.add(files.imageXHR, 'jpg');
+	imgXHR.useImageXHR = true;
 	assetLoader.add(files.audio);
 	assetLoader.add(files.video);
 	assetLoader.add(files.json, 'json');
@@ -37,6 +40,7 @@ describe('asset loader', function() {
 		});
 		assetLoader.onComplete.add(function() {
 			complete = true;
+			//document.body.appendChild(assetLoader.get(files.imageXHR).data);
 			done();
 		});
 		assetLoader.start();
@@ -47,6 +51,8 @@ describe('asset loader', function() {
 		expect(childrenLoaded).to.eql(assetLoader.numTotal);
 		expect(assetLoader.numLoaded/assetLoader.numTotal).to.eql(1);
 		expect(assetLoader.get(files.image)).to.exist;
+		expect(assetLoader.get(files.imageXHR)).to.exist;
+		expect(assetLoader.get(files.imageXHR).data.tagName).to.eql('IMG');
 		expect(assetLoader.get(files.audio)).to.exist;
 		expect(assetLoader.get(files.video)).to.exist;
 		expect(assetLoader.get(files.json)).to.exist;

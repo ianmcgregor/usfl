@@ -16,6 +16,7 @@ function AssetLoader() {
     this.webAudioContext = null;
     this.crossOrigin = false;
     this.touchLocked = false;
+    this.useImageXHR = false;
     this.numTotal = 0;
     this.numLoaded = 0;
 }
@@ -43,6 +44,7 @@ AssetLoader.prototype = {
         loader.webAudioContext = this.webAudioContext;
         loader.crossOrigin = this.crossOrigin;
         loader.touchLocked = this.touchLocked;
+        loader.useImageXHR = this.useImageXHR;
         this.queue.push(loader);
         this.numTotal++;
         return loader;
@@ -59,7 +61,18 @@ AssetLoader.prototype = {
         }
         var loader = this.queue.pop();
         var self = this;
-        loader.onComplete.addOnce(function(){
+
+        var progressHandler = function(progress) {
+            var numLoaded = self.numLoaded + progress;
+            if(self.onProgress.getNumListeners() > 0) {
+                self.onProgress.dispatch(numLoaded/self.numTotal);
+            }
+        };
+        loader.onProgress.add(progressHandler);
+
+        var completeHandler = function(){
+            loader.onProgress.remove(progressHandler);
+            loader.onError.remove(errorHandler);
             self.numLoaded++;
             if(self.onProgress.getNumListeners() > 0) {
                 self.onProgress.dispatch(self.numLoaded/self.numTotal);
@@ -67,11 +80,15 @@ AssetLoader.prototype = {
             self.loaders[loader.url] = loader;
             self.onChildComplete.dispatch(loader);
             self.next();
-        });
-        loader.onError.addOnce(function(){
+        };
+        loader.onComplete.addOnce(completeHandler);
+
+        var errorHandler = function(){
             self.onError.dispatch(loader);
             self.next();
-        });
+        };
+        loader.onError.addOnce(errorHandler);
+
         loader.start();
     },
     addMultiple: function(array) {
@@ -95,6 +112,7 @@ AssetLoader.Loader = function(url, type) {
     this.webAudioContext = null;
     this.crossOrigin = false;
     this.touchLocked = false;
+    this.useImageXHR = false;
 };
 
 AssetLoader.Loader.prototype = {
@@ -161,9 +179,16 @@ AssetLoader.Loader.prototype = {
         this.loadMedia('audio', touchLocked);
     },
     loadImage: function(crossOrigin) {
+        if(this.useImageXHR) {
+            this.loadImageXHR();
+        }
+        else {
+            this.loadImageEl(crossOrigin);
+        }
+    },
+    loadImageEl: function(crossOrigin) {
         var request = new Image();
         this.data = request;
-        request.name = this.url;
         var self = this;
         request.onload = function () {
             self.onComplete.dispatch(self.data);
@@ -175,6 +200,29 @@ AssetLoader.Loader.prototype = {
             request.crossOrigin = 'anonymous';
         }
         request.src = this.url;
+        this.request = request;
+    },
+    loadImageXHR: function() {
+        var request = new XMLHttpRequest();
+        request.open('GET', this.url, true);
+        request.responseType = 'arraybuffer';
+        var self = this;
+        request.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percentComplete = event.loaded / event.total;
+                self.onProgress.dispatch(percentComplete);
+            }
+        };
+        request.onload = function() {
+            var blob = new Blob([request.response]);
+            self.data = new Image();
+            self.data.src = window.URL.createObjectURL(blob);
+            self.onComplete.dispatch(self.data);
+        };
+        request.onerror = function() {
+            self.onError.dispatch();
+        };
+        request.send();
         this.request = request;
     },
     loadJSON: function() {
@@ -226,19 +274,16 @@ AssetLoader.Loader.prototype = {
     loadMedia: function(type, touchLocked) {
         var request = document.createElement(type);
         this.data = request;
-        request.name = this.url;
         request.preload = 'auto';
         var self = this;
         request.src = this.url;
         if (!!touchLocked) {
-            this.onProgress.dispatch(1);
             this.onComplete.dispatch(this.data);
         }
         else {
             var ready = function(){
                 request.removeEventListener('canplaythrough', ready);
                 clearTimeout(timeout);
-                self.onProgress.dispatch(1);
                 self.onComplete.dispatch(self.data);
             };
             // timeout because sometimes canplaythrough doesn't fire
