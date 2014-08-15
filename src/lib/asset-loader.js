@@ -102,6 +102,9 @@ AssetLoader.Loader.prototype = {
         switch(this.type) {
             case 'mp3':
             case 'ogg':
+            case 'opus':
+            case 'wav':
+            case 'm4a':
                 this.loadAudio(this.webAudioContext, this.touchLocked);
                 break;
             case 'jpg':
@@ -111,6 +114,12 @@ AssetLoader.Loader.prototype = {
                 break;
             case 'json':
                 this.loadJSON();
+                break;
+            case 'ogv':
+            case 'mp4':
+            case 'webm':
+            case 'hls':
+                this.loadVideo(this.touchLocked);
                 break;
             default:
                 throw 'ERROR: Unknown type for file with URL: ' + this.url;
@@ -149,32 +158,7 @@ AssetLoader.Loader.prototype = {
         this.request = request;
     },
     loadHTML5Audio: function(touchLocked) {
-        var request = new Audio();
-        this.data = request;
-        request.name = this.url;
-        request.preload = 'auto';
-        var self = this;
-        request.src = this.url;
-        if (!!touchLocked) {
-            this.onProgress.dispatch(1);
-            this.onComplete.dispatch(this.data);
-        }
-        else {
-            var ready = function(){
-                request.removeEventListener('canplaythrough', ready);
-                clearTimeout(timeout);
-                self.onProgress.dispatch(1);
-                self.onComplete.dispatch(self.data);
-            };
-            // timeout because sometimes canplaythrough doesn't fire
-            var timeout = setTimeout(ready, 2000);
-            request.addEventListener('canplaythrough', ready, false);
-            request.onerror = function() {
-                clearTimeout(timeout);
-                self.onError.dispatch();
-            };
-            request.load();
-        }
+        this.loadMedia('audio', touchLocked);
     },
     loadImage: function(crossOrigin) {
         var request = new Image();
@@ -194,12 +178,11 @@ AssetLoader.Loader.prototype = {
         this.request = request;
     },
     loadJSON: function() {
-
         var request = createXHR();
         request.open('GET', this.url, true);
         request.responseType = 'text';
         var self = this;
-        
+
         function handleLoaded() {
             if (request.status >= 400) {
                 self.onError.dispatch();
@@ -236,6 +219,37 @@ AssetLoader.Loader.prototype = {
 
         request.send();
         this.request = request;
+    },
+    loadVideo: function(touchLocked) {
+        this.loadMedia('video', touchLocked);
+    },
+    loadMedia: function(type, touchLocked) {
+        var request = document.createElement(type);
+        this.data = request;
+        request.name = this.url;
+        request.preload = 'auto';
+        var self = this;
+        request.src = this.url;
+        if (!!touchLocked) {
+            this.onProgress.dispatch(1);
+            this.onComplete.dispatch(this.data);
+        }
+        else {
+            var ready = function(){
+                request.removeEventListener('canplaythrough', ready);
+                clearTimeout(timeout);
+                self.onProgress.dispatch(1);
+                self.onComplete.dispatch(self.data);
+            };
+            // timeout because sometimes canplaythrough doesn't fire
+            var timeout = setTimeout(ready, 2000);
+            request.addEventListener('canplaythrough', ready, false);
+            request.onerror = function() {
+                clearTimeout(timeout);
+                self.onError.dispatch();
+            };
+            request.load();
+        }
     },
     cancel: function() {
       if(this.request && this.request.readyState !== 4) {

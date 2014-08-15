@@ -176,6 +176,28 @@ function VideoObject() {
         return Math.round(p * 10) / 10;
     };
 
+    var getCanPlay = function() {
+        var el = document.createElement('video');
+        if(!el) { return {}; }
+
+        var tests = [
+            { ext: 'ogv', type: 'video/ogg; codecs="theora"' },
+            { ext: 'mp4', type: 'video/mp4; codecs="avc1.42E01E"' },
+            { ext: 'webm', type: 'video/webm; codecs="vp8, vorbis"' },
+            { ext: 'webm', type: 'video/webm; codecs="vp9"' },
+            { ext: 'hls', type: 'application/x-mpegURL; codecs="avc1.42E01E"' }
+        ];
+
+        var canPlay = {};
+
+        for (var i = 0; i < tests.length; i++) {
+            var test = tests[i];
+            var canPlayType = !!el.canPlayType(test.type);
+            canPlay[test.ext] = canPlayType;
+        }
+        return canPlay;
+    };
+
     self = {
         'onReady': onReady,
         'onPlay': onPlay,
@@ -183,6 +205,7 @@ function VideoObject() {
         'onEnded': onEnded,
         'onTimeUpdate': onTimeUpdate,
 
+        'canPlay': getCanPlay(),
         'create': create,
         'load': load,
         'forceLoad': forceLoad,
