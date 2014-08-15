@@ -367,14 +367,14 @@ Steering behaviours
 #### Examples
 
 ```javascript
-var gfx = new Graphics();
+var gfx = new usfl.Graphics();
 
-var wanderer = new Boid();
+var wanderer = new usfl.Boid();
     wanderer.setBounds(gfx.width, gfx.height);
     wanderer.position.x = 400;
     wanderer.position.y = 400;
 
-var seeker = new Boid();
+var seeker = new usfl.Boid();
     seeker.setBounds(gfx.width, gfx.height);
     seeker.position.x = 10;
     seeker.position.y = 10;
@@ -452,7 +452,7 @@ Canvas drawing abstraction
 #### Examples
 
 ```javascript
-var graphics = new Graphics();
+var graphics = new usfl.Graphics();
 graphics.background('#FFFF00')
 graphics.fill('#00FF00');
 graphics.circle(200, 200, 10);
@@ -475,21 +475,199 @@ Check if keys are down
 
 Linked List
 
+>`add(item)` returns item  
+`remove(item)` returns item  
+`insertAfter(item, after)` returns item  
+`insertBefore(item, before)` returns item  
+`forEach(callback, callbackContext)`  
+`getFirst()` returns item  
+`getLast()` returns item  
+`getCount()` returns number  
+
+#### Examples
+
+```javascript
+function ListItem(name) {
+  this.name = name;
+  this.next = null;
+  this.prev = null;
+}
+var linkedList = new LinkedList();
+linkedList.add(new ListItem('a'));
+linkedList.add(new ListItem('b'));
+linkedList.add(new ListItem('c'));
+
+linkedList.getCount(); // 3
+linkedList.getFirst().name; // 'a'
+linkedList.getLast().name; // 'c'
+
+var item = linkedList.getFirst();
+while(item.next) {
+  console.log(item.name);
+  item = item.next;
+}
+
+linkedList.forEach(function(item) {
+  console.log(item.name);
+});
+
+//linkedList.remove
+//linkedList.insertBefore(item, before);
+```
+
+
 ## ObjectPool
 
 Reuse objects for performance
+
+>`ObjectPool(Type)` returns instance  
+`getPool()` returns array  
+`get()` returns instance  
+`dispose(instance)`  
+`fill(count)`  
+`empty()`  
+
+#### Examples
+
+```javascript
+function Foo() {
+  // something
+}
+
+var pool = new usfl.ObjectPool(Foo);
+var foo = pool.get(); // new instance of Foo
+pool.dispose(foo); // put back in pool
+pool.getPool().length // 1
+
+pool.fill(100); // create 100 Foo instances for later use
+pool.getPool().length // 101
+
+for(var i = 0; i < 10; i++) {
+  var foo = pool.get();
+}
+pool.getPool().length // 91
+
+pool.empty(); // empty the pool
+pool.getPool().length // 0
+```
 
 ## StateMachine
 
 Finite State Machine
 
+>`StateMachine()` returns instance  
+`start()`  
+`action(action, data)`  
+`cancel()`  
+`addState(state, isInitial)` returns State  
+`removeState(stateName)`  
+`getState(stateName)` returns State  
+`onChange` returns Signal  
+`currentState` returns State  
+`previousState` returns State  
+`states` returns array  
+`initial` returns State  
+`history` returns array  
+`factory` returns StateFactory  
+`factory.addMultiple(arr)`  
+`factory.create(name, transitions, isInitial)` returns State  
+`factory.getTotal()` returns number
+
+#### Examples
+
+```javascript
+var stateMachine = new usfl.StateMachine();
+
+var State = {
+CLOSED: 'CLOSED',
+OPENED: 'OPENED',
+LOCKED: 'LOCKED'
+};
+
+var Action = {
+CLOSE: 'CLOSE',
+OPEN: 'OPEN',
+LOCK: 'LOCK',
+UNLOCK: 'UNLOCK'
+};
+
+var config = [
+{
+  initial: true,
+  name: State.CLOSED,
+  transitions: [
+    { action: Action.OPEN, target: State.OPENED },
+    { action: Action.LOCK, target: State.LOCKED }
+  ]
+},
+{
+  name: State.OPENED,
+  transitions: [
+    { action: Action.CLOSE, target: State.CLOSED }
+  ]
+},
+{
+  name: State.LOCKED,
+  transitions: [
+    { action: Action.UNLOCK, target: State.CLOSED }
+  ]
+}
+];
+
+stateMachine.factory.addMultiple(config);
+stateMachine.onChange.add(function(state, data) {
+console.log('State has changed to:', state);
+console.log('Got data:', data);
+});
+
+stateMachine.start(); // state changed to 'CLOSED' because that state has 'initial' flag
+stateMachine.action(Action.LOCK); // state changed to 'LOCKED'
+stateMachine.action(Action.CLOSE); // state didn't change - no valid transition for 'CLOSE' from 'LOCKED'
+stateMachine.action(Action.UNLOCK, { foo: 'bar' }); // state changed to 'CLOSED', date sent through
+
+// debug view with info and buttons to change state
+var debugView = new usfl.StateMachine.DebugView(stateMachine);
+document.body.appendChild(debugView);
+
+```
+
+
 ## Vec2
 
 2d vector
 
+>`add(vec, overwrite)` returns Vec2  
+`subtract(vec, overwrite)` returns Vec2  
+`multiply(vec, overwrite)` returns Vec2  
+`divide(vec, overwrite)` returns Vec2  
+`normalize()` returns Vec2  
+`isNormalized()` returns boolean  
+
+
 ## VideoObject
 
 Wrapper for Video media element
+
+>`onReady` returns Signal  
+`onPlay` returns Signal  
+`onError` returns Signal  
+`onEnded` returns Signal  
+`onTimeUpdate` returns Signal  
+`create()`  
+`load(url)`  
+`forceLoad(pauseDelay)`  
+`unload()`  
+`destroy()`  
+`play()`  
+`pause()`  
+`seek(time)`  
+`getBufferProgress()`  
+`getReadyStateString()`  
+`getNetworkStateString()`  
+`getErrorStateString()`  
+`getElement()`  
+`getVolume()`  
+`setVolume(value)
 
 ## Viewport
 
