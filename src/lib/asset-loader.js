@@ -22,16 +22,17 @@ function AssetLoader() {
 }
 
 function createXHR() {
-    var xhr, i, progId,
-        progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+    var xhr;
 
     if (typeof XMLHttpRequest !== 'undefined') {
-        return new XMLHttpRequest();
-    } else if (typeof window.ActiveXObject !== 'undefined') {
-        for (i = 0; i < 3; i += 1) {
-            progId = progIds[i];
+        xhr = new XMLHttpRequest();
+    }
+    else if (typeof window.ActiveXObject !== 'undefined') {
+        var progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+        for (var i = 0; i < 3; i += 1) {
             try {
-                xhr = new window.ActiveXObject(progId);
+                xhr = new window.ActiveXObject(progIds[i]);
+                break;
             } catch (e) {}
         }
     }
@@ -200,7 +201,6 @@ AssetLoader.Loader.prototype = {
             request.crossOrigin = 'anonymous';
         }
         request.src = this.url;
-        this.request = request;
     },
     loadImageXHR: function() {
         var request = new XMLHttpRequest();
