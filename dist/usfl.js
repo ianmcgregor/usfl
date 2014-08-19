@@ -490,21 +490,30 @@ function AssetLoader() {
     this.webAudioContext = null;
     this.crossOrigin = false;
     this.touchLocked = false;
+    this.useImageXHR = false;
     this.numTotal = 0;
     this.numLoaded = 0;
+    this.browserHasBlob = (function() {
+        try {
+            return !!new Blob();
+        } catch (e) {
+            return false;
+        }
+    }());
 }
 
 function createXHR() {
-    var xhr, i, progId,
-        progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+    var xhr;
 
     if (typeof XMLHttpRequest !== 'undefined') {
-        return new XMLHttpRequest();
-    } else if (typeof window.ActiveXObject !== 'undefined') {
-        for (i = 0; i < 3; i += 1) {
-            progId = progIds[i];
+        xhr = new XMLHttpRequest();
+    }
+    else if (typeof window.ActiveXObject !== 'undefined') {
+        var progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+        for (var i = 0; i < 3; i += 1) {
             try {
-                xhr = new window.ActiveXObject(progId);
+                xhr = new window.ActiveXObject(progIds[i]);
+                break;
             } catch (e) {}
         }
     }
@@ -517,6 +526,7 @@ AssetLoader.prototype = {
         loader.webAudioContext = this.webAudioContext;
         loader.crossOrigin = this.crossOrigin;
         loader.touchLocked = this.touchLocked;
+        loader.useImageXHR = this.useImageXHR;
         this.queue.push(loader);
         this.numTotal++;
         return loader;
@@ -533,7 +543,18 @@ AssetLoader.prototype = {
         }
         var loader = this.queue.pop();
         var self = this;
-        loader.onComplete.addOnce(function(){
+
+        var progressHandler = function(progress) {
+            var numLoaded = self.numLoaded + progress;
+            if(self.onProgress.getNumListeners() > 0) {
+                self.onProgress.dispatch(numLoaded/self.numTotal);
+            }
+        };
+        loader.onProgress.add(progressHandler);
+
+        var completeHandler = function(){
+            loader.onProgress.remove(progressHandler);
+            loader.onError.remove(errorHandler);
             self.numLoaded++;
             if(self.onProgress.getNumListeners() > 0) {
                 self.onProgress.dispatch(self.numLoaded/self.numTotal);
@@ -541,11 +562,15 @@ AssetLoader.prototype = {
             self.loaders[loader.url] = loader;
             self.onChildComplete.dispatch(loader);
             self.next();
-        });
-        loader.onError.addOnce(function(){
+        };
+        loader.onComplete.addOnce(completeHandler);
+
+        var errorHandler = function(){
             self.onError.dispatch(loader);
             self.next();
-        });
+        };
+        loader.onError.addOnce(errorHandler);
+
         loader.start();
     },
     addMultiple: function(array) {
@@ -569,6 +594,7 @@ AssetLoader.Loader = function(url, type) {
     this.webAudioContext = null;
     this.crossOrigin = false;
     this.touchLocked = false;
+    this.useImageXHR = false;
 };
 
 AssetLoader.Loader.prototype = {
@@ -576,6 +602,9 @@ AssetLoader.Loader.prototype = {
         switch(this.type) {
             case 'mp3':
             case 'ogg':
+            case 'opus':
+            case 'wav':
+            case 'm4a':
                 this.loadAudio(this.webAudioContext, this.touchLocked);
                 break;
             case 'jpg':
@@ -585,6 +614,12 @@ AssetLoader.Loader.prototype = {
                 break;
             case 'json':
                 this.loadJSON();
+                break;
+            case 'ogv':
+            case 'mp4':
+            case 'webm':
+            case 'hls':
+                this.loadVideo(this.touchLocked);
                 break;
             default:
                 throw 'ERROR: Unknown type for file with URL: ' + this.url;
@@ -623,37 +658,19 @@ AssetLoader.Loader.prototype = {
         this.request = request;
     },
     loadHTML5Audio: function(touchLocked) {
-        var request = new Audio();
-        this.data = request;
-        request.name = this.url;
-        request.preload = 'auto';
-        var self = this;
-        request.src = this.url;
-        if (!!touchLocked) {
-            this.onProgress.dispatch(1);
-            this.onComplete.dispatch(this.data);
-        }
-        else {
-            var ready = function(){
-                request.removeEventListener('canplaythrough', ready);
-                clearTimeout(timeout);
-                self.onProgress.dispatch(1);
-                self.onComplete.dispatch(self.data);
-            };
-            // timeout because sometimes canplaythrough doesn't fire
-            var timeout = setTimeout(ready, 2000);
-            request.addEventListener('canplaythrough', ready, false);
-            request.onerror = function() {
-                clearTimeout(timeout);
-                self.onError.dispatch();
-            };
-            request.load();
-        }
+        this.loadMedia('audio', touchLocked);
     },
     loadImage: function(crossOrigin) {
+        if(this.useImageXHR && this.browserHasBlob) {
+            this.loadImageXHR();
+        }
+        else {
+            this.loadImageEl(crossOrigin);
+        }
+    },
+    loadImageEl: function(crossOrigin) {
         var request = new Image();
         this.data = request;
-        request.name = this.url;
         var self = this;
         request.onload = function () {
             self.onComplete.dispatch(self.data);
@@ -665,15 +682,36 @@ AssetLoader.Loader.prototype = {
             request.crossOrigin = 'anonymous';
         }
         request.src = this.url;
+    },
+    loadImageXHR: function() {
+        var request = new XMLHttpRequest();
+        request.open('GET', this.url, true);
+        request.responseType = 'arraybuffer';
+        var self = this;
+        request.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percentComplete = event.loaded / event.total;
+                self.onProgress.dispatch(percentComplete);
+            }
+        };
+        request.onload = function() {
+            var blob = new Blob([request.response]);
+            self.data = new Image();
+            self.data.src = window.URL.createObjectURL(blob);
+            self.onComplete.dispatch(self.data);
+        };
+        request.onerror = function() {
+            self.onError.dispatch();
+        };
+        request.send();
         this.request = request;
     },
     loadJSON: function() {
-
         var request = createXHR();
         request.open('GET', this.url, true);
         request.responseType = 'text';
         var self = this;
-        
+
         function handleLoaded() {
             if (request.status >= 400) {
                 self.onError.dispatch();
@@ -710,6 +748,34 @@ AssetLoader.Loader.prototype = {
 
         request.send();
         this.request = request;
+    },
+    loadVideo: function(touchLocked) {
+        this.loadMedia('video', touchLocked);
+    },
+    loadMedia: function(type, touchLocked) {
+        var request = document.createElement(type);
+        this.data = request;
+        request.preload = 'auto';
+        var self = this;
+        request.src = this.url;
+        if (!!touchLocked) {
+            this.onComplete.dispatch(this.data);
+        }
+        else {
+            var ready = function(){
+                request.removeEventListener('canplaythrough', ready);
+                clearTimeout(timeout);
+                self.onComplete.dispatch(self.data);
+            };
+            // timeout because sometimes canplaythrough doesn't fire
+            var timeout = setTimeout(ready, 2000);
+            request.addEventListener('canplaythrough', ready, false);
+            request.onerror = function() {
+                clearTimeout(timeout);
+                self.onError.dispatch();
+            };
+            request.load();
+        }
     },
     cancel: function() {
       if(this.request && this.request.readyState !== 4) {
@@ -1323,7 +1389,7 @@ function mobile() {
 // screen.width / screen.height is often wrong in Android
 
 function screenHeight() {
-    return  Math.max(window.outerHeight, window.screen.height);
+    return Math.max(window.outerHeight, window.screen.height);
 }
 
 function screenWidth() {
@@ -3120,9 +3186,26 @@ function swapCase(str) {
     });
 }
 
+// formats seconds into HH:MM:SS
+function timeCode(seconds, delim) {
+    if(delim === undefined) { delim = ':'; }
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor((seconds % 3600) / 60);
+    var s = Math.floor((seconds % 3600) % 60);
+    var hr = (h === 0 ? '' : (h < 10 ? '0' + h + delim : h + delim));
+    var mn = (m < 10 ? '0' + m : m) + delim;
+    var sc = (s < 10 ? '0' + s : s);
+    return hr + mn + sc;
+}
+
 /*
  * Query
  */
+
+// whether str begins with substr
+function beginsWith(str, substr) {
+    return str.indexOf(substr) === 0;
+}
 
 // whether str contains any instances of substr
 function contains(str, substr) {
@@ -3183,11 +3266,6 @@ function afterLast(str, substr) {
     return str.substr(index);
 }
 
-// whether str begins with substr
-function beginsWith(str, substr) {
-    return str.indexOf(substr) === 0;
-}
-
 // everything before the first occurrence of substr in str
 function beforeFirst(str, substr) {
     var index = str.indexOf(substr);
@@ -3209,7 +3287,9 @@ function between(str, start, end) {
     if (startIndex !== -1) {
         startIndex += start.length;
         var endIndex = str.indexOf(end, startIndex);
-        if (endIndex !== -1) { substr = str.substr(startIndex, endIndex-startIndex); }
+        if (endIndex !== -1) {
+            substr = str.substr(startIndex, endIndex-startIndex);
+        }
     }
     return substr;
 }
@@ -3314,8 +3394,10 @@ var StringUtils = {
     'reverseWords': reverseWords,
     'stripTags': stripTags,
     'swapCase': swapCase,
+    'timeCode': timeCode,
 
     // query:
+    'beginsWith': beginsWith,
     'contains': contains,
     'countOf': countOf,
     'endsWith': endsWith,
@@ -3327,7 +3409,6 @@ var StringUtils = {
     // substring:
     'afterFirst': afterFirst,
     'afterLast': afterLast,
-    'beginsWith': beginsWith,
     'beforeFirst': beforeFirst,
     'beforeLast': beforeLast,
     'between': between,
@@ -3782,6 +3863,28 @@ function VideoObject() {
         return Math.round(p * 10) / 10;
     };
 
+    var getCanPlay = function() {
+        var el = document.createElement('video');
+        if(!el) { return {}; }
+
+        var tests = [
+            { ext: 'ogv', type: 'video/ogg; codecs="theora"' },
+            { ext: 'mp4', type: 'video/mp4; codecs="avc1.42E01E"' },
+            { ext: 'webm', type: 'video/webm; codecs="vp8, vorbis"' },
+            { ext: 'webm', type: 'video/webm; codecs="vp9"' },
+            { ext: 'hls', type: 'application/x-mpegURL; codecs="avc1.42E01E"' }
+        ];
+
+        var canPlay = {};
+
+        for (var i = 0; i < tests.length; i++) {
+            var test = tests[i];
+            var canPlayType = !!el.canPlayType(test.type);
+            canPlay[test.ext] = canPlayType;
+        }
+        return canPlay;
+    };
+
     self = {
         'onReady': onReady,
         'onPlay': onPlay,
@@ -3789,6 +3892,7 @@ function VideoObject() {
         'onEnded': onEnded,
         'onTimeUpdate': onTimeUpdate,
 
+        'canPlay': getCanPlay(),
         'create': create,
         'load': load,
         'forceLoad': forceLoad,
@@ -3963,8 +4067,8 @@ if(visibilityChange !== undefined) {
 }
 
 var Visibility = {
-    onPageShown: onPageShown,
-    onPageHidden: onPageHidden
+    onPageHidden: onPageHidden,
+    onPageShown: onPageShown
 };
 
 if (typeof module === 'object' && module.exports) {

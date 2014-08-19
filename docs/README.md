@@ -4,7 +4,7 @@
 
 ## array
 
-Array helpers
+Array helpers [array-utils.js](../src/lib/array-utils.js)
 
 >`isArray(arr)` returns boolean  
 `sortNumeric(arr)` returns array  
@@ -469,7 +469,27 @@ Keeps track of user input position
 
 ## KeyInput
 
-Check if keys are down
+Check if keys are down, with helpers for WASD and arrow keys
+
+>`on()`  
+`off()`  
+`isDown(key)` // returns boolean  
+`left()` // returns boolean  
+`right()` // returns boolean  
+`up()` // returns boolean  
+`down()` // returns boolean  
+`space()` // returns boolean
+
+#### Examples
+
+```javascript
+var keyInput = new usfl.KeyInput();
+var p = keyInput.isDown(usfl.keyboard.P); // P key is pressed
+var left = keyInput.left(); // left arrow or A is pressed
+keyInput.off(); // stop listening
+keyInput.on(); // start listening again
+```
+
 
 ## LinkedList
 
@@ -673,6 +693,38 @@ Wrapper for Video media element
 
 Manager for a user defined viewport
 
+>`init(width, height)`  
+`mouseLeftWindow(fn, context)`  
+`getWindowWidth()` returns number  
+`getWindowHeight()` returns number  
+`getScrollTop()` returns number  
+`getWindowScrollY()` returns number  
+`getDocHeight()` returns number  
+`getScrollPercentage()` returns number  
+`onResize` returns Signal  
+`originalHeight` returns number  
+`originalWidth` returns number  
+`rect` returns Object  
+`resize()`  
+
+
+#### Examples
+
+```javascript
+Viewport.init(640, 360);
+Viewport.resize();
+Viewport.originalWidth; // 640
+Viewport.rect.x; // number
+Viewport.rect.stageWidth;
+Viewport.rect.scale;
+Viewport.getScrollTop();
+Viewport.getWindowScrollY();
+Viewport.getDocHeight();
+Viewport.getScrollPercentage();
+});
+```
+
+
 ## WebAudio
 
 WebAudio API wrapper
@@ -680,11 +732,48 @@ WebAudio API wrapper
 
 # Functions
 
+
 ## popup
+
+Pop up window
+
+>`popup(url, name, width, height)` returns boolean
+
+#### Examples
+
+```javascript
+usfl.popup('http://www.example.com', 'example', 640, 480);
+```
+
 
 ## ready
 
+Dom ready
+
+>`ready()`
+
+#### Examples
+
+```javascript
+usfl.ready(function() {
+  // something
+});
+```
+
+
 ## resize
+
+Resize a rectangle maintaining aspect ratio
+
+>`foo` returns bar  
+
+#### Examples
+
+```javascript
+function Foo() {
+  // something
+}
+```
 
 ## console patch
 
@@ -695,4 +784,24 @@ WebAudio API wrapper
 
 ## Facebook
 
+>`foo` returns bar  
+
+#### Examples
+
+```javascript
+function Foo() {
+  // something
+}
+```
+
 ## Flash
+
+>`foo` returns bar  
+
+#### Examples
+
+```javascript
+function Foo() {
+  // something
+}
+```

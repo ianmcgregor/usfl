@@ -19,6 +19,13 @@ function AssetLoader() {
     this.useImageXHR = false;
     this.numTotal = 0;
     this.numLoaded = 0;
+    this.browserHasBlob = (function() {
+        try {
+            return !!new Blob();
+        } catch (e) {
+            return false;
+        }
+    }());
 }
 
 function createXHR() {
@@ -180,7 +187,7 @@ AssetLoader.Loader.prototype = {
         this.loadMedia('audio', touchLocked);
     },
     loadImage: function(crossOrigin) {
-        if(this.useImageXHR) {
+        if(this.useImageXHR && this.browserHasBlob) {
             this.loadImageXHR();
         }
         else {
