@@ -41,16 +41,16 @@ function InputCoords() {
 		percentY: 0,
 		isListening: false,
 
-		listen: function(on) {
-			if(on) {
-				document.body.addEventListener('mousemove', calculateCoords);
-				document.body.addEventListener('touchmove', calculateCoords);
-			}
-			else {
-				document.body.removeEventListener('mousemove', calculateCoords);
-				document.body.removeEventListener('touchmove', calculateCoords);	
-			}
-			self.isListening = on;
+		on: function() {
+			document.body.addEventListener('mousemove', calculateCoords);
+			document.body.addEventListener('touchmove', calculateCoords);
+			self.isListening = true;
+			return this;
+		},
+		off: function() {
+			document.body.removeEventListener('mousemove', calculateCoords);
+			document.body.removeEventListener('touchmove', calculateCoords);
+			self.isListening = false;
 			return this;
 		}
 	};

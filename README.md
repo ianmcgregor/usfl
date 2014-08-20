@@ -50,15 +50,11 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 
 [usfl.AssetLoader](docs/README.md#assetloader)
 
-[usfl.AudioManager](docs/README.md#audiomanager)
-
 [usfl.Boid](docs/README.md#boid)
 
 [usfl.FPS](docs/README.md#fps)
 
 [usfl.Graphics](docs/README.md#graphics)
-
-[usfl.HTMLAudio](docs/README.md#htmlaudio)
 
 [usfl.InputCoords](docs/README.md#inputcoords)
 
@@ -71,8 +67,6 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 [usfl.VideoObject](docs/README.md#videoobject)
 
 [usfl.Viewport](docs/README.md#viewport)
-
-[usfl.WebAudio](docs/README.md#webaudio)
 
 
 #### Functions
@@ -96,9 +90,6 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 
 [lib/modern.js](docs/README.md#modern) Detect modern browser via feature detection
 
-[lib/stub-objects.js](docs/README.md#stub-objects) Reference
-
-[lib/track.js](docs/README.md#track) Google Anaytics wrapper
 
 ### Dev setup
 

@@ -4,7 +4,9 @@
 
 ## array
 
-Array helpers [array-utils.js](../src/lib/array-utils.js)
+[array-utils.js](../src/lib/array-utils.js)
+
+Array helpers
 
 >`isArray(arr)` returns boolean  
 `sortNumeric(arr)` returns array  
@@ -24,6 +26,8 @@ usfl.array.getRandom(arr); // 1
 
 ## css (for ie9, Android 2)
 
+[css-utils.js](../src/lib/legacy/css-utils.js)
+
 >`addClass(el, className)`  
 `hasClass(el, className)` returns boolean  
 `removeClass(el, className)`  
@@ -40,6 +44,8 @@ usfl.css.toggleClass(el, 'is-selected');
 
 
 ## device
+
+[device.js](../src/lib/device.js)
 
 UserAgent things for when Modernizr isn't enough
 
@@ -71,6 +77,8 @@ if(usfl.device.ipad && usfl.device.retina) {
 
 ## event (for ie8)
 
+[event-utils.js](../src/lib/legacy/event-utils.js)
+
 >`addEvent(el, type, fn)`  
 `removeEvent(el, type, fn)`
 
@@ -83,6 +91,8 @@ usfl.event.removeEvent(el, 'click', clickHandler);
 
 
 ## fullscreen
+
+[fullscreen.js](../src/lib/fullscreen.js)
 
 Wrapper for browser fullscreen API
 
@@ -107,6 +117,8 @@ if(usfl.fullscreen.isSupported) {
 
 ## keyboard
 
+[keyboard.js](../src/lib/keyboard.js)
+
 Hashmap of constants for keyCodes
 
 #### Examples
@@ -122,6 +134,8 @@ function onKeyDown(event) {
 
 
 ## math
+
+[math-utils.js](../src/lib/math-utils.js)
 
 >`angle(x1, y1, x2, y2)` returns angle in radians between two points  
 `clamp(value, min, max)` returns number between min and max  
@@ -168,6 +182,8 @@ usfl.math.roundToNearest(96.5, 10); // 100
 
 ## share
 
+[share.js](../src/lib/share.js)
+
 Various social media share options
 
 >`facebook(url)`  
@@ -187,6 +203,8 @@ usfl.share.facebook('http://www.example.com');
 
 
 ## storage
+
+[storage-utils.js](../src/lib/storage-utils.js)
 
 Local storage wrapper, including image to dataUrl
 
@@ -220,6 +238,8 @@ img.onload = function() {
 
 
 ## string
+
+[string-utils.js](../src/lib/string-utils.js)
 
 Utilities for working with strings
 
@@ -276,6 +296,8 @@ usfl.string.editDistance('Hello', 'Helllo'); // 1
 
 ## track
 
+[track.js](../src/lib/track.js)
+
 Google Analytics util
 
 >`init(gaAccount)`  
@@ -293,6 +315,8 @@ usfl.track.event('Foo', 'Bar');
 
 ## urlParams
 
+[url-params.js](../src/lib/url-params.js)
+
 Query string parameters to object
 
 #### Examples
@@ -309,6 +333,8 @@ var level = usfl.urlParams.level; // 2
 
 
 ## visibility
+
+[visibility.js](../src/lib/visibility.js)
 
 Wrapper for browser visibility API
 
@@ -333,7 +359,10 @@ usfl.visibility.onPageShown.add(function() {
 
 # Constructors
 
+
 ## AssetLoader
+
+[asset-loader.js](../src/lib/asset-loader.js)
 
 Batch loads images, audio and json files.
 
@@ -355,12 +384,10 @@ assetLoader.onComplete.add(function(loaders) {
 assetLoader.start();
 ```
 
-## AudioManager
-
-Manage audio
-
 
 ## Boid
+
+[boid.js](../src/lib/boid.js)
 
 Steering behaviours
 
@@ -403,6 +430,8 @@ update();
 
 ## FPS
 
+[fps.js](../src/lib/fps.js)
+
 Simple FPS counter
 
 #### Examples
@@ -425,6 +454,8 @@ var fps = new usfl.FPS(el);
 
 
 ## Graphics
+
+[graphics.js](../src/lib/graphics.js)
 
 Canvas drawing abstraction
 
@@ -459,15 +490,35 @@ graphics.circle(200, 200, 10);
 
 ```
 
-## HTMLAudio
-
-Wrapper for Audio tag
 
 ## InputCoords
 
+[input-coords.js](../src/lib/input-coords.js)
+
 Keeps track of user input position
 
+>`x` returns number  
+`y` returns number  
+`percentX` returns number  
+`percentY` returns number  
+`isListening` returns boolean  
+`on()`  
+`off()`
+
+#### Examples
+
+```javascript
+var inputCoords = new usfl.InputCoords();
+inputCoords.on(); // start listening
+inputCoords.off(); // stop listening
+var x = inputCoords.x; // x position of pointer
+var p = inputCoords.percentX; // x position of pointer as percentage of window
+```
+
+
 ## KeyInput
+
+[key-input.js](../src/lib/key-input.js)
 
 Check if keys are down, with helpers for WASD and arrow keys
 
@@ -492,6 +543,8 @@ keyInput.on(); // start listening again
 
 
 ## LinkedList
+
+[linked-list.js](../src/lib/linked-list.js)
 
 Linked List
 
@@ -538,6 +591,8 @@ linkedList.forEach(function(item) {
 
 ## ObjectPool
 
+[object-pool.js](../src/lib/object-pool.js)
+
 Reuse objects for performance
 
 >`ObjectPool(Type)` returns instance  
@@ -553,7 +608,6 @@ Reuse objects for performance
 function Foo() {
   // something
 }
-
 var pool = new usfl.ObjectPool(Foo);
 var foo = pool.get(); // new instance of Foo
 pool.dispose(foo); // put back in pool
@@ -572,6 +626,8 @@ pool.getPool().length // 0
 ```
 
 ## StateMachine
+
+[state-machine.js](../src/lib/state-machine.js)
 
 Finite State Machine
 
@@ -654,17 +710,53 @@ document.body.appendChild(debugView);
 
 ## Vec2
 
+[vec2.js](../src/lib/vec2.js)
+
 2d vector
 
->`add(vec, overwrite)` returns Vec2  
+>`Vec2.get(x, y)` returns Vec2  
+`add(vec, overwrite)` returns Vec2  
 `subtract(vec, overwrite)` returns Vec2  
 `multiply(vec, overwrite)` returns Vec2  
 `divide(vec, overwrite)` returns Vec2  
 `normalize()` returns Vec2  
 `isNormalized()` returns boolean  
+`truncate(max)` returns Vec2  
+`scaleBy(mul)` returns Vec2  
+`divideBy(div)` returns Vec2  
+`equals(vec)` returns boolean  
+`negate()` returns Vec2  
+`reverse()` returns Vec2  
+`dotProduct(vec)` returns number  
+`crossProduct(vec)` returns number  
+`distanceSquared(vec)` returns number  
+`distance(vec)` returns number  
+`clone()` returns Vec2  
+`zero()` returns Vec2  
+`isZero()` returns boolean  
+`reset()` returns Vec2  
+`perpendicular()` returns Vec2  
+`sign(vec)` returns number  
+`set(x, y)` returns Vec2  
+`dispose()`  
+`Vec2.angleBetween()` returns number  
+`lengthSquared` returns number  
+`length` returns number  
+`angle` returns number  
+
+#### Examples
+
+```javascript
+var velocity = Vec2.get(1,1);
+var position = Vec2.get(2,2);
+position.add(velocity, true);
+console.log(position.x, position.y); // 3, 3
+```
 
 
 ## VideoObject
+
+[video-object.js](../src/lib/video-object.js)
 
 Wrapper for Video media element
 
@@ -690,6 +782,8 @@ Wrapper for Video media element
 `setVolume(value)
 
 ## Viewport
+
+[viewport.js](../src/lib/viewport.js)
 
 Manager for a user defined viewport
 
@@ -725,15 +819,12 @@ Viewport.getScrollPercentage();
 ```
 
 
-## WebAudio
-
-WebAudio API wrapper
-
-
 # Functions
 
 
 ## popup
+
+[popup.js](../src/lib/popup.js)
 
 Pop up window
 
@@ -747,6 +838,8 @@ usfl.popup('http://www.example.com', 'example', 640, 480);
 
 
 ## ready
+
+[ready.js](../src/lib/ready.js)
 
 Dom ready
 
@@ -763,45 +856,108 @@ usfl.ready(function() {
 
 ## resize
 
+[resize.js](../src/lib/resize.js)
+
 Resize a rectangle maintaining aspect ratio
 
->`foo` returns bar  
+>`resize(rect, areaWidth, areaHeight, autoCenter, method)`
 
 #### Examples
 
 ```javascript
-function Foo() {
-  // something
-}
+var rect = { x:0, y:0, width: 640, height: 360 };
+// fill up the area completely and center
+usfl.resize(rect, window.innerWidth, window.innerHeight, true, 'fill');
+// fit within the area and center
+usfl.resize(rect, window.innerWidth, window.innerHeight, true, 'fit');
 ```
+
 
 ## console patch
 
-## raf Polyfill
+[console-patch.js](../src/lib/legacy/console-patch.js)
+
+Adds a dummy console object and basic functions
+
+
+## raf polyfill
+
+[raf-polyfill.js](../src/lib/raf-polyfill.js)
+
+Handle need for prefix or fallback to setTimeout
 
 
 # Not included in bundle
 
+
 ## Facebook
 
->`foo` returns bar  
+[facebook.js](../src/lib/facebook.js)
+
+>`init()`  
+`login()`  
+`onInit` returns Signal  
+`onInfo` returns Signal  
+`utils`  
+`getInfo(permissions, fields)`
 
 #### Examples
 
 ```javascript
-function Foo() {
-  // something
-}
+var facebook = new Facebook(appId);
+facebook.onInfo.add(function(response) {
+    console.log(response);
+});
+facebook.onInit.add(function() {
+    facebook.getInfo();
+});
+facebook.init();
 ```
+
 
 ## Flash
 
->`foo` returns bar  
+[flash.js](../src/lib/flash.js)
+
+>`Flash(element, url, embedvars, flashvars)`  
+`embed()`  
+`getFlashObject` returns SWF  
+`ready()`  
+`call(functionName, args)`  
+`onEmded` returns Signal  
+`onReady` returns Signal
 
 #### Examples
 
 ```javascript
-function Foo() {
-  // something
+var el = document.querySelector('.Flash');
+var flash = new Flash(el, 'flash.swf', {
+  version: '11.2.0',
+  width: 640,
+  height: 360,
+  bgColor: '#000000'
+}, {
+  debug: true,
+  foo: 'bar'
+});
+flash.embed();
+```
+
+
+## Modern
+
+[modern.js](../src/lib/modern.js)
+
+Basic feature detection to detect a 'modern' browser
+
+#### Examples
+
+```javascript
+var modern = require('modern.js');
+if(modern) {
+    // modern browser
+}
+if(Modernizr.modern) {
+    // modern browser
 }
 ```

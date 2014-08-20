@@ -26,9 +26,9 @@ Flash.prototype = {
      */
     embed: function() {
         // Querystring vars
-        this.getFlashvarsFromQueryString(this.flashvars);
+        this._getFlashvarsFromQueryString(this.flashvars);
         // Check path format
-        this.formatPaths(this.flashvars);
+        this._formatPaths(this.flashvars);
         // check flash version
         var flashVersion = swfobject.getFlashPlayerVersion();
         var minVersionArr = ( this.embedvars.version || '10.2.0' ).split('.');
@@ -86,22 +86,8 @@ Flash.prototype = {
         }
         this.isReady = true;
         console.log('flash.ready called');
-        this.applyQueuedCalls();
+        this._applyQueuedCalls();
         this.onReady.dispatch();
-    },
-    /*
-     * Any JS methods called before Flash loaded will be queued and called when this method is called.
-     */
-    applyQueuedCalls: function() {
-        console.log('flash.applyQueuedCalls', this.queuedCalls.length);
-        var queuedCalls = this.queuedCalls;
-        var l = queuedCalls.length;
-        var i = 0;
-        while(i < l) {
-            this.call.apply(this, queuedCalls[i]);
-            i++;
-        }
-        this.queuedCalls = [];
     },
     /*
      * Call methods in flash
@@ -141,9 +127,23 @@ Flash.prototype = {
         return false;
     },
     /*
+     * Any JS methods called before Flash loaded will be queued and called when this method is called.
+     */
+    _applyQueuedCalls: function() {
+        console.log('flash._applyQueuedCalls', this.queuedCalls.length);
+        var queuedCalls = this.queuedCalls;
+        var l = queuedCalls.length;
+        var i = 0;
+        while(i < l) {
+            this.call.apply(this, queuedCalls[i]);
+            i++;
+        }
+        this.queuedCalls = [];
+    },
+    /*
      * Check Querystring for Flashvar values
      */
-    getFlashvarsFromQueryString: function(flashvars) {
+    _getFlashvarsFromQueryString: function(flashvars) {
         // Set Flashvars from Query String params
         function setFlashvarFromQueryString(param) {
             if (swfobject.getQueryParamValue(param)) {
@@ -172,7 +172,7 @@ Flash.prototype = {
     /*
      * Check paths for correct formatting
      */
-    formatPaths: function(flashvars) {
+    _formatPaths: function(flashvars) {
         // Make sure paths start with protocol and end with '/'
         function formatPath(input) {
             if(input && input.lastIndexOf('/') !== input.length - 1) {
