@@ -1,6 +1,5 @@
 'use strict';
 
-require('./lib/legacy/console-patch.js'); // ie8
 require('./lib/raf-polyfill.js'); // iOS6 (prefix), ie9, iOS5, Android < 4.4
 
 var usfl = {};
@@ -10,9 +9,7 @@ var usfl = {};
  */
 
 usfl.array = require('./lib/array-utils.js');
-usfl.css = require('./lib/legacy/css-utils.js'); // for ie9, Android 2
 usfl.device = require('./lib/device.js');
-usfl.event = require('./lib/legacy/event-utils.js'); // for ie8
 usfl.fullscreen = require('./lib/fullscreen.js');
 usfl.keyboard = require('./lib/keyboard.js');
 usfl.math = require('./lib/math-utils.js');

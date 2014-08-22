@@ -1,8 +1,7 @@
 'use strict';
 
 var signals = require('signals'),
-    resizeUtil = require('./resize.js'),
-    EventUtils = require('./legacy/event-utils.js');
+    resizeUtil = require('./resize.js');
 
 var ViewPort = {
     rect: {
@@ -46,12 +45,11 @@ var ViewPort = {
         // notify
         this.onResize.dispatch();
     },
-    mouseLeftWindow: function(fn, context) {
-        EventUtils.addEvent('mouseout', document, function(e) {
-            e = e ? e : window.event;
+    mouseLeftWindow: function(fn, thisArg) {
+        document.addEventListener('mouseout', function(e) {
             var from = e.relatedTarget || e.toElement;
             if (!from || from.nodeName === 'HTML') {
-                fn.call(context || this);
+                fn.call(thisArg || this);
             }
         });
     },
