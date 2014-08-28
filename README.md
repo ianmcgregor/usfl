@@ -21,11 +21,7 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 
 [usfl.array](docs/README.md#array)
 
-[usfl.css](docs/README.md#css) (for ie9, Android 2)
-
 [usfl.device](docs/README.md#device)
-
-[usfl.event](docs/README.md#event) (for ie8)
 
 [usfl.fullscreen](docs/README.md#fullscreen)
 
@@ -76,8 +72,6 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 [usfl.ready](docs/README.md#ready)
 
 [usfl.resize](docs/README.md#resize)
-
-[lib/legacy/console-patch.js](docs/README.md#console-patch) for IE 8
 
 [lib/raf-polyfill.js](docs/README.md#raf-polyfill) for iOS6 (prefix), ie9, iOS5, Android < 4.4
 

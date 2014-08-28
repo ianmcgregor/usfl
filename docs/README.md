@@ -24,25 +24,6 @@ usfl.array.getRandom(arr); // 1
 ```
 
 
-## css (for ie9, Android 2)
-
-[css-utils.js](../src/lib/legacy/css-utils.js)
-
->`addClass(el, className)`  
-`hasClass(el, className)` returns boolean  
-`removeClass(el, className)`  
-`toggleClass(el, className)`
-
-#### Examples
-
-```javascript
-usfl.css.addClass(el, 'is-selected');
-usfl.css.hasClass(el, 'is-selected'); // true
-usfl.css.removeClass(el, 'is-selected');
-usfl.css.toggleClass(el, 'is-selected');
-```
-
-
 ## device
 
 [device.js](../src/lib/device.js)
@@ -72,21 +53,6 @@ UserAgent things for when Modernizr isn't enough
 if(usfl.device.ipad && usfl.device.retina) {
   // do something
 }
-```
-
-
-## event (for ie8)
-
-[event-utils.js](../src/lib/legacy/event-utils.js)
-
->`addEvent(el, type, fn)`  
-`removeEvent(el, type, fn)`
-
-#### Examples
-
-```javascript
-usfl.event.addEvent(el, 'click', clickHandler);
-usfl.event.removeEvent(el, 'click', clickHandler);
 ```
 
 
@@ -871,13 +837,6 @@ usfl.resize(rect, window.innerWidth, window.innerHeight, true, 'fill');
 // fit within the area and center
 usfl.resize(rect, window.innerWidth, window.innerHeight, true, 'fit');
 ```
-
-
-## console patch
-
-[console-patch.js](../src/lib/legacy/console-patch.js)
-
-Adds a dummy console object and basic functions
 
 
 ## raf polyfill
