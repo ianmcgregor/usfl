@@ -25,13 +25,11 @@ usfl.visibility = require('./lib/visibility.js');
  */
 
 usfl.AssetLoader = require('./lib/asset-loader.js');
-usfl.AudioManager = require('./lib/audio-manager.js');
 usfl.Boid = require('./lib/boid.js');
 //usfl.Facebook = require('./lib/facebook.js');
 //usfl.Flash = require('./lib/flash.js');
 usfl.FPS = require('./lib/fps.js');
 usfl.Graphics = require('./lib/graphics.js');
-usfl.HTMLAudio = require('./lib/html-audio.js');
 usfl.InputCoords = require('./lib/input-coords.js'); // should be instance?
 usfl.KeyInput = require('./lib/key-input.js');
 usfl.LinkedList = require('./lib/linked-list.js');
@@ -40,7 +38,6 @@ usfl.StateMachine = require('./lib/state-machine.js');
 usfl.Vec2 = require('./lib/vec2.js');
 usfl.VideoObject = require('./lib/video-object.js');
 usfl.Viewport = require('./lib/viewport.js');
-usfl.WebAudio = require('./lib/web-audio.js');
 
 /*
  * function

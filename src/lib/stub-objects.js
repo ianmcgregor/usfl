@@ -16,11 +16,11 @@ function Module() {
 
     var privateVar = '';
 
-    return {
+    return Object.freeze({
         publicFn: function() {
             return privateVar;
         }
-    };
+    });
 }
 
 return Module;
