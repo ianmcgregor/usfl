@@ -54,6 +54,8 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 
 [usfl.InputCoords](docs/README.md#inputcoords)
 
+[usfl.KeyInput](docs/README.md#keyinput)
+
 [usfl.LinkedList](docs/README.md#linkedlist)
 
 [usfl.ObjectPool](docs/README.md#objectpool)
