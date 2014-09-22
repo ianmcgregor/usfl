@@ -1,6 +1,6 @@
 # usfl
 
-[![Build Status](https://secure.travis-ci.org/ianmcgregor/usfl.png)](https://travis-ci.org/ianmcgregor/usfl)
+[![NPM version](https://badge.fury.io/js/usfl.svg)](http://badge.fury.io/js/usfl) [![Bower version](https://badge.fury.io/bo/usfl.svg)](http://badge.fury.io/bo/usfl) [![Build Status](https://secure.travis-ci.org/ianmcgregor/usfl.png)](https://travis-ci.org/ianmcgregor/usfl)
 
 A collection of tested, reusable JS utilities and snippets.
 
