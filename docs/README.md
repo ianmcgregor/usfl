@@ -8,19 +8,23 @@
 
 Array helpers
 
->`isArray(arr)` returns boolean  
+>`clone(arr)` returns array  
+`getRandom(arr)` returns random item from array  
+`isArray(arr)` returns boolean  
+`nearest(value, arr)` returns number (index of item nearest to value)  
 `sortNumeric(arr)` returns array  
 `sortRandom(arr)` returns array  
-`getRandom(arr)` returns random item from array
 
 #### Examples
 
 ```javascript
 var arr = [2,1,3];
-usfl.array.isArray(arr); // true
-usfl.array.sortNumeric(arr); // [1,2,3]
-usfl.array.sortRandom(arr); // [2,1,3]
+usfl.array.clone(arr); // [2,1,3]
 usfl.array.getRandom(arr); // 1
+usfl.array.isArray(arr); // true
+usfl.array.nearest(2.3, arr); // 0
+usfl.array.sortNumeric(arr); // [1,2,3]
+usfl.array.sortRandom(arr); // [1,3,2]
 ```
 
 
@@ -552,6 +556,36 @@ linkedList.forEach(function(item) {
 
 //linkedList.remove
 //linkedList.insertBefore(item, before);
+```
+
+
+## MouseWheel
+
+[mouse-wheel.js](../src/lib/mouse-wheel.js)
+
+Cross-browser mouse wheel util
+
+>`MouseWheel(speed)` returns instance  
+`add()` listen again after remove  
+`remove()` stop listening  
+`onUpdate` returns Signal  
+`onUp` returns Signal  
+`onDown` returns Signal  
+
+
+#### Examples
+
+```javascript
+var mouseWheel = new usfl.MouseWheel(5);
+mouseWheel.onUpdate.add(function(delta) {
+    console.log('mouse wheel moved:', delta);
+});
+mouseWheel.onUp.add(function() {
+    console.log('mouse wheel moved up');
+});
+mouseWheel.onDown.add(function() {
+    console.log('mouse wheel moved down');
+});
 ```
 
 

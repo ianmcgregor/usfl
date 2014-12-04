@@ -449,8 +449,27 @@
 'use strict';
 
 var ArrayUtils = {
+    clone: function(arr) {
+        return arr.slice(0);
+    },
+    getRandom: function(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    },
     isArray: function(arr) {
-        return arr instanceof Array;
+        return Array.isArray ? Array.isArray(arr) : arr && arr instanceof Array;
+    },
+    nearest: function(value, arr) {
+        var index = -1,
+            least = Number.MAX_VALUE,
+            diff;
+        arr.forEach(function(item, i) {
+            diff = Math.abs(item - value);
+            if (diff < least) {
+                least = diff;
+                index = i;
+            }
+        });
+        return index;
     },
     sortNumeric: function(arr) {
         return arr.sort(function(a,b){
@@ -461,9 +480,6 @@ var ArrayUtils = {
         return arr.sort(function(){
             return Math.random() > 0.5 ? -1 : 1;
         });
-    },
-    getRandom: function(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
     }
 };
 
@@ -1131,7 +1147,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Boid;
 }
 
-},{"./vec2.js":24}],5:[function(_dereq_,module,exports){
+},{"./vec2.js":25}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var ua = navigator.userAgent;
@@ -1265,39 +1281,68 @@ if (typeof module === 'object' && module.exports) {
 
 function FPS(el) {
 
-    var ms = 0,
+    var time = 0,
         fps = 0,
         currentFps = 0,
         averageFps = 0,
         ticks = 0,
         totalFps = 0;
+    //  getMem = window.performance && window.performance.memory,
+    //  lastUsedHeap = 0,
+    //  gcPauses = 0;
 
-    if(!el) {
+    if (!el) {
         el = document.createElement('div');
         el.setAttribute('id', 'fps');
         el.style.position = 'absolute';
         el.style.top = '0px';
         el.style.right = '0px';
         el.style.padding = '2px 6px';
-        el.style.zIndex = '9999';
+        el.style.zIndex = '99999';
         el.style.background = '#000';
         el.style.color = '#fff';
+        el.style.fontSize = '10px';
         document.body.appendChild(el);
     }
 
     function report() {
         el.innerHTML = 'FPS: ' + currentFps + '<br />AVE: ' + averageFps;
+
+        // if (getMem) {
+        //     // /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --enable-memory-info
+        //     var memoryInfo = window.performance.memory;
+        //     var percentUsed = memoryInfo.totalJSHeapSize / memoryInfo.jsHeapSizeLimit;
+
+        //     if (memoryInfo.usedJSHeapSize < lastUsedHeap) {
+        //         // console.log('Garbage collected!');
+        //         gcPauses++;
+        //         lastUsedHeap = memoryInfo.usedJSHeapSize;
+        //     }
+        //     // memoryInfo.jsHeapSizeLimit;
+        //     // memoryInfo.totalJSHeapSize;
+        //     // memoryInfo.usedJSHeapSize;
+        //     el.innerHTML = 'FPS: ' + currentFps +
+        //                                    '<br />AVE: ' + averageFps +
+        //                                    '<br />MEM: ' + (percentUsed * 100).toFixed(1) + '%' +
+        //                                    '<br />totalJSHeapSize: ' + memoryInfo.totalJSHeapSize +
+        //                                    '<br />jsHeapSizeLimit: ' + memoryInfo.jsHeapSizeLimit +
+        //                                    '<br />usedJSHeapSize: ' + memoryInfo.usedJSHeapSize +
+        //                                    '<br />GC: ' + gcPauses;
+        // }
     }
 
-    function update(time) {
-        if(time === undefined) {
-            time = Date.now();
+    function update(now) {
+        // console.log('-->', now);
+
+        if (now === undefined) {
+            now = Date.now();
         }
-        if(ms === 0) {
-            ms = time;
+        if (time === 0) {
+            time = now;
         }
-        if (time - 1000 > ms) {
-            ms = time;
+        // console.log(now, time);
+        if (now - 1000 > time) {
+            time = now;
             currentFps = fps;
             fps = 0;
 
@@ -1311,12 +1356,19 @@ function FPS(el) {
         fps++;
     }
 
+    function autoUpdate() {
+        window.requestAnimationFrame(autoUpdate);
+
+        update();
+    }
+
     return {
+        'autoUpdate': autoUpdate,
         'update': update
     };
 }
 
-if(typeof module === 'object' && module.exports) {
+if (typeof module === 'object' && module.exports) {
     module.exports = FPS;
 }
 
@@ -2052,6 +2104,65 @@ if (typeof module === 'object' && module.exports) {
 },{}],14:[function(_dereq_,module,exports){
 'use strict';
 
+var signals = _dereq_('signals');
+
+function MouseWheel(speed) {
+  speed = speed || 2;
+
+  var onUpdate = new signals.Signal();
+  var onUp = new signals.Signal();
+  var onDown = new signals.Signal();
+
+  function add() {
+    if ('onmousewheel' in window) {
+      window.onmousewheel = mouseWheelHandler;
+    } else if (window.addEventListener) {
+      window.addEventListener('DOMMouseScroll', mouseWheelHandler, false);
+    }
+  }
+
+  function remove() {
+    if ('onmousewheel' in window) {
+      window.onmousewheel = null;
+    } else if (window.removeEventListener) {
+      window.removeEventListener('DOMMouseScroll', mouseWheelHandler, false);
+    }
+  }
+
+  function mouseWheelHandler(event) {
+    if (!event) { event = window.event; }
+    // event.preventDefault();
+
+    var direction = (event.detail < 0 || event.wheelDelta > 0) ? 1 : -1;
+    var delta = direction * speed;
+
+    if (direction > 0) {
+      onUp.dispatch(delta);
+    } else {
+      onDown.dispatch(delta);
+    }
+
+    onUpdate.dispatch(delta);
+  }
+
+  add();
+
+  return Object.freeze({
+    'add': add,
+    'remove': remove,
+    'onUpdate': onUpdate,
+    'onUp': onUp,
+    'onDown': onDown
+  });
+}
+
+if (typeof module === 'object' && module.exports) {
+  module.exports = MouseWheel;
+}
+
+},{"signals":1}],15:[function(_dereq_,module,exports){
+'use strict';
+
 function ObjectPool(Type) {
 
     var pool = [];
@@ -2085,7 +2196,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ObjectPool;
 }
 
-},{}],15:[function(_dereq_,module,exports){
+},{}],16:[function(_dereq_,module,exports){
 'use strict';
 
 var popup = function (url, name, width, height) {
@@ -2114,7 +2225,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = popup;
 }
 
-},{}],16:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
 /*
  * ie8, ie9, safari 6 (osx and ios)
  */
@@ -2148,7 +2259,7 @@ if (typeof module === 'object' && module.exports) {
         };
     }
 }());
-},{}],17:[function(_dereq_,module,exports){
+},{}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var ready;
@@ -2181,7 +2292,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ready;
 }
 
-},{}],18:[function(_dereq_,module,exports){
+},{}],19:[function(_dereq_,module,exports){
 'use strict';
 
 var resize = function (rect, areaWidth, areaHeight, autoCenter, method) {
@@ -2220,7 +2331,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = resize;
 }
 
-},{}],19:[function(_dereq_,module,exports){
+},{}],20:[function(_dereq_,module,exports){
 'use strict';
 
 var popup = _dereq_('./popup.js');
@@ -2289,7 +2400,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Share;
 }
 
-},{"./popup.js":15}],20:[function(_dereq_,module,exports){
+},{"./popup.js":16}],21:[function(_dereq_,module,exports){
 'use strict';
 
 var StorageUtils = {
@@ -2325,7 +2436,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = StorageUtils;
 }
 
-},{}],21:[function(_dereq_,module,exports){
+},{}],22:[function(_dereq_,module,exports){
 'use strict';
 
 /*
@@ -2688,7 +2799,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = StringUtils;
 }
 
-},{}],22:[function(_dereq_,module,exports){
+},{}],23:[function(_dereq_,module,exports){
 'use strict';
 
 var track = {
@@ -2739,7 +2850,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = track;
 }
 
-},{}],23:[function(_dereq_,module,exports){
+},{}],24:[function(_dereq_,module,exports){
 'use strict';
 
 var urlParams = {};
@@ -2762,7 +2873,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = urlParams;
 }
 
-},{}],24:[function(_dereq_,module,exports){
+},{}],25:[function(_dereq_,module,exports){
 'use strict';
 
 function Vec2(x, y) {
@@ -2949,7 +3060,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Vec2;
 }
 
-},{}],25:[function(_dereq_,module,exports){
+},{}],26:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals');
@@ -3195,7 +3306,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = VideoObject;
 }
 
-},{"signals":1}],26:[function(_dereq_,module,exports){
+},{"signals":1}],27:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals'),
@@ -3294,7 +3405,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = ViewPort;
 }
 
-},{"./resize.js":18,"signals":1}],27:[function(_dereq_,module,exports){
+},{"./resize.js":19,"signals":1}],28:[function(_dereq_,module,exports){
 'use strict';
 
 var signals = _dereq_('signals');
@@ -3338,7 +3449,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = Visibility;
 }
 
-},{"signals":1}],28:[function(_dereq_,module,exports){
+},{"signals":1}],29:[function(_dereq_,module,exports){
 'use strict';
 
 _dereq_('./lib/raf-polyfill.js'); // iOS6 (prefix), ie9, iOS5, Android < 4.4
@@ -3374,6 +3485,7 @@ usfl.Graphics = _dereq_('./lib/graphics.js');
 usfl.InputCoords = _dereq_('./lib/input-coords.js'); // should be instance?
 usfl.KeyInput = _dereq_('./lib/key-input.js');
 usfl.LinkedList = _dereq_('./lib/linked-list.js');
+usfl.MouseWheel = _dereq_('./lib/mouse-wheel.js');
 usfl.ObjectPool = _dereq_('./lib/object-pool.js');
 usfl.Vec2 = _dereq_('./lib/vec2.js');
 usfl.VideoObject = _dereq_('./lib/video-object.js');
@@ -3389,6 +3501,6 @@ usfl.resize = _dereq_('./lib/resize.js');
 
 module.exports = usfl;
 
-},{"./lib/array-utils.js":2,"./lib/asset-loader.js":3,"./lib/boid.js":4,"./lib/device.js":5,"./lib/fps.js":6,"./lib/fullscreen.js":7,"./lib/graphics.js":8,"./lib/input-coords.js":9,"./lib/key-input.js":10,"./lib/keyboard.js":11,"./lib/linked-list.js":12,"./lib/math-utils.js":13,"./lib/object-pool.js":14,"./lib/popup.js":15,"./lib/raf-polyfill.js":16,"./lib/ready.js":17,"./lib/resize.js":18,"./lib/share.js":19,"./lib/storage-utils.js":20,"./lib/string-utils.js":21,"./lib/track.js":22,"./lib/url-params.js":23,"./lib/vec2.js":24,"./lib/video-object.js":25,"./lib/viewport.js":26,"./lib/visibility.js":27}]},{},[28])
-(28)
+},{"./lib/array-utils.js":2,"./lib/asset-loader.js":3,"./lib/boid.js":4,"./lib/device.js":5,"./lib/fps.js":6,"./lib/fullscreen.js":7,"./lib/graphics.js":8,"./lib/input-coords.js":9,"./lib/key-input.js":10,"./lib/keyboard.js":11,"./lib/linked-list.js":12,"./lib/math-utils.js":13,"./lib/mouse-wheel.js":14,"./lib/object-pool.js":15,"./lib/popup.js":16,"./lib/raf-polyfill.js":17,"./lib/ready.js":18,"./lib/resize.js":19,"./lib/share.js":20,"./lib/storage-utils.js":21,"./lib/string-utils.js":22,"./lib/track.js":23,"./lib/url-params.js":24,"./lib/vec2.js":25,"./lib/video-object.js":26,"./lib/viewport.js":27,"./lib/visibility.js":28}]},{},[29])
+(29)
 });

@@ -7,7 +7,7 @@ A collection of tested, reusable JS utilities and snippets.
 ### Installation
 
 * npm: ```npm install usfl --save-dev```
-* bower: ```bower install usfl --save```
+* bower: ```bower install usfl --save-dev```
 
 ### Usage
 
@@ -57,6 +57,8 @@ To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-rel
 [usfl.KeyInput](docs/README.md#keyinput)
 
 [usfl.LinkedList](docs/README.md#linkedlist)
+
+[usfl.MouseWheel](docs/README.md#mousewheel)
 
 [usfl.ObjectPool](docs/README.md#objectpool)
 
