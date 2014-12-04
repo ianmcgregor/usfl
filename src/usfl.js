@@ -33,6 +33,7 @@ usfl.Graphics = require('./lib/graphics.js');
 usfl.InputCoords = require('./lib/input-coords.js'); // should be instance?
 usfl.KeyInput = require('./lib/key-input.js');
 usfl.LinkedList = require('./lib/linked-list.js');
+usfl.MouseWheel = require('./lib/mouse-wheel.js');
 usfl.ObjectPool = require('./lib/object-pool.js');
 usfl.Vec2 = require('./lib/vec2.js');
 usfl.VideoObject = require('./lib/video-object.js');
