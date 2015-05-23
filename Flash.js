@@ -1,15 +1,11 @@
 'use strict';
 
-var signals = require('signals'),
-    swfobject = require('swfobject');
+var Emitter = require('./Emitter'),
+    swfobject = window.swfobject;
 
 function Flash(element, url, embedvars, flashvars) {
 
-    console.log('Flash:', element, url);
-
-    this.onReady = new signals.Signal();
-    this.onEmbed = new signals.Signal();
-
+    this.emitter = new Emitter();
     this.elementId = element.getAttribute('id');
     this.flashId = 'flash-' + this.elementId;
     this.url = url;
@@ -65,11 +61,11 @@ Flash.prototype = {
             };
 
             swfobject.embedSWF(this.url, this.elementId, (this.embedvars.width || '100%'), (this.embedvars.height || '100%'), (this.embedvars.version || '10.2.0'), this.flashvars.assetsPath + 'swf/expressInstall.swf', this.flashvars, params, attributes);
-            
+
             result = 1;
         }
 
-        this.onEmbed.dispatch(result);
+        this.emitter.emit('embed', result);
     },
     /*
      * Get ref to Flash object
@@ -87,15 +83,15 @@ Flash.prototype = {
         this.isReady = true;
         console.log('flash.ready called');
         this._applyQueuedCalls();
-        this.onReady.dispatch();
+        this.emitter.emit('ready');
     },
     /*
      * Call methods in flash
-     * 
-     * E.g. 
+     *
+     * E.g.
      * flash.call( "onSomeJSActionComplete", response ); - calls the ExternalInterface call back 'onSomeJSActionComplete' in Flash
      * flash.call("onFlashDispatcher", "Hello", "World", {testObj:true}, false); - can send multiple arguments - max 4 at moment!
-     * 
+     *
      */
     call: function( functionName ) {
         try {
@@ -154,7 +150,9 @@ Flash.prototype = {
         // QueryString params to overwrite default Flashvars
         function queryParamsToFlashvars(flashvars) {
             for(var param in flashvars) {
-                setFlashvarFromQueryString(param);
+                if (flashvars.hasOwnProperty(param)) {
+                    setFlashvarFromQueryString(param);
+                }
             }
         }
         queryParamsToFlashvars(flashvars);

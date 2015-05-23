@@ -11,17 +11,15 @@ var ArrayUtils = {
         return Array.isArray ? Array.isArray(arr) : arr && arr instanceof Array;
     },
     nearest: function(value, arr) {
-        var index = -1,
-            least = Number.MAX_VALUE,
-            diff;
-        arr.forEach(function(item, i) {
+        var least = Number.MAX_VALUE, diff;
+        return arr.reduce(function(index, item, i) {
             diff = Math.abs(item - value);
             if (diff < least) {
                 least = diff;
                 index = i;
             }
-        });
-        return index;
+            return value;
+        }, -1);
     },
     sortNumeric: function(arr) {
         return arr.sort(function(a,b){

@@ -1,6 +1,6 @@
 'use strict';
 
-var popup = require('./popup.js');
+var popup = require('./popup');
 
 // warnBadURL - helper to warn on relative URLs supplied for images etc
 function warnBadURL(url) {

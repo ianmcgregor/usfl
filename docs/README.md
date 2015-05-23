@@ -1,10 +1,10 @@
 # usfl
 
-# Instances
+
 
 ## array
 
-[array-utils.js](../src/lib/array-utils.js)
+[array.js](../array.js)
 
 Array helpers
 
@@ -18,19 +18,50 @@ Array helpers
 #### Examples
 
 ```javascript
+var array = require('usfl/array');
 var arr = [2,1,3];
-usfl.array.clone(arr); // [2,1,3]
-usfl.array.getRandom(arr); // 1
-usfl.array.isArray(arr); // true
-usfl.array.nearest(2.3, arr); // 0
-usfl.array.sortNumeric(arr); // [1,2,3]
-usfl.array.sortRandom(arr); // [1,3,2]
+array.clone(arr); // [2,1,3]
+array.getRandom(arr); // 1
+array.isArray(arr); // true
+array.nearest(2.3, arr); // 0
+array.sortNumeric(arr); // [1,2,3]
+array.sortRandom(arr); // [1,3,2]
 ```
+
+
+
+
+## AssetLoader
+
+[AssetLoader.js](../AssetLoader.js)
+
+Batch loads images, audio and json files.
+
+#### Examples
+
+```javascript
+var AssetLoader = require('usfl/AssetLoader');
+
+var assetLoader = new AssetLoader();
+assetLoader.add('images/foo.jpg');
+assetLoader.add('images/bar.jpg');
+assetLoader.on('progress', function(progress) {
+  // progress 0 to 1
+});
+assetLoader.on('child', function(loader) {
+  // something loaded
+});
+assetLoader.on('complete', function(loaders) {
+  // finished
+});
+assetLoader.start();
+```
+
 
 
 ## device
 
-[device.js](../src/lib/device.js)
+[device.js](../device.js)
 
 UserAgent things for when Modernizr isn't enough
 
@@ -54,15 +85,137 @@ UserAgent things for when Modernizr isn't enough
 #### Examples
 
 ```javascript
-if(usfl.device.ipad && usfl.device.retina) {
+var device = require('usfl/device');
+if(device.ipad && device.retina) {
   // do something
 }
 ```
 
 
+
+## Emitter
+
+[Emitter.js](../Emitter.js)
+
+Decorates standard events.EventEmitter with 'off' method.
+
+>`off()`  
+`off(name)`  
+`off(name, fn)`
+
+#### Examples
+
+```javascript
+var Emitter = require('usfl/Emitter');
+var foo = Object.create(Emitter.prototype, {
+    bar: {
+        value: function() {
+            this.emit('hi', 0);
+        }
+    }
+});
+var log = function(value) {
+    console.log(value);
+};
+foo.on('hi', log);
+// remove all handlers
+foo.off();
+// remove handler listening for 'hi'
+foo.off('hi');
+// remove handler with specific signature
+foo.off('hi', log);
+```
+
+
+
+## Facebook
+
+[Facebook.js](../Facebook.js)
+
+>`init()`  
+`login()`  
+`on('init', fn)`  
+`on('info', fn)`  
+`utils`  
+`getInfo(permissions, fields)`
+
+#### Examples
+
+```javascript
+var Facebook = require('usfl/Facebook');
+var facebook = new Facebook(appId);
+facebook.on('info', function(response) {
+    console.log(response);
+});
+facebook.once('init', function() {
+    facebook.getInfo();
+});
+facebook.init();
+```
+
+
+## Flash
+
+[Flash.js](../Flash.js)
+
+>`Flash(element, url, embedvars, flashvars)`  
+`embed()`  
+`getFlashObject` returns SWF  
+`ready()`  
+`call(functionName, args)`  
+`on('embed', fn)`  
+`on('ready', fn)`  
+
+#### Examples
+
+```javascript
+var Flash = require('usfl/Flash');
+var el = document.querySelector('.Flash');
+var flash = new Flash(el, 'flash.swf', {
+  version: '11.2.0',
+  width: 640,
+  height: 360,
+  bgColor: '#000000'
+}, {
+  debug: true,
+  foo: 'bar'
+});
+flash.embed();
+```
+
+
+## Fps
+
+[Fps.js](../Fps.js)
+
+Simple FPS counter
+
+#### Examples
+
+```javascript
+var Fps = require('usfl/Fps');
+
+var fps = new Fps();
+
+function update() {
+  window.requestAnimationFrame(update);
+  // update stuff
+  fps.update();
+}
+update();
+
+// use pre-existing element
+var el = document.querySelector('.Fps');
+var fps = new Fps(el);
+
+```
+
+
+
+
 ## fullscreen
 
-[fullscreen.js](../src/lib/fullscreen.js)
+[fullscreen.js](../fullscreen.js)
 
 Wrapper for browser fullscreen API
 
@@ -75,37 +228,193 @@ Wrapper for browser fullscreen API
 #### Examples
 
 ```javascript
-if(usfl.fullscreen.isSupported) {
+var fullscreen = require('usfl/fullscreen');
+
+if(fullscreen.isSupported) {
   btnFullscreen.classList.add('is-visible');
 
   btnFullscreen.addEventListener('click', function() {
-    usfl.fullscreen.toggle();
+    fullscreen.toggle();
   });
 }
 ```
 
 
+
+## Graphics
+
+[Graphics.js](../Graphics.js)
+
+Canvas drawing abstraction
+
+>`init(canvas)` canvas is optional  
+`size(width, height)` if width and height are undefined window innerWidth/Height are used  
+`clear(color)` clear with optional colour  
+`background(r, g, b)`  
+`fill(r, g, b, a)`  
+`stroke(r, g, b, a)`  
+`strokeWeight(w)`  
+`move(x, y)`  
+`line(x1, y1, x2, y2)`  
+`rect(x, y, width, height, angle)`  
+`circle(x, y, radius)`  
+`triangle(x, y, width, height, angle)`  
+`triangleABC(x1, y1, x2, y2, x3, y3)`  
+`image(img, x, y, angle)`  
+`cross(radius)`  
+`text(str, x, y)`  
+`textFont(font)`  
+`textSize(size)`  
+`openImage()`  
+`downloadImage()`  
+`getImageData()`  
+`getPixel(x, y)`  
+`setPixel(x, y, r, g, b, a)`  
+`eachPixel(fn)`
+
+#### Examples
+
+```javascript
+var Graphics = require('usfl/Graphics');
+
+var graphics = new Graphics();
+graphics.background('#FFFF00')
+graphics.fill('#00FF00');
+graphics.circle(200, 200, 10);
+
+```
+
+
+## InputCoords
+
+[InputCoords.js](../InputCoords.js)
+
+Keeps track of user input position
+
+>`x` returns number  
+`y` returns number  
+`percentX` returns number  
+`percentY` returns number  
+`isListening` returns boolean  
+`on()`  
+`off()`
+
+#### Examples
+
+```javascript
+var InputCoords = require('usfl/InputCoords');
+
+var inputCoords = new InputCoords();
+inputCoords.on(); // start listening
+inputCoords.off(); // stop listening
+var x = inputCoords.x; // x position of pointer
+var p = inputCoords.percentX; // x position of pointer as percentage of window
+```
+
+
+
 ## keyboard
 
-[keyboard.js](../src/lib/keyboard.js)
+[keyboard.js](../keyboard.js)
 
 Hashmap of constants for keyCodes
 
 #### Examples
 
 ```javascript
+var keyboard = require('usfl/keyboard');
+
 function onKeyDown(event) {
     event.preventDefault();
-    if(event.keyCode === usfl.keyboard.P) {
+    if(event.keyCode === keyboard.P) {
       // P key is down
     }
 }
 ```
 
 
+## KeyInput
+
+[KeyInput.js](../KeyInput.js)
+
+Check if keys are down, with helpers for WASD and arrow keys
+
+>`on()`  
+`off()`  
+`isDown(key)` // returns boolean  
+`left()` // returns boolean  
+`right()` // returns boolean  
+`up()` // returns boolean  
+`down()` // returns boolean  
+`space()` // returns boolean
+
+#### Examples
+
+```javascript
+var KeyInput = require('usfl/KeyInput');
+
+var keyInput = new KeyInput();
+var p = keyInput.isDown(keyboard.P); // P key is pressed
+var left = keyInput.left(); // left arrow or A is pressed
+keyInput.off(); // stop listening
+keyInput.on(); // start listening again
+```
+
+
+## LinkedList
+
+[LinkedList.js](../LinkedList.js)
+
+Linked List
+
+>`add(item)` returns item  
+`remove(item)` returns item  
+`insertAfter(item, after)` returns item  
+`insertBefore(item, before)` returns item  
+`forEach(callback, callbackContext)`  
+`getFirst()` returns item  
+`getLast()` returns item  
+`getCount()` returns number  
+
+#### Examples
+
+```javascript
+var LinkedList = require('usfl/LinkedList');
+
+function ListItem(name) {
+  this.name = name;
+  this.next = null;
+  this.prev = null;
+}
+var linkedList = new LinkedList();
+linkedList.add(new ListItem('a'));
+linkedList.add(new ListItem('b'));
+linkedList.add(new ListItem('c'));
+
+linkedList.getCount(); // 3
+linkedList.getFirst().name; // 'a'
+linkedList.getLast().name; // 'c'
+
+var item = linkedList.getFirst();
+while(item.next) {
+  console.log(item.name);
+  item = item.next;
+}
+
+linkedList.forEach(function(item) {
+  console.log(item.name);
+});
+
+//linkedList.remove
+//linkedList.insertBefore(item, before);
+```
+
+
+
+
 ## math
 
-[math-utils.js](../src/lib/math-utils.js)
+[math.js](../math.js)
 
 >`angle(x1, y1, x2, y2)` returns angle in radians between two points  
 `clamp(value, min, max)` returns number between min and max  
@@ -131,28 +440,176 @@ function onKeyDown(event) {
 #### Examples
 
 ```javascript
-usfl.math.angle(0, 0, -1, 0); // Math.PI
-usfl.math.clamp(100, 0, 50)); // 50);
-usfl.math.coinToss(); // true or false
-usfl.math.degrees(Math.PI); // 180
-usfl.math.difference(-20, 20); // 40
-usfl.math.distance(0, 0, 1, 1); // 1.41421356237 (Math.SQRT2)
-usfl.math.distanceSQ(0, 0, 1, 1); // 2
-usfl.math.getCirclePoints(0, 0, 8, 8).length; // 8;
-usfl.math.getIntersectionArea(0, 0, 2, 2, 0, 1, 2, 2); // 2
-usfl.math.lerp(0, 1, 0.2); // 0.2
-usfl.math.map(0.75, 0, 1, -100, 100)); // 50
-usfl.math.radians(180); // Math.PI
-usfl.math.random(0, 100); // 45
-usfl.math.rotateToDEG(359, 1); // 361
-usfl.math.rotateToRAD(Math.PI * 2, Math.PI) // 9.42477796076938 (Math.PI * 3)
-usfl.math.roundToNearest(96.5, 10); // 100
+var math = require('usfl/math');
+
+math.angle(0, 0, -1, 0); // Math.PI
+math.clamp(100, 0, 50)); // 50);
+math.coinToss(); // true or false
+math.degrees(Math.PI); // 180
+math.difference(-20, 20); // 40
+math.distance(0, 0, 1, 1); // 1.41421356237 (Math.SQRT2)
+math.distanceSQ(0, 0, 1, 1); // 2
+math.getCirclePoints(0, 0, 8, 8).length; // 8;
+math.getIntersectionArea(0, 0, 2, 2, 0, 1, 2, 2); // 2
+math.lerp(0, 1, 0.2); // 0.2
+math.map(0.75, 0, 1, -100, 100)); // 50
+math.radians(180); // Math.PI
+math.random(0, 100); // 45
+math.rotateToDEG(359, 1); // 361
+math.rotateToRAD(Math.PI * 2, Math.PI) // 9.42477796076938 (Math.PI * 3)
+math.roundToNearest(96.5, 10); // 100
 ```
+
+
+
+
+## Modern
+
+[modern.js](../modern.js)
+
+Basic feature detection to detect a 'modern' browser
+
+#### Examples
+
+```javascript
+var modern = require('usfl/modern');
+if(modern) {
+    // modern browser
+}
+if(Modernizr.modern) {
+    // modern browser
+}
+```
+
+
+## MouseWheel
+
+[MouseWheel.js](../MouseWheel.js)
+
+Cross-browser mouse wheel util
+
+>`MouseWheel(speed)` returns instance  
+`add()` listen again after remove  
+`remove()` stop listening  
+`on('update', fn)`
+`on('up', fn)`
+`on('down', fn)`
+
+
+#### Examples
+
+```javascript
+var MouseWheel = require('usfl/MouseWheel');
+
+var mouseWheel = new MouseWheel(5);
+mouseWheel.on('update', function(delta) {
+    console.log('mouse wheel moved:', delta);
+});
+mouseWheel.on('up', function() {
+    console.log('mouse wheel moved up');
+});
+mouseWheel.on('down', function() {
+    console.log('mouse wheel moved down');
+});
+```
+
+
+## ObjectPool
+
+[ObjectPool.js](../ObjectPool.js)
+
+Reuse objects for performance
+
+>`ObjectPool(Type)` returns instance  
+`getPool()` returns array  
+`get()` returns instance  
+`dispose(instance)`  
+`fill(count)`  
+`empty()`  
+
+#### Examples
+
+```javascript
+var ObjectPool = require('usfl/ObjectPool');
+
+function Foo() {
+  // something
+}
+var pool = new ObjectPool(Foo);
+var foo = pool.get(); // new instance of Foo
+pool.dispose(foo); // put back in pool
+pool.getPool().length // 1
+
+pool.fill(100); // create 100 Foo instances for later use
+pool.getPool().length // 101
+
+for(var i = 0; i < 10; i++) {
+  var foo = pool.get();
+}
+pool.getPool().length // 91
+
+pool.empty(); // empty the pool
+pool.getPool().length // 0
+```
+
+
+## popup
+
+[popup.js](../popup.js)
+
+Pop up window
+
+>`popup(url, name, width, height)` returns boolean
+
+#### Examples
+
+```javascript
+var popup = require('usfl/popup');
+popup('http://www.example.com', 'example', 640, 480);
+```
+
+## ready
+
+[ready.js](../ready.js)
+
+Dom ready
+
+>`ready()`
+
+#### Examples
+
+```javascript
+var ready = require('usfl/ready');
+ready(function() {
+  // something
+});
+```
+
+
+## resize
+
+[resize.js](../resize.js)
+
+Resize a rectangle maintaining aspect ratio
+
+>`resize(rect, areaWidth, areaHeight, autoCenter, method)`
+
+#### Examples
+
+```javascript
+var resize = require('usfl/resize');
+var rect = { x:0, y:0, width: 640, height: 360 };
+// fill up the area completely and center
+resize(rect, window.innerWidth, window.innerHeight, true, 'fill');
+// fit within the area and center
+resize(rect, window.innerWidth, window.innerHeight, true, 'fit');
+```
+
 
 
 ## share
 
-[share.js](../src/lib/share.js)
+[share.js](../share.js)
 
 Various social media share options
 
@@ -168,13 +625,14 @@ Various social media share options
 #### Examples
 
 ```javascript
-usfl.share.facebook('http://www.example.com');
+var share = require('usfl/share');
+share.facebook('http://www.example.com');
 ```
 
 
 ## storage
 
-[storage-utils.js](../src/lib/storage-utils.js)
+[storage.js](../storage.js)
 
 Local storage wrapper, including image to dataUrl
 
@@ -185,13 +643,15 @@ Local storage wrapper, including image to dataUrl
 #### Examples
 
 ```javascript
-usfl.storage.saveJSON('user', {
+var storage = require('usfl/storage');
+
+storage.saveJSON('user', {
   level: 2,
   score: 500,
   lives: 2
 });
 
-var user = usfl.storage.loadJSON('user');
+var user = storage.loadJSON('user');
 console.log(user.level); // 2
 
 // save images in localstorage
@@ -200,16 +660,16 @@ img.src = 'http://www.example.com/foo.jpg';
 img.onload = function() {
   var user = {
     name: 'foo',
-    offlineImage: usfl.storage.getImageDataURL(img);
+    offlineImage: storage.getImageDataURL(img);
   };
-  usfl.storage.saveJSON('user', user);
+  storage.saveJSON('user', user);
 };
 ```
 
 
 ## string
 
-[string-utils.js](../src/lib/string-utils.js)
+[string.js](../string.js)
 
 Utilities for working with strings
 
@@ -254,19 +714,21 @@ Utility:
 #### Examples
 
 ```javascript
-usfl.string.capitalize('hello world', true); // 'Hello World'
-usfl.string.padLeft('1', 4); // '0001'
-usfl.string.stripTags('<p>Hello</p>'); // 'Hello'
-usfl.string.contains('Hello World', 'World'); // true
-usfl.string.isNumeric('8797865'); // true
-usfl.string.between('Hello [World]', '[', ']'); // World
-usfl.string.editDistance('Hello', 'Helllo'); // 1
+var string = require('usfl/string');
+
+string.capitalize('hello world', true); // 'Hello World'
+string.padLeft('1', 4); // '0001'
+string.stripTags('<p>Hello</p>'); // 'Hello'
+string.contains('Hello World', 'World'); // true
+string.isNumeric('8797865'); // true
+string.between('Hello [World]', '[', ']'); // World
+string.editDistance('Hello', 'Helllo'); // 1
 ```
 
 
 ## track
 
-[track.js](../src/lib/track.js)
+[track.js](../track.js)
 
 Google Analytics util
 
@@ -277,430 +739,63 @@ Google Analytics util
 #### Examples
 
 ```javascript
-usfl.track.init('UA-XXX-YYY');
-usfl.track.page('Home');
-usfl.track.event('Foo', 'Bar');
+var track = require('usfl/track');
+
+track.init('UA-XXX-YYY');
+track.page('Home');
+track.event('Foo', 'Bar');
 ```
 
 
 ## urlParams
 
-[url-params.js](../src/lib/url-params.js)
+[urlParams.js](../urlParams.js)
 
 Query string parameters to object
 
 #### Examples
 
 ```javascript
+var urlParams = require('usfl/urlParams');
+
 // Browser address is: http://www.example.com/?debug=true&level=2
 
-if(usfl.urlParams.debug) {
+if(urlParams.debug) {
   // do something
 }
 
-var level = usfl.urlParams.level; // 2
+var level = urlParams.level; // 2
 ```
 
 
-## visibility
 
-[visibility.js](../src/lib/visibility.js)
 
-Wrapper for browser visibility API
+## VideoPlayer
 
->`onPageHidden` // returns Signal  
-`onPageShown` // returns Signal
-
-
-#### Examples
-
-```javascript
-usfl.visibility.onPageHidden.add(function() {
-  videoPlayer.pause();
-  audio.mute();
-});
-
-usfl.visibility.onPageShown.add(function() {
-  videoPlayer.play();
-  audio.unmute();
-});
-```
-
-
-# Constructors
-
-
-## AssetLoader
-
-[asset-loader.js](../src/lib/asset-loader.js)
-
-Batch loads images, audio and json files.
-
-#### Examples
-
-```javascript
-var assetLoader = new usfl.AssetLoader();
-assetLoader.add('images/foo.jpg');
-assetLoader.add('images/bar.jpg');
-assetLoader.onProgress.add(function(progress) {
-  // progress 0 to 1
-});
-assetLoader.onChildComplete.add(function(loader) {
-  // something loaded
-});
-assetLoader.onComplete.add(function(loaders) {
-  // finished
-});
-assetLoader.start();
-```
-
-
-## Boid
-
-[boid.js](../src/lib/boid.js)
-
-Steering behaviours
-
-#### Examples
-
-```javascript
-var gfx = new usfl.Graphics();
-
-var wanderer = new usfl.Boid();
-    wanderer.setBounds(gfx.width, gfx.height);
-    wanderer.position.x = 400;
-    wanderer.position.y = 400;
-
-var seeker = new usfl.Boid();
-    seeker.setBounds(gfx.width, gfx.height);
-    seeker.position.x = 10;
-    seeker.position.y = 10;
-
-function update() {
-    window.requestAnimationFrame(update);
-
-    wanderer.wander();
-    wanderer.update();
-
-    seeker.seek(wanderer.position);
-    seeker.update();
-
-    gfx.clear();
-
-    gfx.fill('#00FF00');
-    gfx.circle(wanderer.position.x, wanderer.position.y, 10);
-
-    gfx.fill('#0000FF');
-    var angle = mouseSeeker.velocity.angle + Math.PI / 2;
-    gfx.triangle(seeker.position.x, seeker.position.y, 30, 40, angle);
-}
-update();
-```
-
-
-## FPS
-
-[fps.js](../src/lib/fps.js)
-
-Simple FPS counter
-
-#### Examples
-
-```javascript
-var fps = new usfl.FPS();
-
-function update() {
-  window.requestAnimationFrame(update);
-  // update stuff
-  fps.update();
-}
-update();
-
-// use pre-existing element
-var el = document.querySelector('.Fps');
-var fps = new usfl.FPS(el);
-
-```
-
-
-## Graphics
-
-[graphics.js](../src/lib/graphics.js)
-
-Canvas drawing abstraction
-
->`init(canvas)` canvas is optional  
-`size(width, height)` if width and height are undefined window innerWidth/Height are used  
-`clear(color)` clear with optional colour  
-`background(r, g, b)`  
-`fill(r, g, b, a)`  
-`stroke(r, g, b, a)`  
-`strokeWeight(w)`  
-`move(x, y)`  
-`line(x1, y1, x2, y2)`  
-`rect(x, y, width, height, angle)`  
-`circle(x, y, radius)`  
-`triangle(x, y, width, height, angle)`  
-`triangleABC(x1, y1, x2, y2, x3, y3)`  
-`image(img, x, y, angle)`  
-`cross(radius)`  
-`text(str, x, y)`  
-`textFont(font)`  
-`textSize(size)`  
-`openImage()`  
-`downloadImage()`
-
-#### Examples
-
-```javascript
-var graphics = new usfl.Graphics();
-graphics.background('#FFFF00')
-graphics.fill('#00FF00');
-graphics.circle(200, 200, 10);
-
-```
-
-
-## InputCoords
-
-[input-coords.js](../src/lib/input-coords.js)
-
-Keeps track of user input position
-
->`x` returns number  
-`y` returns number  
-`percentX` returns number  
-`percentY` returns number  
-`isListening` returns boolean  
-`on()`  
-`off()`
-
-#### Examples
-
-```javascript
-var inputCoords = new usfl.InputCoords();
-inputCoords.on(); // start listening
-inputCoords.off(); // stop listening
-var x = inputCoords.x; // x position of pointer
-var p = inputCoords.percentX; // x position of pointer as percentage of window
-```
-
-
-## KeyInput
-
-[key-input.js](../src/lib/key-input.js)
-
-Check if keys are down, with helpers for WASD and arrow keys
-
->`on()`  
-`off()`  
-`isDown(key)` // returns boolean  
-`left()` // returns boolean  
-`right()` // returns boolean  
-`up()` // returns boolean  
-`down()` // returns boolean  
-`space()` // returns boolean
-
-#### Examples
-
-```javascript
-var keyInput = new usfl.KeyInput();
-var p = keyInput.isDown(usfl.keyboard.P); // P key is pressed
-var left = keyInput.left(); // left arrow or A is pressed
-keyInput.off(); // stop listening
-keyInput.on(); // start listening again
-```
-
-
-## LinkedList
-
-[linked-list.js](../src/lib/linked-list.js)
-
-Linked List
-
->`add(item)` returns item  
-`remove(item)` returns item  
-`insertAfter(item, after)` returns item  
-`insertBefore(item, before)` returns item  
-`forEach(callback, callbackContext)`  
-`getFirst()` returns item  
-`getLast()` returns item  
-`getCount()` returns number  
-
-#### Examples
-
-```javascript
-function ListItem(name) {
-  this.name = name;
-  this.next = null;
-  this.prev = null;
-}
-var linkedList = new LinkedList();
-linkedList.add(new ListItem('a'));
-linkedList.add(new ListItem('b'));
-linkedList.add(new ListItem('c'));
-
-linkedList.getCount(); // 3
-linkedList.getFirst().name; // 'a'
-linkedList.getLast().name; // 'c'
-
-var item = linkedList.getFirst();
-while(item.next) {
-  console.log(item.name);
-  item = item.next;
-}
-
-linkedList.forEach(function(item) {
-  console.log(item.name);
-});
-
-//linkedList.remove
-//linkedList.insertBefore(item, before);
-```
-
-
-## MouseWheel
-
-[mouse-wheel.js](../src/lib/mouse-wheel.js)
-
-Cross-browser mouse wheel util
-
->`MouseWheel(speed)` returns instance  
-`add()` listen again after remove  
-`remove()` stop listening  
-`onUpdate` returns Signal  
-`onUp` returns Signal  
-`onDown` returns Signal  
-
-
-#### Examples
-
-```javascript
-var mouseWheel = new usfl.MouseWheel(5);
-mouseWheel.onUpdate.add(function(delta) {
-    console.log('mouse wheel moved:', delta);
-});
-mouseWheel.onUp.add(function() {
-    console.log('mouse wheel moved up');
-});
-mouseWheel.onDown.add(function() {
-    console.log('mouse wheel moved down');
-});
-```
-
-
-## ObjectPool
-
-[object-pool.js](../src/lib/object-pool.js)
-
-Reuse objects for performance
-
->`ObjectPool(Type)` returns instance  
-`getPool()` returns array  
-`get()` returns instance  
-`dispose(instance)`  
-`fill(count)`  
-`empty()`  
-
-#### Examples
-
-```javascript
-function Foo() {
-  // something
-}
-var pool = new usfl.ObjectPool(Foo);
-var foo = pool.get(); // new instance of Foo
-pool.dispose(foo); // put back in pool
-pool.getPool().length // 1
-
-pool.fill(100); // create 100 Foo instances for later use
-pool.getPool().length // 101
-
-for(var i = 0; i < 10; i++) {
-  var foo = pool.get();
-}
-pool.getPool().length // 91
-
-pool.empty(); // empty the pool
-pool.getPool().length // 0
-```
-
-## Vec2
-
-[vec2.js](../src/lib/vec2.js)
-
-2d vector
-
->`Vec2.get(x, y)` returns Vec2  
-`add(vec, overwrite)` returns Vec2  
-`subtract(vec, overwrite)` returns Vec2  
-`multiply(vec, overwrite)` returns Vec2  
-`divide(vec, overwrite)` returns Vec2  
-`normalize()` returns Vec2  
-`isNormalized()` returns boolean  
-`truncate(max)` returns Vec2  
-`scaleBy(mul)` returns Vec2  
-`divideBy(div)` returns Vec2  
-`equals(vec)` returns boolean  
-`negate()` returns Vec2  
-`reverse()` returns Vec2  
-`dotProduct(vec)` returns number  
-`crossProduct(vec)` returns number  
-`distanceSquared(vec)` returns number  
-`distance(vec)` returns number  
-`clone()` returns Vec2  
-`zero()` returns Vec2  
-`isZero()` returns boolean  
-`reset()` returns Vec2  
-`perpendicular()` returns Vec2  
-`sign(vec)` returns number  
-`set(x, y)` returns Vec2  
-`dispose()`  
-`Vec2.angleBetween()` returns number  
-`lengthSquared` returns number  
-`length` returns number  
-`angle` returns number  
-
-#### Examples
-
-```javascript
-var velocity = Vec2.get(1,1);
-var position = Vec2.get(2,2);
-position.add(velocity, true);
-console.log(position.x, position.y); // 3, 3
-```
-
-
-## VideoObject
-
-[video-object.js](../src/lib/video-object.js)
+[VideoPlayer.js](../VideoPlayer.js)
 
 Wrapper for Video media element
 
->`onReady` returns Signal  
-`onPlay` returns Signal  
-`onError` returns Signal  
-`onEnded` returns Signal  
-`onTimeUpdate` returns Signal  
+>`on('ready', fn)`  
+`on('play', fn)`  
+`on('error', fn)`  
+`on('ended', fn)`  
+`on('timeupdate', fn)`  
 `create()`  
 `load(url)`  
-`forceLoad(pauseDelay)`  
 `unload()`  
 `destroy()`  
 `play()`  
 `pause()`  
-`seek(time)`  
-`getBufferProgress()`  
-`getReadyStateString()`  
-`getNetworkStateString()`  
-`getErrorStateString()`  
-`getElement()`  
-`getVolume()`  
-`setVolume(value)
+`seek(time)`
+`el`  
+`currentTime`  
+`duration`  
+`volume`  
 
 ## Viewport
 
-[viewport.js](../src/lib/viewport.js)
+[viewport.js](../viewport.js)
 
 Manager for a user defined viewport
 
@@ -712,7 +807,7 @@ Manager for a user defined viewport
 `getWindowScrollY()` returns number  
 `getDocHeight()` returns number  
 `getScrollPercentage()` returns number  
-`onResize` returns Signal  
+`on('resize', fn)`
 `originalHeight` returns number  
 `originalWidth` returns number  
 `rect` returns Object  
@@ -722,152 +817,68 @@ Manager for a user defined viewport
 #### Examples
 
 ```javascript
-Viewport.init(640, 360);
-Viewport.resize();
-Viewport.originalWidth; // 640
-Viewport.rect.x; // number
-Viewport.rect.stageWidth;
-Viewport.rect.scale;
-Viewport.getScrollTop();
-Viewport.getWindowScrollY();
-Viewport.getDocHeight();
-Viewport.getScrollPercentage();
+var viewport = require('usfl/viewport');
+
+viewport.init(640, 360);
+viewport.resize();
+viewport.originalWidth; // 640
+viewport.rect.x; // number
+viewport.rect.stageWidth;
+viewport.rect.scale;
+viewport.getScrollTop();
+viewport.getWindowScrollY();
+viewport.getDocHeight();
+viewport.getScrollPercentage();
 });
 ```
 
 
-# Functions
+## visibility
 
+[visibility.js](../visibility.js)
 
-## popup
+Wrapper for browser visibility API
 
-[popup.js](../src/lib/popup.js)
+>`on('hidden', fn)`
+`on('shown', fn)`  
 
-Pop up window
-
->`popup(url, name, width, height)` returns boolean
 
 #### Examples
 
 ```javascript
-usfl.popup('http://www.example.com', 'example', 640, 480);
-```
+var visibility = require('usfl/visibility');
 
+visibility.on('hidden', function() {
+  videoPlayer.pause();
+  audio.mute();
+});
 
-## ready
-
-[ready.js](../src/lib/ready.js)
-
-Dom ready
-
->`ready()`
-
-#### Examples
-
-```javascript
-usfl.ready(function() {
-  // something
+visibility.on('shown', function() {
+  videoPlayer.play();
+  audio.unmute();
 });
 ```
 
 
-## resize
 
-[resize.js](../src/lib/resize.js)
+## polyfills
 
-Resize a rectangle maintaining aspect ratio
+[polyfill-classlist.js](../polyfill-classlist.js)
 
->`resize(rect, areaWidth, areaHeight, autoCenter, method)`
+Shims broken classList.add, classList.remove and classList.toggle in ie10 and ie11
 
-#### Examples
+[polyfill-console.js](../polyfill-console.js)
 
-```javascript
-var rect = { x:0, y:0, width: 640, height: 360 };
-// fill up the area completely and center
-usfl.resize(rect, window.innerWidth, window.innerHeight, true, 'fill');
-// fit within the area and center
-usfl.resize(rect, window.innerWidth, window.innerHeight, true, 'fit');
-```
+Patches missing console methods
 
+[polyfill-raf.js](../polyfill-raf.js)
 
-## raf polyfill
-
-[raf-polyfill.js](../src/lib/raf-polyfill.js)
-
-Handle need for prefix or fallback to setTimeout
-
-
-# Not included in bundle
-
-
-## Facebook
-
-[facebook.js](../src/lib/facebook.js)
-
->`init()`  
-`login()`  
-`onInit` returns Signal  
-`onInfo` returns Signal  
-`utils`  
-`getInfo(permissions, fields)`
+Handles need for prefix or fallback to setTimeout
 
 #### Examples
 
 ```javascript
-var facebook = new Facebook(appId);
-facebook.onInfo.add(function(response) {
-    console.log(response);
-});
-facebook.onInit.add(function() {
-    facebook.getInfo();
-});
-facebook.init();
-```
-
-
-## Flash
-
-[flash.js](../src/lib/flash.js)
-
->`Flash(element, url, embedvars, flashvars)`  
-`embed()`  
-`getFlashObject` returns SWF  
-`ready()`  
-`call(functionName, args)`  
-`onEmded` returns Signal  
-`onReady` returns Signal
-
-#### Examples
-
-```javascript
-var el = document.querySelector('.Flash');
-var flash = new Flash(el, 'flash.swf', {
-  version: '11.2.0',
-  width: 640,
-  height: 360,
-  bgColor: '#000000'
-}, {
-  debug: true,
-  foo: 'bar'
-});
-flash.embed();
-```
-
-
-## Modern
-
-[modern.js](../src/lib/modern.js)
-
-Basic feature detection to detect a 'modern' browser
-
-#### Examples
-
-```javascript
-var modern = require('modern.js');
-if(modern) {
-    // modern browser
-}
-if(Modernizr.modern) {
-    // modern browser
-}
+require('usfl/polyfill-classlist');
+require('usfl/polyfill-console');
+require('usfl/polyfill-raf');
 ```

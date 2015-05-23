@@ -1,6 +1,6 @@
 'use strict';
 
-var Viewport = require('../src/lib/viewport.js');
+var Viewport = require('../viewport');
 
 describe('viewport', function() {
     Viewport.init(640, 360);

@@ -1,6 +1,6 @@
 'use strict';
 
-var Fullscreen = require('../src/lib/fullscreen.js');
+var Fullscreen = require('../fullscreen');
 
 describe('fullscreen', function() {
 
@@ -9,7 +9,7 @@ describe('fullscreen', function() {
     });
 
     it('should have onChange', function() {
-        expect(Fullscreen.onChange).to.be.an('object');
+        expect(Fullscreen.on).to.be.a('function');
     });
 
 });

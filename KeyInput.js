@@ -1,6 +1,6 @@
 'use strict';
 
-var Keyboard = require('./keyboard.js');
+var Keyboard = require('./keyboard');
 
 function KeyInput() {
     var keys = [];

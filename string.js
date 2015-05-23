@@ -195,7 +195,7 @@ function afterFirst(str, substr) {
     return str.substr(index);
 }
 
-// everything after the last occurence of substr in str    
+// everything after the last occurence of substr in str
 function afterLast(str, substr) {
     var index = str.lastIndexOf(substr);
     if (index === -1) { return ''; }
@@ -210,7 +210,7 @@ function beforeFirst(str, substr) {
     return str.substr(0, index);
 }
 
-// everything before the last occurrence of substr in the string.        
+// everything before the last occurrence of substr in the string.
 function beforeLast(str, substr) {
     var index = str.lastIndexOf(substr);
     if (index === -1) { return ''; }
@@ -242,11 +242,12 @@ function between(str, start, end) {
 // If a match can't be found in your specified length an  '...' is added to that block,
 // and the blocking continues untill all the text is broken apart.
 function block(str, len, delim) {
-    if(delim === undefined) {
-        delim = '.';
-    }
+    if(delim === undefined) { delim = '.'; }
     var arr = [];
-    if (str === null || !contains(str, delim)) { return arr; }
+
+    if (!str || !contains(str, delim)) { return arr; }
+    if (delim === ' ') { str += delim; }
+
     var chrIndex = 0;
     var strLen = str.length;
     var replPatt = new RegExp('[^'+escapePattern(delim)+']+$');
@@ -257,7 +258,7 @@ function block(str, len, delim) {
             chrIndex += subString.length;
         }
         subString = subString.replace(replPatt, '');
-        arr.push(subString);
+        arr.push(trim(subString));
         chrIndex += subString.length;
     }
     return arr;
@@ -342,7 +343,7 @@ var StringUtils = {
     'isEmpty': isEmpty,
     'isNumeric': isNumeric,
     'wordCount': wordCount,
-    
+
     // substring:
     'afterFirst': afterFirst,
     'afterLast': afterLast,

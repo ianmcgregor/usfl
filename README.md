@@ -11,82 +11,84 @@ A collection of tested, reusable JS utilities and snippets.
 
 ### Usage
 
-Use individual modules from `src/lib/` or the bundles `dist/usfl.js` or `dist/usfl.min.js`.
+Use individual modules or the bundles `index.js`, `dist/usfl.js` or `dist/usfl.min.js`.
 
-To create your own custom bundle, edit `src/usfl.js` and run `gulp js-bundle-release`.
+```javascript
+// individual module
+var device = require('usfl/device');
+
+// entire bundle
+var usfl = require('usfl');
+var device = usfl.device;
+```
 
 ### Api
 
-#### Instances
+[usfl/array](docs/README.md#array)
 
-[usfl.array](docs/README.md#array)
+[usfl/AssetLoader](docs/README.md#assetloader)
 
-[usfl.device](docs/README.md#device)
+[usfl/device](docs/README.md#device)
 
-[usfl.fullscreen](docs/README.md#fullscreen)
+[usfl/Emitter](docs/README.md#emitter)
 
-[usfl.keyboard](docs/README.md#keyboard)
+[usfl/Facebook](docs/README.md#facebook)
 
-[usfl.math](docs/README.md#math)
+[usfl/Flash](docs/README.md#flash)
 
-[usfl.share](docs/README.md#share)
+[usfl/Fps](docs/README.md#fps)
 
-[usfl.storage](docs/README.md#storage)
+[usfl/fullscreen](docs/README.md#fullscreen)
 
-[usfl.string](docs/README.md#string)
+[usfl/Graphics](docs/README.md#graphics)
 
-[usfl.track](docs/README.md#track)
+[usfl/InputCoords](docs/README.md#inputcoords)
 
-[usfl.urlParams](docs/README.md#urlparams)
+[usfl/keyboard](docs/README.md#keyboard)
 
-[usfl.visibility](docs/README.md#visibility)
+[usfl/KeyInput](docs/README.md#keyinput)
 
+[usfl/LinkedList](docs/README.md#linkedlist)
 
-#### Constructors
+[usfl/math](docs/README.md#math)
 
-[usfl.AssetLoader](docs/README.md#assetloader)
+[usfl/modern](docs/README.md#modern)
 
-[usfl.Boid](docs/README.md#boid)
+[usfl/MouseWheel](docs/README.md#mousewheel)
 
-[usfl.FPS](docs/README.md#fps)
+[usfl/ObjectPool](docs/README.md#objectpool)
 
-[usfl.Graphics](docs/README.md#graphics)
+[usfl/platform](docs/README.md#platform)
 
-[usfl.InputCoords](docs/README.md#inputcoords)
+[usfl/popup](docs/README.md#popup)
 
-[usfl.KeyInput](docs/README.md#keyinput)
+[usfl/ready](docs/README.md#ready)
 
-[usfl.LinkedList](docs/README.md#linkedlist)
+[usfl/resize](docs/README.md#resize)
 
-[usfl.MouseWheel](docs/README.md#mousewheel)
+[usfl/share](docs/README.md#share)
 
-[usfl.ObjectPool](docs/README.md#objectpool)
+[usfl/storage](docs/README.md#storage)
 
-[usfl.Vec2](docs/README.md#vec2)
+[usfl/string](docs/README.md#string)
 
-[usfl.VideoObject](docs/README.md#videoobject)
+[usfl/track](docs/README.md#track)
 
-[usfl.Viewport](docs/README.md#viewport)
+[usfl/urlParams](docs/README.md#urlparams)
 
+[usfl/VideoPlayer](docs/README.md#videoplayer)
 
-#### Functions
+[usfl/Viewport](docs/README.md#viewport)
 
-[usfl.popup](docs/README.md#popup)
+[usfl/visibility](docs/README.md#visibility)
 
-[usfl.ready](docs/README.md#ready)
+### polyfills
 
-[usfl.resize](docs/README.md#resize)
+[usfl/polyfill-classList](docs/README.md#polyfills)
 
-[lib/raf-polyfill.js](docs/README.md#raf-polyfill) for iOS6 (prefix), ie9, iOS5, Android < 4.4
+[usfl/polyfill-console](docs/README.md#polyfills)
 
-
-### Not included in bundle
-
-[lib/facebook.js](docs/README.md#facebook) Login/Graph API wrapper
-
-[lib/flash.js](docs/README.md#flash) Flash SWF wrapper
-
-[lib/modern.js](docs/README.md#modern) Detect modern browser via feature detection
+[usfl/polyfill-raf](docs/README.md#polyfills)
 
 
 ### Dev setup

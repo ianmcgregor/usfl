@@ -1,53 +1,53 @@
 'use strict';
 
-var StringUtils = require('../src/lib/string-utils.js');
+var string = require('../string');
 
 describe('string utils', function() {
 
 	var str = 'Hello World';
 
 	it('should query', function() {
-		expect(StringUtils.contains(str, 'World')).to.be.true;
-		expect(StringUtils.countOf(str, 'l')).to.eql(3);
-		expect(StringUtils.endsWith(str, 'ld')).to.be.true;
-		expect(StringUtils.hasText(str)).to.be.true;
-		expect(StringUtils.isEmpty(str)).to.be.false;
-		expect(StringUtils.isNumeric(str)).to.be.false;
-		expect(StringUtils.isNumeric('68769123214')).to.be.true;
-		expect(StringUtils.wordCount(str)).to.eql(2);
-		expect(StringUtils.editDistance(str, str)).to.eql(0);
-		expect(StringUtils.editDistance(str, str + 'a')).to.eql(1);
-		expect(StringUtils.similarity(str, str)).to.eql(1);
+		expect(string.contains(str, 'World')).to.be.true;
+		expect(string.countOf(str, 'l')).to.eql(3);
+		expect(string.endsWith(str, 'ld')).to.be.true;
+		expect(string.hasText(str)).to.be.true;
+		expect(string.isEmpty(str)).to.be.false;
+		expect(string.isNumeric(str)).to.be.false;
+		expect(string.isNumeric('68769123214')).to.be.true;
+		expect(string.wordCount(str)).to.eql(2);
+		expect(string.editDistance(str, str)).to.eql(0);
+		expect(string.editDistance(str, str + 'a')).to.eql(1);
+		expect(string.similarity(str, str)).to.eql(1);
 	});
 
 	it('should find substr', function() {
-		expect(StringUtils.afterFirst(str, 'l')).to.eql('lo World');
-		expect(StringUtils.afterLast(str, 'l')).to.eql('d');
-		expect(StringUtils.beginsWith(str, 'H')).to.be.true;
-		expect(StringUtils.beforeFirst(str, 'l')).to.eql('He');
-		expect(StringUtils.beforeLast(str, 'l')).to.eql('Hello Wor');
-		expect(StringUtils.between(str, 'H', 'W')).to.eql('ello ');
+		expect(string.afterFirst(str, 'l')).to.eql('lo World');
+		expect(string.afterLast(str, 'l')).to.eql('d');
+		expect(string.beginsWith(str, 'H')).to.be.true;
+		expect(string.beforeFirst(str, 'l')).to.eql('He');
+		expect(string.beforeLast(str, 'l')).to.eql('Hello Wor');
+		expect(string.between(str, 'H', 'W')).to.eql('ello ');
 	});
 
 	it('should format', function() {
-		expect(StringUtils.trim('  '+str+'  ')).to.eql('Hello World');
-		expect(StringUtils.trimLeft('  '+str+'  ')).to.eql('Hello World  ');
-		expect(StringUtils.trimRight('  '+str+'  ')).to.eql('  Hello World');
-		expect(StringUtils.padLeft(str, '_', 12)).to.eql('_Hello World');
-		expect(StringUtils.padRight(str, '_', 12)).to.eql('Hello World_');
-		expect(StringUtils.removeExtraWhitespace('Hello     World')).to.eql('Hello World');
-		expect(StringUtils.remove(str, 'll')).to.eql('Heo World');
+		expect(string.trim('  '+str+'  ')).to.eql('Hello World');
+		expect(string.trimLeft('  '+str+'  ')).to.eql('Hello World  ');
+		expect(string.trimRight('  '+str+'  ')).to.eql('  Hello World');
+		expect(string.padLeft(str, '_', 12)).to.eql('_Hello World');
+		expect(string.padRight(str, '_', 12)).to.eql('Hello World_');
+		expect(string.removeExtraWhitespace('Hello     World')).to.eql('Hello World');
+		expect(string.remove(str, 'll')).to.eql('Heo World');
 		// TODO: this sometime acts unexpectedly with shorter strings
-		expect(StringUtils.truncate(str, 10)).to.eql('Hello...');
-		//expect(StringUtils.truncate(str, 4)).to.eql('Hello...');
-		expect(StringUtils.capitalize(str.toLowerCase())).to.eql('Hello world');
-		expect(StringUtils.properCase(str.toLowerCase())).to.eql('Hello World');
-		expect(StringUtils.reverse(str)).to.eql('dlroW olleH');
-		expect(StringUtils.reverseWords(str)).to.eql('World Hello');
-		expect(StringUtils.stripTags('<p>'+str+'</p>')).to.eql('Hello World');
-		expect(StringUtils.swapCase(str)).to.eql('hello World');
-		//expect(StringUtils.block(str)).to.eql('Hello World');
-		expect(StringUtils.escapePattern(str + '.')).to.eql('Hello World\\.');
-		expect(StringUtils.timeCode(217.8)).to.eql('03:37');
+		expect(string.truncate(str, 10)).to.eql('Hello...');
+		//expect(string.truncate(str, 4)).to.eql('Hello...');
+		expect(string.capitalize(str.toLowerCase())).to.eql('Hello world');
+		expect(string.properCase(str.toLowerCase())).to.eql('Hello World');
+		expect(string.reverse(str)).to.eql('dlroW olleH');
+		expect(string.reverseWords(str)).to.eql('World Hello');
+		expect(string.stripTags('<p>'+str+'</p>')).to.eql('Hello World');
+		expect(string.swapCase(str)).to.eql('hello World');
+		//expect(string.block(str)).to.eql('Hello World');
+		expect(string.escapePattern(str + '.')).to.eql('Hello World\\.');
+		expect(string.timeCode(217.8)).to.eql('03:37');
 	});
 });

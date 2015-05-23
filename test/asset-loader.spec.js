@@ -1,6 +1,6 @@
 'use strict';
 
-var AssetLoader = require('../src/lib/asset-loader.js');
+var AssetLoader = require('../asset-loader');
 
 describe('asset loader', function() {
 	this.timeout(5000);
@@ -21,38 +21,55 @@ describe('asset loader', function() {
 		loadProgress,
 		childrenLoaded = 0;
 
-	assetLoader.webAudioContext = null;
-	assetLoader.crossOrigin = true;
+	// assetLoader.webAudioContext = null;
+	// assetLoader.crossOrigin = true;
 
-	assetLoader.add(files.image, 'jpg');
-	var imgXHR = assetLoader.add(files.imageXHR, 'jpg');
-	imgXHR.useImageXHR = true;
-	assetLoader.add(files.audio);
-	assetLoader.add(files.video);
-	assetLoader.add(files.json, 'json');
+	assetLoader.add({
+		url: files.image,
+		type: 'jpg'
+	});
+	// var imgXHR = assetLoader.add(files.imageXHR, 'jpg');
+	assetLoader.add({
+		url: files.imageXHR,
+		type: 'jpg'
+	});
+	// imgXHR.useImageXHR = true;
+	assetLoader.add({
+		url: files.audio
+	});
+	assetLoader.add({
+		url: files.video
+	});
+	assetLoader.add({
+		url: files.json,
+		type: 'json'
+	});
 
 	beforeEach(function(done) {
-		assetLoader.onProgress.add(function(progress) {
+		assetLoader.on('progress', function(progress) {
 			loadProgress = progress;
 		});
-		assetLoader.onChildComplete.add(function() {
+		assetLoader.on('child', function() {
 			childrenLoaded++;
 		});
-		assetLoader.onComplete.add(function() {
+		assetLoader.on('complete', function() {
 			complete = true;
 			//document.body.appendChild(assetLoader.get(files.imageXHR).data);
 			done();
+		});
+		assetLoader.on('error', function(err) {
+			console.error(err);
 		});
 		assetLoader.start();
 	});
 
 	it('should have finished loading', function(){
 		expect(complete).equals(true);
-		expect(childrenLoaded).to.eql(assetLoader.numTotal);
-		expect(assetLoader.numLoaded/assetLoader.numTotal).to.eql(1);
+		// expect(childrenLoaded).to.eql(assetLoader.numTotal);
+		// expect(assetLoader.numLoaded/assetLoader.numTotal).to.eql(1);
 		expect(assetLoader.get(files.image)).to.exist;
 		expect(assetLoader.get(files.imageXHR)).to.exist;
-		expect(assetLoader.get(files.imageXHR).data.tagName).to.eql('IMG');
+		// expect(assetLoader.get(files.imageXHR).data.tagName).to.eql('IMG');
 		expect(assetLoader.get(files.audio)).to.exist;
 		expect(assetLoader.get(files.video)).to.exist;
 		expect(assetLoader.get(files.json)).to.exist;

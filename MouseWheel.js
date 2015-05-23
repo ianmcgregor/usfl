@@ -1,17 +1,15 @@
 'use strict';
 
-var signals = require('signals');
+var Emitter = require('./Emitter');
 
 function MouseWheel(speed) {
   speed = speed || 2;
 
-  var onUpdate = new signals.Signal();
-  var onUp = new signals.Signal();
-  var onDown = new signals.Signal();
+  var mouseWheel;
 
   function add() {
     if ('onmousewheel' in window) {
-      window.onmousewheel = mouseWheelHandler;
+      window.addEventListener('mousewheel', mouseWheelHandler, false);
     } else if (window.addEventListener) {
       window.addEventListener('DOMMouseScroll', mouseWheelHandler, false);
     }
@@ -19,7 +17,7 @@ function MouseWheel(speed) {
 
   function remove() {
     if ('onmousewheel' in window) {
-      window.onmousewheel = null;
+      window.removeEventListener('mousewheel', mouseWheelHandler, false);
     } else if (window.removeEventListener) {
       window.removeEventListener('DOMMouseScroll', mouseWheelHandler, false);
     }
@@ -33,23 +31,23 @@ function MouseWheel(speed) {
     var delta = direction * speed;
 
     if (direction > 0) {
-      onUp.dispatch(delta);
+      mouseWheel.emit('up', delta);
     } else {
-      onDown.dispatch(delta);
+      mouseWheel.emit('down', delta);
     }
 
-    onUpdate.dispatch(delta);
+    mouseWheel.emit('update', delta);
   }
 
   add();
 
-  return Object.freeze({
-    'add': add,
-    'remove': remove,
-    'onUpdate': onUpdate,
-    'onUp': onUp,
-    'onDown': onDown
+  mouseWheel = Object.create(Emitter.prototype, {
+      _events: { value: {} },
+      add: { value: add },
+      remove: { value: remove }
   });
+
+  return Object.freeze(mouseWheel);
 }
 
 if (typeof module === 'object' && module.exports) {

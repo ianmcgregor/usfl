@@ -1,12 +1,12 @@
 {
   "name": "usfl",
-  "version": "0.2.7",
+  "version": "1.0.0",
   "homepage": "https://github.com/ianmcgregor/usfl",
   "authors": [
     "Ian McGregor <imcgrgr@gmail.com>"
   ],
   "description": "A collection of tested, reusable JS utilities and snippets.",
-  "main": "dist/usfl.js",
+  "main": "dist/usfl.min.js",
   "moduleType": [
     "node",
     "amd",
@@ -18,8 +18,5 @@
     "node_modules",
     "bower_components",
     "test"
-  ],
-  "dependencies": {
-    "js-signals": "1.0.0"
-  }
+  ]
 }

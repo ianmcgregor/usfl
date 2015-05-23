@@ -1,7 +1,7 @@
 'use strict';
 
-var signals = require('signals'),
-    resizeUtil = require('./resize.js');
+var Emitter = require('./Emitter'),
+    resizeUtil = require('./resize');
 
 var ViewPort = {
     rect: {
@@ -17,6 +17,7 @@ var ViewPort = {
     originalHeight: 0,
 
     init: function(width, height) {
+        this.emitter = new Emitter();
         this.originalWidth = width;
         this.originalHeight = height;
         var self = this;
@@ -43,7 +44,7 @@ var ViewPort = {
         }
         this.rect.scale = this.rect.width / this.originalWidth;
         // notify
-        this.onResize.dispatch();
+        this.emitter.emit('resize');
     },
     mouseLeftWindow: function(fn, thisArg) {
         document.addEventListener('mouseout', function(e) {
@@ -88,8 +89,7 @@ var ViewPort = {
     getScrollPercentage: function() {
         // Get current vertical scroll percentage
         return ((this.getWindowScrollY() + this.getWindowHeight()) / this.getDocHeight()) * 100;
-    },
-    onResize: new signals.Signal()
+    }
 };
 
 if (typeof module === 'object' && module.exports) {

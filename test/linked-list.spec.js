@@ -1,6 +1,6 @@
 'use strict';
 
-var LinkedList = require('../src/lib/linked-list.js');
+var LinkedList = require('../linked-list');
 
 describe('linked list', function() {
 	var linkedList = new LinkedList();
@@ -13,7 +13,7 @@ describe('linked list', function() {
 			'prev': null
 		}));
 	}
-	
+
 	it('should have 10 items', function() {
 		expect(linkedList.getCount()).to.eql(10);
 	});

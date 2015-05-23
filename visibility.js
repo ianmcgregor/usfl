@@ -1,16 +1,16 @@
 'use strict';
 
-var signals = require('signals');
+var Emitter = require('./Emitter');
 
-var onPageHidden = new signals.Signal(),
-    onPageShown = new signals.Signal(),
-    hidden, visibilityChange;
+var visibility,
+    hidden,
+    visibilityChange;
 
 function onVisibilityChange() {
     if (document[hidden]) {
-        onPageHidden.dispatch();
+        visibility.emit('hidden');
     } else {
-        onPageShown.dispatch();
+        visibility.emit('shown');
     }
 }
 
@@ -32,11 +32,10 @@ if(visibilityChange !== undefined) {
     document.addEventListener(visibilityChange, onVisibilityChange, false);
 }
 
-var Visibility = {
-    onPageHidden: onPageHidden,
-    onPageShown: onPageShown
-};
+visibility = Object.create(Emitter.prototype, {
+    _events: { value: {} }
+});
 
 if (typeof module === 'object' && module.exports) {
-    module.exports = Visibility;
+    module.exports = visibility;
 }

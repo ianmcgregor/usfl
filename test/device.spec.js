@@ -1,9 +1,9 @@
 'use strict';
 
-var device = require('../src/lib/device.js');
+var device = require('../device');
 
 describe('device', function() {
-	
+
 	it('should pass', function() {
 		expect(device.mobile).to.be.false;
 		expect(device.ipad).to.be.false;

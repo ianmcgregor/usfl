@@ -1,6 +1,6 @@
 'use strict';
 
-var ready = require('../src/lib/ready.js');
+var ready = require('../ready');
 
 describe('ready', function() {
 	var isReady = false;

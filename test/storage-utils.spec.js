@@ -1,7 +1,7 @@
 'use strict';
 
-var AssetLoader = require('../src/lib/asset-loader.js'),
-	StorageUtils = require('../src/lib/storage-utils.js');
+var AssetLoader = require('../asset-loader.js'),
+	StorageUtils = require('../storage-utils');
 
 describe('storage utils', function() {
 	var key = 'testData',
@@ -24,18 +24,25 @@ describe('storage utils', function() {
 		expect(loaded.x).to.eql(0);
 	});
 
-	var loader = new AssetLoader.Loader('http://placekitten.com/g/200/300', 'jpg');
-	loader.crossOrigin = true;
+	var loader = new AssetLoader.Loader({
+		url: 'http://placekitten.com/g/200/300',
+		type: 'jpg',
+		crossOrigin: 'anonymous'
+	});
+	var loaderData;
 	beforeEach(function(done) {
-		loader.onComplete.add(function() {
-			loader.onComplete.removeAll();
+		loader.on('complete', function(id, data) {
+			loaderData = data;
+			loader.off();
 			done();
+		}).on('error', function(err) {
+			console.error(err);
 		});
 		loader.start();
 	});
 
 	it('should get image data', function(){
-		var dataURL = StorageUtils.getImageDataURL(loader.data);
+		var dataURL = StorageUtils.getImageDataURL(loaderData);
 		expect(dataURL.indexOf('data:image/')).to.eql(0);
 	});
 });
