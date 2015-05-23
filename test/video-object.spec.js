@@ -1,6 +1,6 @@
 'use strict';
 
-var VideoPlayer = require('../video-player');
+var VideoPlayer = require('../VideoPlayer');
 
 describe('video object', function() {
 	this.timeout(20000); // extend timeout for this test

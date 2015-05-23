@@ -1,7 +1,7 @@
 'use strict';
 
-var AssetLoader = require('../asset-loader.js'),
-	StorageUtils = require('../storage-utils');
+var AssetLoader = require('../AssetLoader.js'),
+	storage = require('../storage');
 
 describe('storage utils', function() {
 	var key = 'testData',
@@ -12,12 +12,12 @@ describe('storage utils', function() {
 		};
 
 	it('should store object and return true', function(){
-		var saved = StorageUtils.saveJSON(key, testData);
+		var saved = storage.saveJSON(key, testData);
 		expect(saved).to.be.true;
 	});
 
 	it('should retrieve stored object', function(){
-		var loaded = StorageUtils.loadJSON(key);
+		var loaded = storage.loadJSON(key);
 		expect(loaded).to.exist;
 		expect(loaded.id).to.eql('foo');
 		expect(loaded.name).to.eql('bar');
@@ -42,7 +42,7 @@ describe('storage utils', function() {
 	});
 
 	it('should get image data', function(){
-		var dataURL = StorageUtils.getImageDataURL(loaderData);
+		var dataURL = storage.getImageDataURL(loaderData);
 		expect(dataURL.indexOf('data:image/')).to.eql(0);
 	});
 });

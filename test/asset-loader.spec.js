@@ -1,6 +1,6 @@
 'use strict';
 
-var AssetLoader = require('../asset-loader');
+var AssetLoader = require('../AssetLoader');
 
 describe('asset loader', function() {
 	this.timeout(5000);

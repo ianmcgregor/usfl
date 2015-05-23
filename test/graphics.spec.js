@@ -1,6 +1,6 @@
 'use strict';
 
-var Graphics = require('../graphics');
+var Graphics = require('../Graphics');
 
 describe('graphics', function() {
 	var graphics = new Graphics();

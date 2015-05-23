@@ -1,6 +1,6 @@
 'use strict';
 
-var ObjectPool = require('../object-pool');
+var ObjectPool = require('../ObjectPool');
 
 describe('object pool', function() {
 	var newlyCreated = 0;
@@ -26,7 +26,7 @@ describe('object pool', function() {
 		p.dispose(t);
 
 		expect(p.getPool().length).to.eql(1);
-		
+
 		t = p.get();
 
 		expect(t.getId()).to.be.a('number');
