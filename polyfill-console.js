@@ -1,21 +1,36 @@
 'use strict';
 
-var fn = function() {};
-
-if (console === undefined) {
-  window.console = {};
-}
-
-console.log = console.log || fn;
-console.debug = console.debug || console.log;
-console.dir = console.dir || fn;
-console.error = console.error || fn;
-console.group = console.group || fn;
-console.groupCollapsed = console.groupCollapsed || fn;
-console.info = console.info || fn;
-console.profile = console.profile || fn;
-console.profileEnd = console.profileEnd || fn;
-console.table = console.table || fn;
-console.timeStamp = console.timeStamp || fn;
-console.trace = console.trace || fn;
-console.warn = console.warn || fn;
+(function(fn) {
+    window.console = window.console || {};
+    var methods = [
+        'assert',
+        'clear',
+        'count',
+        'debug',
+        'dir',
+        'dirxml',
+        'error',
+        'group',
+        'groupCollapsed',
+        'groupEnd',
+        'info',
+        'log',
+        'markTimeline',
+        'memory',
+        'profile',
+        'profileEnd',
+        'table',
+        'time',
+        'timeEnd',
+        'timeStamp',
+        'timeline',
+        'timelineEnd',
+        'trace',
+        'warn'
+    ];
+    var methodName;
+    for (var i = 0; i < methods.length; i++) {
+        methodName = methods[i];
+        window.console[methodName] = window.console[methodName] || fn;
+    }
+}(function() {}));
