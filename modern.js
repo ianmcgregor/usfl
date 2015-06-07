@@ -49,8 +49,8 @@ var modern = (function() {
 
 }());
 
-if(Modernizr) {
-    Modernizr.addTest('modern', function() {
+if(window.Modernizr) {
+    window.Modernizr.addTest('modern', function() {
         return modern;
     });
 }
