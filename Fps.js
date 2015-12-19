@@ -27,7 +27,7 @@ function FPS(el) {
 
     function report() {
         if (currentFps === lastFps && averageFps === lastAverage) {
-          return;
+            return;
         }
         lastFps = currentFps;
         lastAverage = averageFps;
@@ -49,7 +49,7 @@ function FPS(el) {
             fps = 0;
 
             if (currentFps > 1) {
-                ticks ++;
+                ticks++;
                 totalFps += currentFps;
                 averageFps = Math.floor(totalFps / ticks);
             }

@@ -2,7 +2,7 @@
 
 var urlParams = {};
 
-(function () {
+(function() {
     var pl = /\+/g;  // Regex for replacing addition symbol with a space
     var search = /([^&=]+)=?([^&]*)/g;
     var decode = function(s) {
@@ -14,7 +14,7 @@ var urlParams = {};
         urlParams[decode(match[1])] = decode(match[2]);
         match = search.exec(query);
     }
-})();
+}());
 
 if (typeof module === 'object' && module.exports) {
     module.exports = urlParams;

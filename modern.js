@@ -8,7 +8,7 @@ var modern = (function() {
 
     var androidOld = (function() {
         var ua = navigator.userAgent;
-        return !!(ua.match(/Android/i) && parseFloat(ua.slice(ua.indexOf('Android')+8)) < 4);
+        return !!(ua.match(/Android/i) && parseFloat(ua.slice(ua.indexOf('Android') + 8)) < 4);
     }());
 
     var androidStock = (function() {
@@ -30,7 +30,7 @@ var modern = (function() {
         try {
             Object.defineProperty({}, 'x', {});
             Object.create({});
-        } catch(e) {
+        } catch (e) {
             return false;
         }
         return true;
@@ -49,11 +49,10 @@ var modern = (function() {
 
 }());
 
-if(window.Modernizr) {
+if (window.Modernizr) {
     window.Modernizr.addTest('modern', function() {
         return modern;
     });
-}
-else if (typeof module === 'object' && module.exports) {
+} else if (typeof module === 'object' && module.exports) {
     module.exports = modern;
 }

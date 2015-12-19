@@ -36,10 +36,9 @@ var ViewPort = {
         this.rect.stageHeight = this.getWindowHeight();
         this.rect.scale = 1;
         // resize
-        if(this.rect.stageWidth > this.rect.stageHeight) {
+        if (this.rect.stageWidth > this.rect.stageHeight) {
             resizeUtil(this.rect, this.rect.stageWidth, this.rect.stageHeight, true, 'fill');
-        }
-        else {
+        } else {
             resizeUtil(this.rect, this.rect.stageWidth, this.rect.stageHeight, true, 'fitWidth');
         }
         this.rect.scale = this.rect.width / this.originalWidth;
@@ -50,7 +49,7 @@ var ViewPort = {
         document.addEventListener('mouseout', function(e) {
             var from = e.relatedTarget || e.toElement;
             if (!from || from.nodeName === 'HTML') {
-                fn.call(thisArg || this);
+                fn.call(thisArg);
             }
         });
     },

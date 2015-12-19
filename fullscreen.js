@@ -5,8 +5,10 @@ var Emitter = require('./Emitter');
 var Fullscreen = (function() {
 
     var self,
-        el = document.documentElement,
-        isSupported = !!(el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen);
+        docEl = document.documentElement,
+        isSupported = !!(docEl.requestFullScreen ||
+            docEl.webkitRequestFullScreen ||
+            docEl.mozRequestFullScreen);
 
     function onFullscreenChange() {
         self.emit('change', self.isFullscreen());
@@ -27,19 +29,24 @@ var Fullscreen = (function() {
             value: isSupported
         },
         enter: {
-            value: function(element) {
-                element = element || document.documentElement;
+            value: function(el) {
+                el = el || document.documentElement;
 
-                var method = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen; // || element.msRequestFullscreen;
+                var method = el.requestFullScreen ||
+                    el.webkitRequestFullScreen ||
+                    el.mozRequestFullScreen;
 
                 if (method) {
-                    method.call(element);
+                    method.call(el);
                 }
             }
         },
         exit: {
             value: function() {
-                var method = document.exitFullscreen || document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen; // || document.msExitFullscreen;
+                var method = document.exitFullscreen ||
+                    document.cancelFullScreen ||
+                    document.webkitCancelFullScreen ||
+                    document.mozCancelFullScreen;
 
                 if (method) {
                     method.call(document);
@@ -47,17 +54,19 @@ var Fullscreen = (function() {
             }
         },
         toggle: {
-            value: function(element) {
+            value: function(el) {
                 if (this.isFullscreen()) {
                     this.exit();
                 } else {
-                    this.enter(element);
+                    this.enter(el);
                 }
             }
         },
         isFullscreen: {
             value: function() {
-                return !!(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen); // || document.msFullscreenElement );
+                return !!(document.fullScreen ||
+                    document.webkitIsFullScreen ||
+                    document.mozFullScreen);
             }
         }
     });

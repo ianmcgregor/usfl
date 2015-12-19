@@ -30,13 +30,17 @@ function trimRight(str) {
 
 // pad str with substr from the left
 function padLeft(str, substr, length) {
-    while (str.length < length) { str = substr + str; }
+    while (str.length < length) {
+        str = substr + str;
+    }
     return str;
 }
 
 // pads str with substr from the right
 function padRight(str, substr, length) {
-    while (str.length < length) { str += substr; }
+    while (str.length < length) {
+        str += substr;
+    }
     return str;
 }
 
@@ -55,7 +59,7 @@ function remove(str, substr, caseSensitive) {
 
 // truncate to length with suffix
 function truncate(str, len, suffix) {
-    if(suffix === undefined) {
+    if (suffix === undefined) {
         suffix = '...';
     }
     len -= suffix.length;
@@ -78,8 +82,7 @@ function capitalize(str, all) {
         return substr.replace(/^.|\b./g, function(match) {
             return match.toUpperCase();
         });
-    }
-    else {
+    } else {
         return substr.replace(/(^\w)/, function(match) {
             return match.toUpperCase();
         });
@@ -125,11 +128,13 @@ function swapCase(str) {
 
 // formats seconds into HH:MM:SS
 function timeCode(seconds, delim) {
-    if(delim === undefined) { delim = ':'; }
+    if (delim === undefined) {
+        delim = ':';
+    }
     var h = Math.floor(seconds / 3600);
     var m = Math.floor((seconds % 3600) / 60);
     var s = Math.floor((seconds % 3600) % 60);
-    var hr = (h === 0 ? '' : (h < 10 ? '0' + h + delim : h + delim));
+    var hr = (h < 10 ? '0' + h : h) + delim;
     var mn = (m < 10 ? '0' + m : m) + delim;
     var sc = (s < 10 ? '0' + s : s);
     return hr + mn + sc;
@@ -190,7 +195,9 @@ function wordCount(str) {
 // everything after the first occurrence of substr in str
 function afterFirst(str, substr) {
     var index = str.indexOf(substr);
-    if (index === -1) { return ''; }
+    if (index === -1) {
+        return '';
+    }
     index += substr.length;
     return str.substr(index);
 }
@@ -198,7 +205,9 @@ function afterFirst(str, substr) {
 // everything after the last occurence of substr in str
 function afterLast(str, substr) {
     var index = str.lastIndexOf(substr);
-    if (index === -1) { return ''; }
+    if (index === -1) {
+        return '';
+    }
     index += substr.length;
     return str.substr(index);
 }
@@ -206,14 +215,18 @@ function afterLast(str, substr) {
 // everything before the first occurrence of substr in str
 function beforeFirst(str, substr) {
     var index = str.indexOf(substr);
-    if (index === -1) { return ''; }
+    if (index === -1) {
+        return '';
+    }
     return str.substr(0, index);
 }
 
 // everything before the last occurrence of substr in the string.
 function beforeLast(str, substr) {
     var index = str.lastIndexOf(substr);
-    if (index === -1) { return ''; }
+    if (index === -1) {
+        return '';
+    }
     return str.substr(0, index);
 }
 
@@ -225,7 +238,7 @@ function between(str, start, end) {
         startIndex += start.length;
         var endIndex = str.indexOf(end, startIndex);
         if (endIndex !== -1) {
-            substr = str.substr(startIndex, endIndex-startIndex);
+            substr = str.substr(startIndex, endIndex - startIndex);
         }
     }
     return substr;
@@ -242,18 +255,24 @@ function between(str, start, end) {
 // If a match can't be found in your specified length an  '...' is added to that block,
 // and the blocking continues untill all the text is broken apart.
 function block(str, len, delim) {
-    if(delim === undefined) { delim = '.'; }
+    if (delim === undefined) {
+        delim = '.';
+    }
     var arr = [];
 
-    if (!str || !contains(str, delim)) { return arr; }
-    if (delim === ' ') { str += delim; }
+    if (!str || !contains(str, delim)) {
+        return arr;
+    }
+    if (delim === ' ') {
+        str += delim;
+    }
 
     var chrIndex = 0;
     var strLen = str.length;
-    var replPatt = new RegExp('[^'+escapePattern(delim)+']+$');
-    while (chrIndex <  strLen) {
+    var replPatt = new RegExp('[^' + escapePattern(delim) + ']+$');
+    while (chrIndex < strLen) {
         var subString = str.substr(chrIndex, len);
-        if (!contains(subString, delim)){
+        if (!contains(subString, delim)) {
             arr.push(truncate(subString, subString.length));
             chrIndex += subString.length;
         }
@@ -270,10 +289,16 @@ function block(str, len, delim) {
 function editDistance(source, target) {
     var i;
 
-    if (source === null) { source = ''; }
-    if (target === null) { target = ''; }
+    if (source === null) {
+        source = '';
+    }
+    if (target === null) {
+        target = '';
+    }
 
-    if (source === target) { return 0; }
+    if (source === target) {
+        return 0;
+    }
 
     var d = [];
     var cost;
@@ -281,24 +306,37 @@ function editDistance(source, target) {
     var m = target.length;
     var j;
 
-    if (n === 0) { return m; }
-    if (m === 0) { return n; }
+    if (n === 0) {
+        return m;
+    }
+    if (m === 0) {
+        return n;
+    }
 
-    for (i=0; i<=n; i++) { d[i] = []; }
-    for (i=0; i<=n; i++) { d[i][0] = i; }
-    for (j=0; j<=m; j++) { d[0][j] = j; }
+    for (i = 0; i <= n; i++) {
+        d[i] = [];
+    }
+    for (i = 0; i <= n; i++) {
+        d[i][0] = i;
+    }
+    for (j = 0; j <= m; j++) {
+        d[0][j] = j;
+    }
 
-    for (i=1; i<=n; i++) {
+    for (i = 1; i <= n; i++) {
 
-        var s_i = source.charAt(i-1);
-        for (j=1; j<=m; j++) {
+        var si = source.charAt(i - 1);
+        for (j = 1; j <= m; j++) {
 
-            var t_j = target.charAt(j-1);
+            var tj = target.charAt(j - 1);
 
-            if (s_i === t_j) { cost = 0; }
-            else { cost = 1; }
+            if (si === tj) {
+                cost = 0;
+            } else {
+                cost = 1;
+            }
 
-            d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+cost);
+            d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
         }
     }
     return d[n][m];
@@ -308,8 +346,11 @@ function editDistance(source, target) {
 function similarity(a, b) {
     var e = editDistance(a, b);
     var m = Math.max(a.length, b.length);
-    if (m === 0) { return 1; }
-    else { return (1 - e/m); }
+    if (m === 0) {
+        return 1;
+    } else {
+        return (1 - e / m);
+    }
 }
 
 

@@ -5,7 +5,7 @@ var resize = function (rect, areaWidth, areaHeight, autoCenter, method) {
         height = rect.height,
         scale;
 
-    switch(method) {
+    switch (method) {
         case 'fill':
             scale = Math.max(areaWidth / width, areaHeight / height);
             break;

@@ -18,12 +18,11 @@ function LinkedList() {
         }
     */
     function add(item) {
-        if(!first) {
+        if (!first) {
             first = last = item;
-        }
-        else {
+        } else {
             var i = first;
-            while(i.next) {
+            while (i.next) {
                 i = i.next;
             }
             insertAfter(item, i);
@@ -54,11 +53,10 @@ function LinkedList() {
 
         item.prev = after;
         item.next = after.next;
-        
+
         if (!after.next) {
             last = item;
-        }
-        else {
+        } else {
             after.next.prev = item;
         }
 
@@ -75,8 +73,7 @@ function LinkedList() {
 
         if (!before.prev) {
             first = item;
-        }
-        else {
+        } else {
             before.prev.next = item;
         }
 
@@ -86,14 +83,14 @@ function LinkedList() {
     }
 
     function forEach(callback, callbackContext) {
-        if(!first) {
+        if (!first) {
             return;
         }
         var args = Array.prototype.splice.call(arguments, 2);
         args.unshift(null); // make space for item
 
         var item = first;
-        while(item) {
+        while (item) {
             args[0] = item;
             callback.apply(callbackContext, args);
             item = item.next;
@@ -110,8 +107,8 @@ function LinkedList() {
         getCount: function() {
             var count = 0;
             var i = first;
-            while(i) {
-                count ++;
+            while (i) {
+                count++;
                 i = i.next;
             }
             return count;

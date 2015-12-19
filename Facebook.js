@@ -14,14 +14,14 @@ function Facebook(appId) {
                 if(response.status === 'connected') {
                 }
             });*/
-            FB.init({
+            window.FB.init({
                 appId: appId,
                 status: true,
                 cookie: true,
                 logging: true,
                 xfbml: true
             });
-            FB.getLoginStatus(function(response) {
+            window.FB.getLoginStatus(function(response) {
                 self.emit('init', response.status);
             });
             clearTimeout(loadScriptTimeout);
@@ -35,7 +35,7 @@ function Facebook(appId) {
 
     // login
     function login(callback, permissions) {
-        FB.login(function() {
+        window.FB.login(function() {
             callback();
         }, {
             'scope': (permissions || '')
@@ -45,29 +45,28 @@ function Facebook(appId) {
     // check that user has granted required permissions and request if needed
     function checkPermissions(callback, permissions) {
         if (permissions === undefined || permissions === '') {
-            callback();
-        } else {
-            FB.api('/me/permissions', function(response) {
-                var hasPermission = true;
-                var perms = permissions.split(',');
-                for (var i = 0; i < perms.length; i++) {
-                    hasPermission = !!response.data[0][perms[i]];
-                    if (!hasPermission) {
-                        break;
-                    }
-                }
-                if (hasPermission) {
-                    callback();
-                } else {
-                    login(callback, permissions);
-                }
-            });
+            return callback();
         }
+
+        window.FB.api('/me/permissions', function(response) {
+            var hasPermission = true;
+            var perms = permissions.split(',');
+            for (var i = 0; i < perms.length; i++) {
+                hasPermission = !!response.data[0][perms[i]];
+                if (!hasPermission) {
+                    break;
+                }
+            }
+            if (hasPermission) {
+                return callback();
+            }
+            login(callback, permissions);
+        });
     }
 
     // check user login and permission status
     function checkAuth(callback, permissions) {
-        FB.getLoginStatus(function(response) {
+        window.FB.getLoginStatus(function(response) {
             if (response.status === 'connected') {
                 checkPermissions(callback, permissions);
             } else {
@@ -78,7 +77,7 @@ function Facebook(appId) {
 
     function getInfo(permissions, fields) {
         checkAuth(function() {
-            FB.api('/me', {
+            window.FB.api('/me', {
                 'fields': fields
             }, function(response) {
                 if (!response || response.error) {
@@ -137,30 +136,32 @@ function Facebook(appId) {
 
 var utils = {
     getProfileImageUrl: function(id, width, height) {
-        return document.location.protocol + '//graph.facebook.com/' + id + '/picture?width=' + width + '&height=' + height;
+        return document.location.protocol +
+            '//graph.facebook.com/' + id +
+            '/picture?width=' + width + '&height=' + height;
     },
     resizeCanvas: function(height) {
-        FB.Canvas.setSize({
+        window.FB.Canvas.setSize({
             'height': height
         });
         setTimeout(function() {
-            FB.Canvas.setSize({
+            window.FB.Canvas.setSize({
                 'height': height
             });
         }, 1000);
     },
     scrollToTop: function() {
-        FB.Canvas.scrollTo(0, 0);
+        window.FB.Canvas.scrollTo(0, 0);
     },
     logout: function() {
-        FB.Event.subscribe('auth.logout', function(response) {
+        window.FB.Event.subscribe('auth.logout', function(response) {
             var success = response && !response.error;
             console.log('onFacebookLogoutComplete', success);
         });
-        FB.logout();
+        window.FB.logout();
     },
     getFriends: function(limit) {
-        FB.api('/me/friends', {
+        window.FB.api('/me/friends', {
             limit: limit
         }, function(response) {
             if (!response || response.error) {
@@ -180,7 +181,7 @@ var utils = {
     },
     /* publish status message to feed. requires publish_stream permission */
     statusPublish: function(message) {
-        FB.api('/me/feed', 'post', {
+        window.FB.api('/me/feed', 'post', {
             message: message
         }, function(response) {
             if (!response || response.error) {
@@ -192,23 +193,23 @@ var utils = {
     },
     /* Send a message */
     sendDialog: function(_link, _name, _description, _picture, _to) {
-        FB.ui({
-                method: 'send',
-                to: _to,
-                name: _name,
-                picture: _picture,
-                link: _link,
-                display: 'popup',
-                description: _description
-            },
-            function(response) {
-                console.log('facebook.sendDialog', response);
-                if (response.success) {
-                    console.log('onFacebookSendDialogComplete', true);
-                } else {
-                    console.log('onFacebookSendDialogComplete', false);
-                }
-            });
+        window.FB.ui({
+            method: 'send',
+            to: _to,
+            name: _name,
+            picture: _picture,
+            link: _link,
+            display: 'popup',
+            description: _description
+        },
+        function(response) {
+            console.log('facebook.sendDialog', response);
+            if (response.success) {
+                console.log('onFacebookSendDialogComplete', true);
+            } else {
+                console.log('onFacebookSendDialogComplete', false);
+            }
+        });
     },
     /* Publish action. requires publish_actions permission */
     /*publishAction: function(appId, namespace, action, target_id, repeaterUrl, object, url, image) {
@@ -229,16 +230,16 @@ var utils = {
         });
     },*/
     /* stream publish with confirmation and user input. rquires publish_stream permission */
-    streamPublish: function(message, attachment, action_links, user_message_prompt, target_id) {
+    streamPublish: function(message, attachment, actionLinks, userMessagePrompt, targetId) {
         var publish = {
             method: 'stream.publish',
             message: message,
             attachment: attachment,
-            action_links: action_links,
-            user_message_prompt: user_message_prompt,
-            target_id: target_id
+            action_links: actionLinks,
+            user_message_prompt: userMessagePrompt,
+            target_id: targetId
         };
-        FB.ui(publish, function(response) {
+        window.FB.ui(publish, function(response) {
             if (!response || response.error) {
                 console.log('onFacebookStreamPublishComplete', false);
             } else {
@@ -254,12 +255,12 @@ var utils = {
             description: 'description',
             href: 'http://example.com/'
         };
-        var action_links = [{
+        var actionLinks = [{
             text: 'action_link',
             href: 'http://example.com/'
         }];
-        var user_message_prompt = 'user_message_prompt';
-        this.streamPublish(message, attachment, action_links, user_message_prompt);
+        var userMessagePrompt = 'user_message_prompt';
+        this.streamPublish(message, attachment, actionLinks, userMessagePrompt);
     }
 };
 

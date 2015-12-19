@@ -28,7 +28,7 @@ if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and 
     visibilityChange = 'webkitvisibilitychange';
 }
 
-if(visibilityChange !== undefined) {
+if (visibilityChange !== undefined) {
     document.addEventListener(visibilityChange, onVisibilityChange, false);
 }
 

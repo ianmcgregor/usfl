@@ -10,15 +10,15 @@ var MathUtils = {
         return Math.atan2(dy, dx);
     },
     clamp: function(value, min, max) {
-        if(min > max) {
+        if (min > max) {
             var a = min;
             min = max;
             max = a;
         }
-        if(value < min) {
+        if (value < min) {
             return min;
         }
-        if(value > max) {
+        if (value > max) {
             return max;
         }
         return value;
@@ -61,7 +61,7 @@ var MathUtils = {
         return aX * bX + aY * bY;
     },
     getCirclePoints: function(originX, originY, radius, count, start, Class) {
-        start = start === undefined ? -Math.PI/2 : start;
+        start = start === undefined ? -Math.PI / 2 : start;
         var points = [],
             circ = Math.PI * 2,
             incr = circ / count,
@@ -86,7 +86,7 @@ var MathUtils = {
         return Math.max(0, Math.min(aY + aH, bY + bH) - Math.max(aY, bY));
     },
     lerp: function(from, to, percent) {
-        return from + ( to - from ) * percent;
+        return from + (to - from) * percent;
     },
     map: function(v, a, b, x, y) {
         // value, min expected, max expected, map min, map max
@@ -99,7 +99,7 @@ var MathUtils = {
         return degrees * RAD;
     },
     random: function(min, max) {
-        if ( isNaN(max) ) {
+        if (isNaN(max)) {
             max = min;
             min = 0;
         }

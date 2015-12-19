@@ -4,23 +4,21 @@ var ready;
 if (document.addEventListener) {
     ready = function(fn, context) {
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            fn.call(context || this);
-        }
-        else {
+            fn.call(context);
+        } else {
             document.addEventListener('DOMContentLoaded', function() {
-                fn.call(context || this);
+                fn.call(context);
             });
         }
     };
-}
-else {
+} else {
     ready = function(fn, context) {
         if (document.readyState === 'interactive') {
-            fn.call(context || this);
+            fn.call(context);
         }
-        document.attachEvent('onreadystatechange', function(){
+        document.attachEvent('onreadystatechange', function() {
             if (document.readyState === 'interactive') {
-                fn.call(context || this);
+                fn.call(context);
             }
         });
     };

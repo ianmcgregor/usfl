@@ -9,11 +9,11 @@ function android() {
 }
 
 function androidOld() {
-    return !!(android() && parseFloat(ua.slice(ua.indexOf('Android')+8)) < 4);
+    return !!(android() && parseFloat(ua.slice(ua.indexOf('Android') + 8)) < 4);
 }
 
 function androidStock() {
-    if(!android()) {
+    if (!android()) {
         return false;
     }
     var regExAppleWebKit = new RegExp(/AppleWebKit\/([\d.]+)/);
@@ -45,19 +45,14 @@ function ie9down() {
 
 function ieVersion() {
     var rv = -1,
-        re,
-        ua;
+        re;
     if (navigator.appName === 'Microsoft Internet Explorer') {
-        ua = ua;
-        re  = new RegExp('MSIE ([0-9]{1,}[.0-9]{0,})');
+        re = new RegExp('MSIE ([0-9]{1,}[.0-9]{0,})');
         if (re.exec(ua) !== null) {
             rv = parseFloat( RegExp.$1 );
         }
-    }
-    else if (navigator.appName === 'Netscape')
-    {
-        ua = ua;
-        re  = new RegExp('Trident/.*rv:([0-9]{1,}[.0-9]{0,})');
+    } else if (navigator.appName === 'Netscape') {
+        re = new RegExp('Trident/.*rv:([0-9]{1,}[.0-9]{0,})');
         if (re.exec(ua) !== null) {
             rv = parseFloat( RegExp.$1 );
         }
