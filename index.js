@@ -31,6 +31,7 @@ usfl.resize = require('./resize');
 usfl.share = require('./share');
 usfl.storage = require('./storage');
 usfl.string = require('./string');
+usfl.TouchInput = require('./TouchInput');
 usfl.track = require('./track');
 usfl.urlParams = require('./urlParams');
 usfl.VideoPlayer = require('./VideoPlayer');
