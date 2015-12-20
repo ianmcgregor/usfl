@@ -3,9 +3,9 @@
 var Graphics = require('../Graphics');
 
 describe('graphics', function() {
-	var graphics = new Graphics();
+    var graphics = new Graphics();
 
-    it('should constrcut successfully', function() {
+    it('should construct successfully', function() {
         expect(graphics).to.exist;
         expect(graphics.size).to.be.a('function');
     });

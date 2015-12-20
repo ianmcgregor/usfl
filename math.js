@@ -2,6 +2,7 @@
 
 var DEG = 180 / Math.PI;
 var RAD = Math.PI / 180;
+var PI2 = Math.PI * 2;
 
 var MathUtils = {
     angle: function(x1, y1, x2, y2) {
@@ -95,6 +96,9 @@ var MathUtils = {
         // map(25, 0, 100, -50, 50) // -25
         return (v === a) ? x : (v - a) * (y - x) / (b - a) + x;
     },
+    percentRemaining: function(value, total) {
+        return (value % total) / total;
+    },
     radians: function(degrees) {
         return degrees * RAD;
     },
@@ -113,7 +117,6 @@ var MathUtils = {
         return start + diff;
     },
     rotateToRAD: function(start, end) {
-        var PI2 = Math.PI * 2;
         var diff = (end - start) % PI2;
         if (diff !== diff % Math.PI) {
             diff = diff < 0 ? diff + PI2 : diff - PI2;

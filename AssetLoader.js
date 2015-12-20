@@ -456,9 +456,7 @@ AssetsLoader.stats = {
             var secs = (Date.now() - startTime) / 1000;
             this.secs += secs;
             this.mbs += mbs;
-            this.log(url, mbs, secs);
-        } else {
-            console.warn.call(console, 'Can\'t get Content-Length:', url);
+            // this.log(url, mbs, secs);
         }
     },
     log: function(url, mbs, secs) {

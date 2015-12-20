@@ -5,7 +5,7 @@ var Viewport = require('../viewport');
 describe('viewport', function() {
     Viewport.init(640, 360);
 
-    it('should pass', function(){
+    it('should pass', function() {
 
         expect(Viewport.originalWidth).to.eql(640);
         expect(Viewport.originalHeight).to.eql(360);
