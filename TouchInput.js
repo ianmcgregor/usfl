@@ -1,6 +1,6 @@
 'use strict';
 
-var EventEmitter = require('./emitter');
+var EventEmitter = require('./Emitter');
 
 module.exports = function TouchInput(el, minSwipeDistance) {
     el = el || document.body;
