@@ -60,6 +60,8 @@ describe('media', () => {
                 done();
             }).on('error', function(err) {
                 console.error(err);
+                ready = true;
+                done();
             });
             videoPlayer.load(file);
         });
