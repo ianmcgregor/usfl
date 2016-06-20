@@ -556,7 +556,7 @@ import 'usfl/polyfill/requestAnimationFrame';
 
 ## popup
 
-[usfl/popup](../popup.js)
+[usfl/popup](../popup/index.js)
 
 ```javascript
 // popup(url, width = 800, height = 600, name = '')
@@ -567,7 +567,7 @@ popup('http://www.example.com');
 
 ## share
 
-[usfl/share](../share.js)
+[usfl/share](../share/index.js)
 
 ```javascript
 import share from 'usfl/share';
@@ -610,7 +610,7 @@ img.src = 'http://www.example.com/foo.jpg';
 
 ## string
 
-[usfl/string](../string.js)
+[usfl/string](../string/index.js)
 
 ```javascript
 import string from 'usfl/string';
@@ -656,7 +656,7 @@ editDistance('Hello', 'Helllo'); // 1
 
 ## track
 
-[usfl/track](../track.js)
+[usfl/track](../track/index.js)
 
 ```javascript
 import track from 'usfl/track';
@@ -669,7 +669,7 @@ track.event(category, action, label, value);
 
 ## visibility
 
-[usfl/visibility](../visibility.js)
+[usfl/visibility](../visibility/index.js)
 
 ```javascript
 const visibility from 'usfl/visibility';
