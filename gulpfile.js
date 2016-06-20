@@ -1,14 +1,12 @@
-'use strict';
-
-var browserify = require('browserify');
-var buffer = require('vinyl-buffer');
-var chalk = require('chalk');
-var gulp = require('gulp');
-var eslint = require('gulp-eslint');
-var rename = require('gulp-rename');
-var source = require('vinyl-source-stream');
-var strip = require('gulp-strip-debug');
-var uglify = require('gulp-uglify');
+const browserify = require('browserify');
+const buffer = require('vinyl-buffer');
+const chalk = require('chalk');
+const gulp = require('gulp');
+const eslint = require('gulp-eslint');
+const rename = require('gulp-rename');
+const source = require('vinyl-source-stream');
+const strip = require('gulp-strip-debug');
+const uglify = require('gulp-uglify');
 
 //log
 function logError(msg) {
@@ -39,6 +37,7 @@ gulp.task('lint', function() {
         '**/*.js',
         '!dist/**/*.js',
         '!node_modules/**/*.js',
+        '!karma.conf.js',
         '!tmp/**/*.js'
     ])
     .pipe(eslint())

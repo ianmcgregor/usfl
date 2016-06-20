@@ -21,8 +21,33 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/**/*.js'
+        'test/**/*.spec.js'
+        // 'test/array-utils.spec.js',
+        // 'test/math-utils.spec.js',
+        // 'test/string-utils.spec.js'
     ],
+
+    preprocessors: {
+    //   'test/**/*.js'
+        // 'string/**/*.js': ['babel']
+    },
+
+//     module.exports = function(config) {
+//   config.set({
+//     files: [
+//       "src/**/*.js",
+//       "test/**/*.js"
+//     ],
+//     preprocessors: {
+//       "src/**/*.js": ["babel"],
+//       "test/**/*.js": ["babel"]
+//     },
+//     "babelPreprocessor": {
+//       // options go here
+//     }
+//   });
+// };
+
 
 
     // list of files to exclude

@@ -1,41 +1,42 @@
-'use strict';
+import './polyfill';
+import array from './array';
+import dom from './dom';
+import events from './events';
+import fps from './fps';
+import fullscreen from './fullscreen';
+import graphics from './graphics';
+import http from './http';
+import input from './input';
+import linkedList from './linked-list';
+import math from './math';
+import media from './media';
+import objectPool from './object-pool';
+import platform from './platform';
+import popup from './popup';
+import share from './share';
+import storage from './storage';
+import string from './string';
+import track from './track';
+import visibility from './visibility';
 
-require('./polyfill-classlist');
-require('./polyfill-console');
-require('./polyfill-raf');
-
-var usfl = {};
-
-usfl.array = require('./array');
-usfl.AssetLoader = require('./AssetLoader');
-usfl.CuepointsReader = require('./CuepointsReader');
-usfl.device = require('./device');
-usfl.Emitter = require('./Emitter');
-usfl.Facebook = require('./Facebook');
-usfl.Flash = require('./Flash');
-usfl.FPS = require('./Fps');
-usfl.fullscreen = require('./fullscreen');
-usfl.Graphics = require('./Graphics');
-usfl.InputCoords = require('./InputCoords');
-usfl.keyboard = require('./keyboard');
-usfl.KeyInput = require('./KeyInput');
-usfl.LinkedList = require('./LinkedList');
-usfl.math = require('./math');
-usfl.modern = require('./modern');
-usfl.MouseWheel = require('./MouseWheel');
-usfl.ObjectPool = require('./ObjectPool');
-usfl.platform = require('./platform');
-usfl.popup = require('./popup');
-usfl.ready = require('./ready');
-usfl.resize = require('./resize');
-usfl.share = require('./share');
-usfl.storage = require('./storage');
-usfl.string = require('./string');
-usfl.TouchInput = require('./TouchInput');
-usfl.track = require('./track');
-usfl.urlParams = require('./urlParams');
-usfl.VideoPlayer = require('./VideoPlayer');
-usfl.Viewport = require('./viewport');
-usfl.visibility = require('./visibility');
-
-module.exports = usfl;
+export default {
+    array,
+    dom,
+    events,
+    fps,
+    fullscreen,
+    graphics,
+    http,
+    input,
+    linkedList,
+    math,
+    media,
+    objectPool,
+    platform,
+    popup,
+    share,
+    storage,
+    string,
+    track,
+    visibility
+};

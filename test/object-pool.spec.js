@@ -1,13 +1,11 @@
-'use strict';
-
-var ObjectPool = require('../ObjectPool');
+import objectPool from '../object-pool';
 
 describe('object pool', function() {
-    var newlyCreated = 0;
+    let newlyCreated = 0;
 
     function TestOb() {
         newlyCreated++;
-        var id = Math.random();
+        const id = Math.random();
         return {
             getId: function() {
                 return id;
@@ -16,32 +14,32 @@ describe('object pool', function() {
     }
 
     it('should pass', function() {
-        var p = new ObjectPool(TestOb);
-        var t = p.get();
+        const pool = objectPool(TestOb);
+        let instance = pool.get();
 
-        expect(t).to.exist;
-        expect(t.getId()).to.be.a('number');
-        expect(p.getPool().length).to.eql(0);
+        expect(instance).to.exist;
+        expect(instance.getId()).to.be.a('number');
+        expect(pool.getPool().length).to.eql(0);
 
-        p.dispose(t);
+        pool.dispose(instance);
 
-        expect(p.getPool().length).to.eql(1);
+        expect(pool.getPool().length).to.eql(1);
 
-        t = p.get();
+        instance = pool.get();
 
-        expect(t.getId()).to.be.a('number');
-        expect(p.getPool().length).to.eql(0);
+        expect(instance.getId()).to.be.a('number');
+        expect(pool.getPool().length).to.eql(0);
         expect(newlyCreated).to.eql(1);
 
-        p.fill(10);
-        expect(p.getPool().length).to.eql(10);
+        pool.fill(10);
+        expect(pool.getPool().length).to.eql(10);
         expect(newlyCreated).to.eql(11);
 
-        for (var i = 0; i < 5; i++) {
-            t = p.get();
-            expect(t.getId()).to.be.a('number');
+        for (let i = 0; i < 5; i++) {
+            instance = pool.get();
+            expect(instance.getId()).to.be.a('number');
         }
-        expect(p.getPool().length).to.eql(5);
+        expect(pool.getPool().length).to.eql(5);
         expect(newlyCreated).to.eql(11);
     });
 });
