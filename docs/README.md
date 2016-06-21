@@ -649,6 +649,8 @@ string.swapCase('Hello World'); // 'hello World'
 string.escapePattern('Hello World' + '.'); // 'Hello World\\.'
 string.timeCode(217.8); // '00:03:37'
 
+string.preventWidow('Hello World'); // Hello&nbsp;World
+
 import editDistance from 'usfl/string/editDistance';
 editDistance('Hello', 'Helllo'); // 1
 ```

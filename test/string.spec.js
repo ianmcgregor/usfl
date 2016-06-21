@@ -46,4 +46,10 @@ describe('string utils', function() {
         expect(string.escapePattern(str + '.')).to.eql('Hello World\\.');
         expect(string.timeCode(217.8)).to.eql('00:03:37');
     });
+
+    it('should prevent widow', () => {
+        expect(string.preventWidow('Hello world')).to.eql('Hello&nbsp;world');
+        expect(string.preventWidow('   Hello world      ')).to.eql('Hello&nbsp;world');
+        expect(string.preventWidow('Morbi in sem quis dui placerat ornare.')).to.eql('Morbi in sem quis dui placerat&nbsp;ornare.');
+    });
 });

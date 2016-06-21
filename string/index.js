@@ -14,6 +14,7 @@ import hasText from './hasText';
 import isNumeric from './isNumeric';
 import padLeft from './padLeft';
 import padRight from './padRight';
+import preventWidow from './preventWidow';
 import properCase from './properCase';
 import remove from './remove';
 import removeExtraWhitespace from './removeExtraWhitespace';
@@ -43,6 +44,7 @@ export default {
     isNumeric,
     padLeft,
     padRight,
+    preventWidow,
     properCase,
     remove,
     removeExtraWhitespace,
