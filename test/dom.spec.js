@@ -29,6 +29,17 @@ describe('dom', () => {
         expect(dom.getScrollTop()).to.be.a('number');
     });
 
+    it('should get SrcsetImage', () => {
+        const srcsetA = `images/image_2048.jpg 2048w,
+                images/image_640.jpg 640w,
+                images/image_1536.jpg 1536w`;
+        expect(dom.getSrcsetImage(srcsetA)).to.be.a('string');
+        expect(dom.getSrcsetImage(srcsetA, 2048)).to.eql('images/image_2048.jpg');
+        expect(dom.getSrcsetImage(srcsetA, 500)).to.eql('images/image_640.jpg');
+        expect(dom.getSrcsetImage(srcsetA, 1280)).to.eql('images/image_1536.jpg');
+        expect(dom.getSrcsetImage(srcsetA, 3000)).to.eql('images/image_2048.jpg');
+    });
+
     it('should get isElementInViewport', () => {
         expect(dom.isElementInViewport(document.body)).to.be.a('boolean');
     });
