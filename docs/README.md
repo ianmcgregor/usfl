@@ -44,6 +44,11 @@ dom.getScrollRemaining(); // returns number
 // get number of px scrolled
 dom.getScrollTop(); // returns number
 
+// get appropriate image from srcset
+const srcset = img.getAttribute('data-srcset');
+// e.g. 'images/image_2048.jpg 2048w, images/image_640.jpg 640w';
+dom.getSrcsetImage(srcset); // return string e.g. images/image_2048.jpg
+
 // is an el contained in the visible screen
 dom.isElementInViewport(el); // returns boolean
 
@@ -56,7 +61,7 @@ dom.resize();
 // smoothed scroll listener
 dom.scroll();
 
-// css transition end listener
+// css transition end listener with timeout
 dom.transitionEnd(el, cb, timeout = 1000);
 
 ```
