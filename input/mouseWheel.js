@@ -1,42 +1,42 @@
 import emitter from '../events/emitter';
 
-export default function MouseWheel(speed) {
+export default function mouseWheel(speed) {
     speed = speed || 2;
 
-    let mouseWheel;
+    let wheel;
 
-    function mouseWheelHandler(event) {
+    function wheelHandler(event) {
         const direction = (event.detail < 0 || event.wheelDelta > 0) ? 1 : -1;
         const delta = direction * speed;
 
         if (direction > 0) {
-            mouseWheel.emit('up', delta);
+            wheel.emit('up', delta);
         } else {
-            mouseWheel.emit('down', delta);
+            wheel.emit('down', delta);
         }
 
-        mouseWheel.emit('update', delta);
+        wheel.emit('update', delta);
     }
 
     function add() {
         if ('onmousewheel' in window) {
-            window.addEventListener('mousewheel', mouseWheelHandler, false);
+            window.addEventListener('mousewheel', wheelHandler, false);
         } else if (window.addEventListener) {
-            window.addEventListener('DOMMouseScroll', mouseWheelHandler, false);
+            window.addEventListener('DOMMouseScroll', wheelHandler, false);
         }
     }
 
     function remove() {
         if ('onmousewheel' in window) {
-            window.removeEventListener('mousewheel', mouseWheelHandler, false);
+            window.removeEventListener('mousewheel', wheelHandler, false);
         } else if (window.removeEventListener) {
-            window.removeEventListener('DOMMouseScroll', mouseWheelHandler, false);
+            window.removeEventListener('DOMMouseScroll', wheelHandler, false);
         }
     }
 
     add();
 
-    mouseWheel = Object.create(emitter.prototype, {
+    wheel = Object.create(emitter.prototype, {
         _events: {
             value: {}
         },
@@ -48,5 +48,5 @@ export default function MouseWheel(speed) {
         }
     });
 
-    return Object.freeze(mouseWheel);
+    return Object.freeze(wheel);
 }

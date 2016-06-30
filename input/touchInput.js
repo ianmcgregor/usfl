@@ -30,15 +30,18 @@ export default function touchInput(el) {
                 data.start[0] = data.move[0] = data.end[0] = data.position[0] = x;
                 data.start[1] = data.move[1] = data.end[1] = data.position[1] = y;
                 data.touching = true;
+                self.emit('start', data);
                 break;
             case 'touchmove':
                 data.move[0] = data.position[0] = x;
                 data.move[1] = data.position[1] = y;
+                self.emit('move', data);
                 break;
             case 'touchend':
                 data.end[0] = data.position[0] = x;
                 data.end[1] = data.position[1] = y;
                 data.touching = false;
+                self.emit('end', data);
                 break;
             default: break;
         }
