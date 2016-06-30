@@ -4,6 +4,7 @@ import getPageHeight from './getPageHeight';
 import getScrollPercentage from './getScrollPercentage';
 import getScrollRemaining from './getScrollRemaining';
 import getScrollTop from './getScrollTop';
+import getSrcsetImage from './getSrcsetImage';
 import isElementInViewport from './isElementInViewport';
 import isPageEnd from './isPageEnd';
 import resize from './resize';
@@ -17,6 +18,7 @@ export default {
     getScrollPercentage,
     getScrollRemaining,
     getScrollTop,
+    getSrcsetImage,
     isElementInViewport,
     isPageEnd,
     resize,
