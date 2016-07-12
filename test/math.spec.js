@@ -82,6 +82,11 @@ describe('math utils', () => {
         expect(math.rotateToRad(Math.PI * 2, Math.PI)).to.eql(Math.PI * 3);
     });
 
+    it('should round to places', () => {
+        expect(math.roundTo(0.1234, 2)).to.eql(0.12);
+        expect(math.roundTo(0.1234, 3)).to.eql(0.123);
+    });
+
     it('should round to nearest', () => {
         expect(math.roundToNearest(96.5, 10)).to.eql(100);
     });

@@ -18,6 +18,7 @@ import radians from './radians';
 import random from './random';
 import rotateToDeg from './rotateToDeg';
 import rotateToRad from './rotateToRad';
+import roundTo from './roundTo';
 import roundToNearest from './roundToNearest';
 import size from './size';
 import splitValueAndUnit from './splitValueAndUnit';
@@ -43,6 +44,7 @@ export default {
     random,
     rotateToDeg,
     rotateToRad,
+    roundTo,
     roundToNearest,
     size,
     splitValueAndUnit

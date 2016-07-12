@@ -68,10 +68,18 @@ dom.transitionEnd(el, cb, timeout = 1000);
 
 ## events
 
+[usfl/events/debounce](../events/debounce.js)  
 [usfl/events/delegateEvents](../events/delegateEvents.js)  
 [usfl/events/emitter](../events/emitter.js)  
 [usfl/events/eventBus](../events/eventBus.js)
 
+```javascript
+// debounce(handler)
+import debounce from 'usfl/events/debounce';
+document.body.addEventListener('touchmove', debounce((event) =>{
+    console.log('touchmove');
+}));
+```
 ```javascript
 // delegateEvents(parentEl, eventType, tagName, cb)
 import delegateEvents from 'usfl/events/delegateEvents';
@@ -396,6 +404,7 @@ math.radians(180); // Math.PI
 math.random(0, 100); // 45
 math.rotateToDeg(359, 1); // 361
 math.rotateToRad(Math.PI * 2, Math.PI) // 9.42477796076938 (Math.PI * 3)
+math.roundTo(1.23456, 2); // 1.23
 math.roundToNearest(96.5, 10); // 100  
 math.size({width: 640, height: 360}, 1920, 720, 'cover', true); // {x: 0, y: -180, width: 1920, height: 1080}
 math.splitValueAndUnit('10%').value; // 10
