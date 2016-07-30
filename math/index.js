@@ -1,4 +1,5 @@
 import angle from './angle';
+import cerp from './cerp';
 import clamp from './clamp';
 import coinToss from './coinToss';
 import crossProduct2d from './crossProduct2d';
@@ -21,10 +22,14 @@ import rotateToRad from './rotateToRad';
 import roundTo from './roundTo';
 import roundToNearest from './roundToNearest';
 import size from './size';
+import smerp from './smerp';
+import smoothstep from './smoothstep';
 import splitValueAndUnit from './splitValueAndUnit';
+import weightedAverage from './weightedAverage';
 
 export default {
     angle,
+    cerp,
     clamp,
     coinToss,
     crossProduct2d,
@@ -46,6 +51,9 @@ export default {
     rotateToRad,
     roundTo,
     roundToNearest,
+    smerp,
+    smoothstep,
     size,
-    splitValueAndUnit
+    splitValueAndUnit,
+    weightedAverage
 };
