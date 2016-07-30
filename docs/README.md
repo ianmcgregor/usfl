@@ -390,7 +390,8 @@ list.insertAfter(item, list.getLast());
 import math from 'usfl/math';
 
 math.angle(0, 0, -1, 0); // Math.PI
-math.clamp(100, 0, 50)); // 50);
+math.cerp(0, 1, 0.3); // 0.20610737385376343
+math.clamp(100, 0, 50); // 50
 math.coinToss(); // true or false
 math.degrees(Math.PI); // 180
 math.difference(-20, 20); // 40
@@ -407,8 +408,11 @@ math.rotateToRad(Math.PI * 2, Math.PI) // 9.42477796076938 (Math.PI * 3)
 math.roundTo(1.23456, 2); // 1.23
 math.roundToNearest(96.5, 10); // 100  
 math.size({width: 640, height: 360}, 1920, 720, 'cover', true); // {x: 0, y: -180, width: 1920, height: 1080}
+math.smerp(10, 20, 0, 10, 5); // 15
+math.smoothstep(10, 20, 15); // 0.5
 math.splitValueAndUnit('10%').value; // 10
 math.splitValueAndUnit('10%').unit; // '%'
+math.weightedAverage(0, 1, 20); // 0.05
 ```
 
 ## media
