@@ -6,6 +6,10 @@ describe('math utils', () => {
         expect(math.angle(0, 0, -1, 0)).to.eql(Math.PI);
     });
 
+    it('should interpolate using cerp', () => {
+        expect(math.cerp(0, 100, 0.5)).to.be.a('number');
+    });
+
     it('should find clamp number', () => {
         expect(math.clamp(100, 0, 50)).to.eql(50);
     });
@@ -123,6 +127,14 @@ describe('math utils', () => {
         });
     });
 
+    it('should interpolate using smoothstep', () => {
+        expect(math.smerp(0, 100, 0, 10, 5)).to.be.a('number');
+    });
+
+    it('should interpolate value using smoothstep', () => {
+        expect(math.smoothstep(0, 1, 0.5)).to.be.a('number');
+    });
+
     it('should split unit and value', () => {
         expect(math.splitValueAndUnit('10%').value).to.eql(10);
         expect(math.splitValueAndUnit('10%').unit).to.eql('%');
@@ -130,6 +142,10 @@ describe('math utils', () => {
         expect(math.splitValueAndUnit('1.4vw').unit).to.eql('vw');
         expect(math.splitValueAndUnit('-2px').value).to.eql(-2);
         expect(math.splitValueAndUnit('-2px').unit).to.eql('px');
+    });
+
+    it('should interpolate using weighted average', () => {
+        expect(math.weightedAverage(0, 100, 20)).to.be.a('number');
     });
 
 });
