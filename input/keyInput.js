@@ -1,52 +1,83 @@
+import array from '../array/array';
+import emitter from '../events/emitter';
 import keyboard from './keyboard';
 
 export default function keyInput() {
-    const keys = [];
+    const api = Object.create(emitter.prototype);
+    const keys = array(256, false);
 
-    for (let i = 0; i < 256; i++) {
-        keys.push(false);
+    function emitKey(keyCode) {
+        const keyName = Object.keys(keyboard).reduce((value, key) => {
+            return keyboard[key] === keyCode ? key : value;
+        }, '').toLowerCase();
+        if (keyName) {
+            api.emit(keyName.toLowerCase());
+        }
     }
 
     function onKeyDown(event) {
         event.preventDefault();
         keys[event.keyCode] = true;
+        api.emit('keydown', event.keyCode);
+        emitKey(event.keyCode);
     }
 
     function onKeyUp(event) {
         event.preventDefault();
         keys[event.keyCode] = false;
+        api.emit('keyup', event.keyCode);
     }
 
-    const self = {
-        on: function() {
-            document.addEventListener('keydown', onKeyDown, false);
-            document.addEventListener('keyup', onKeyUp, false);
-        },
-        off: function() {
-            document.removeEventListener('keydown', onKeyDown, false);
-            document.removeEventListener('keyup', onKeyUp, false);
-        },
-        isDown: function(key) {
-            return keys[key];
-        },
-        left: function() {
-            return keys[keyboard.LEFT] || keys[keyboard.A];
-        },
-        right: function() {
-            return keys[keyboard.RIGHT] || keys[keyboard.D];
-        },
-        up: function() {
-            return keys[keyboard.UP] || keys[keyboard.W];
-        },
-        down: function() {
-            return keys[keyboard.DOWN] || keys[keyboard.S];
-        },
-        space: function() {
-            return keys[keyboard.SPACEBAR];
+    function add() {
+        document.addEventListener('keydown', onKeyDown, false);
+        document.addEventListener('keyup', onKeyUp, false);
+    }
+
+    function remove() {
+        document.removeEventListener('keydown', onKeyDown);
+        document.removeEventListener('keyup', onKeyUp);
+    }
+
+    function isDown(key) {
+        return keys[key];
+    }
+
+    function left() {
+        return keys[keyboard.LEFT] || keys[keyboard.A];
+    }
+
+    function right() {
+        return keys[keyboard.RIGHT] || keys[keyboard.D];
+    }
+
+    function up() {
+        return keys[keyboard.UP] || keys[keyboard.W];
+    }
+
+    function down() {
+        return keys[keyboard.DOWN] || keys[keyboard.S];
+    }
+
+    function space() {
+        return keys[keyboard.SPACE];
+    }
+
+    function enable(value = true) {
+        remove();
+        if (value) {
+            add();
         }
-    };
+    }
 
-    self.on();
+    add();
 
-    return self;
+    return Object.assign(api, {
+        enable,
+        isDown,
+        left,
+        right,
+        up,
+        down,
+        space
+    });
 }

@@ -85,7 +85,6 @@ export default {
     CAPS_LOCK: 20,
     ESC: 27,
     SPACE: 32,
-    SPACEBAR: 32,
     PAGE_UP: 33,
     PAGE_DOWN: 34,
     END: 35,
