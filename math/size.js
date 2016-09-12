@@ -29,6 +29,7 @@ export default function size(rect, areaWidth, areaHeight, method = 'cover', auto
         x,
         y,
         width,
-        height
+        height,
+        scale
     };
 }
