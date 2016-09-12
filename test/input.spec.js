@@ -12,7 +12,7 @@ describe('input', () => {
 
         it('should have key input', () => {
             expect(input.keyInput).to.be.a('function');
-            expect(input.enable).to.be.a('function');
+            expect(input.keyInput().enable).to.be.a('function');
             expect(input.keyInput().isDown).to.be.a('function');
             expect(input.keyInput().isDown(input.keyboard.UP)).to.be.a('boolean');
         });

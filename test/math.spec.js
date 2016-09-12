@@ -102,28 +102,32 @@ describe('math utils', () => {
             x: 320,
             y: 0,
             width: 1280,
-            height: 720
+            height: 720,
+            scale: 2
         });
 
         expect(math.size(rect, 1920, 720, 'cover', true)).to.eql({
             x: 0,
             y: -180,
             width: 1920,
-            height: 1080
+            height: 1080,
+            scale: 3
         });
 
         expect(math.size(rect, 1920, 720, 'width', true)).to.eql({
             x: 0,
             y: -180,
             width: 1920,
-            height: 1080
+            height: 1080,
+            scale: 3
         });
 
         expect(math.size(rect, 1920, 720, 'height', true)).to.eql({
             x: 320,
             y: 0,
             width: 1280,
-            height: 720
+            height: 720,
+            scale: 2
         });
     });
 
