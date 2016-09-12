@@ -1,6 +1,7 @@
 export default function objectPool(factoryFn) {
 
     let pool = [];
+    let numCreated = 0;
 
     return {
         getPool () {
@@ -10,6 +11,7 @@ export default function objectPool(factoryFn) {
             if ( pool.length > 0 ) {
                 return pool.pop();
             } else {
+                numCreated++;
                 return factoryFn();
             }
         },
@@ -18,11 +20,15 @@ export default function objectPool(factoryFn) {
         },
         fill (count) {
             while ( pool.length < count ) {
+                numCreated++;
                 pool[pool.length] = factoryFn();
             }
         },
         empty () {
             pool = [];
+        },
+        getNumCreated() {
+            return numCreated;
         }
     };
 }

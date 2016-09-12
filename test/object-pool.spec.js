@@ -41,5 +41,7 @@ describe('object pool', function() {
         }
         expect(pool.getPool().length).to.eql(5);
         expect(newlyCreated).to.eql(11);
+
+        expect(pool.getNumCreated()).to.eql(newlyCreated);
     });
 });
