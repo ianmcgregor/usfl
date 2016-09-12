@@ -9,6 +9,7 @@ import isElementInViewport from './isElementInViewport';
 import isPageEnd from './isPageEnd';
 import resize from './resize';
 import scroll from './scroll';
+import setStyle from './setStyle';
 import transitionEnd from './transitionEnd';
 
 export default {
@@ -23,5 +24,6 @@ export default {
     isPageEnd,
     resize,
     scroll,
+    setStyle,
     transitionEnd
 };
