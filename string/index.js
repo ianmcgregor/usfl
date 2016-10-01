@@ -9,6 +9,7 @@ import capitalize from './capitalize';
 import countOf from './countOf';
 import editDistance from './editDistance';
 import endsWith from './endsWith';
+import escapeHtml from './escapeHtml';
 import escapePattern from './escapePattern';
 import hasText from './hasText';
 import isNumeric from './isNumeric';
@@ -24,6 +25,7 @@ import similarity from './similarity';
 import stripTags from './stripTags';
 import swapCase from './swapCase';
 import timeCode from './timeCode';
+import toNumber from './toNumber';
 import truncate from './truncate';
 import wordCount from './wordCount';
 
@@ -39,6 +41,7 @@ export default {
     countOf,
     editDistance,
     endsWith,
+    escapeHtml,
     escapePattern,
     hasText,
     isNumeric,
@@ -54,6 +57,7 @@ export default {
     stripTags,
     swapCase,
     timeCode,
+    toNumber,
     truncate,
     wordCount
 };
