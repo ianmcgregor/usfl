@@ -48,7 +48,7 @@ describe('string utils', function() {
 
     it('should escape', () => {
         expect(string.escapePattern(str + '.')).to.eql('Hello World\\.');
-        expect(string.escapeHtml('<script>alert("lol")</script>'))
+        expect(string.escapeHTML('<script>alert("lol")</script>'))
             .to.eql('&lt;script&gt;alert(&quot;lol&quot;)&lt;&#x2F;script&gt;');
     });
 

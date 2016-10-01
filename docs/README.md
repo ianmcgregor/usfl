@@ -671,7 +671,7 @@ import string from 'usfl/string';
 
 string.countOf('Hello World', 'l'); // 3
 string.endsWith('Hello World', 'ld'); // true
-string.escapeHtml('<p>Hello World</p>'); // 
+string.escapeHTML('<p>Hello World</p>'); // 
 string.hasText('Hello World'); // true
 string.isNumeric('Hello World'); // false
 string.isNumeric('68769123214'); // true

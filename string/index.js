@@ -9,7 +9,7 @@ import capitalize from './capitalize';
 import countOf from './countOf';
 import editDistance from './editDistance';
 import endsWith from './endsWith';
-import escapeHtml from './escapeHtml';
+import escapeHTML from './escapeHTML';
 import escapePattern from './escapePattern';
 import hasText from './hasText';
 import isNumeric from './isNumeric';
@@ -41,7 +41,7 @@ export default {
     countOf,
     editDistance,
     endsWith,
-    escapeHtml,
+    escapeHTML,
     escapePattern,
     hasText,
     isNumeric,
