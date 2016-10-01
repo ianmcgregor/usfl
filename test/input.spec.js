@@ -1,7 +1,11 @@
-// import x from '../x';
 import input from '../input';
 
 describe('input', () => {
+
+    describe('clickOutside', () => {
+        expect(input.clickOutside).to.be.a('function');
+        expect(input.clickOutside().destroy).to.be.a('function');
+    });
 
     describe('key', () => {
 
@@ -26,6 +30,7 @@ describe('input', () => {
 
     describe('mouseLeftWindow', () => {
         expect(input.mouseLeftWindow).to.be.a('function');
+        expect(input.mouseLeftWindow().destroy).to.be.a('function');
     });
 
     describe('mouseWheel', () => {

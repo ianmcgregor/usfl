@@ -18,4 +18,11 @@ describe('events', () => {
         expect(events.eventBus).to.be.an('object');
     });
 
+    it('should have heartbeat', () => {
+        expect(events.heartbeat).to.be.a('function');
+        expect(events.heartbeat().start).to.be.a('function');
+        expect(events.heartbeat().stop).to.be.a('function');
+        expect(events.heartbeat().update).to.be.a('function');
+    });
+
 });

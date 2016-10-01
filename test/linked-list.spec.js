@@ -17,10 +17,12 @@ describe('linked list', () => {
     });
 
     it('should have first', () => {
+        expect(list.first).to.exist;
         expect(list.getFirst()).to.exist;
     });
 
     it('should have last', () => {
+        expect(list.last).to.exist;
         expect(list.getLast()).to.exist;
     });
 
@@ -54,5 +56,14 @@ describe('linked list', () => {
 
         expect(list.getCount()).to.eql(9);
         expect(item).to.eql(list.getFirst());
+    });
+
+    it('should be have getters', () => {
+        expect(list.length).to.eql(9);
+        expect(list.length).to.eql(list.getCount());
+        expect(list.first).to.exist;
+        expect(list.first).to.eql(list.getFirst());
+        expect(list.last).to.exist;
+        expect(list.last).to.eql(list.getLast());
     });
 });

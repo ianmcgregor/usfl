@@ -43,13 +43,25 @@ describe('string utils', function() {
         expect(string.stripTags('<p>' + str + '</p>')).to.eql('Hello World');
         expect(string.swapCase(str)).to.eql('hello World');
         // expect(string.block(str)).to.eql('Hello World');
-        expect(string.escapePattern(str + '.')).to.eql('Hello World\\.');
         expect(string.timeCode(217.8)).to.eql('00:03:37');
+    });
+
+    it('should escape', () => {
+        expect(string.escapePattern(str + '.')).to.eql('Hello World\\.');
+        expect(string.escapeHtml('<script>alert("lol")</script>'))
+            .to.eql('&lt;script&gt;alert(&quot;lol&quot;)&lt;&#x2F;script&gt;');
     });
 
     it('should prevent widow', () => {
         expect(string.preventWidow('Hello world')).to.eql('Hello&nbsp;world');
         expect(string.preventWidow('   Hello world      ')).to.eql('Hello&nbsp;world');
-        expect(string.preventWidow('Morbi in sem quis dui placerat ornare.')).to.eql('Morbi in sem quis dui placerat&nbsp;ornare.');
+        expect(string.preventWidow('Morbi in sem quis dui placerat ornare.'))
+            .to.eql('Morbi in sem quis dui placerat&nbsp;ornare.');
+    });
+
+    it('should convert to number', () => {
+        expect(string.toNumber('thing_01')).to.eql(1);
+        expect(string.toNumber('123%')).to.eql(123);
+        expect(string.toNumber('0.10')).to.eql(0.1);
     });
 });
