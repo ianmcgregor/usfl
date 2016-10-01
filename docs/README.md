@@ -8,9 +8,10 @@
 ```javascript
 import array from 'usfl/array';
 
+array.array(5); // [0,1,2,3,4]
 array.clone([2,1,3]); // [2,1,3]
-array.randomChoice([2,1,3]); // 1
 array.nearest(2.3, [2,1,3]); // 2
+array.randomChoice([2,1,3]); // 1
 array.sortNumeric([2,1,3]); // [1,2,3]
 array.sortRandom([2,1,3]); // [1,3,2]
 
@@ -61,6 +62,12 @@ dom.resize();
 // smoothed scroll listener
 dom.scroll();
 
+// set element styles
+dom.setStyle(el, {
+    left: 0,
+    top: 0
+});
+
 // css transition end listener with timeout
 dom.transitionEnd(el, cb, timeout = 1000);
 
@@ -72,6 +79,7 @@ dom.transitionEnd(el, cb, timeout = 1000);
 [usfl/events/delegateEvents](../events/delegateEvents.js)  
 [usfl/events/emitter](../events/emitter.js)  
 [usfl/events/eventBus](../events/eventBus.js)
+[usfl/events/heartbeat](../events/heartbeat.js)
 
 ```javascript
 // debounce(handler)
@@ -109,6 +117,17 @@ foo.off('hello');
 import eventBus from 'usfl/events/eventBus';
 eventBus.on('foo', () => doSomething());
 eventBus.emit('bar');
+```
+```javascript
+import heartbeat from 'usfl/events/heartbeat';
+const beat = heartbeat(2);
+beat.on('update', () => console.log('beat'));
+beat.start();
+function update() {
+  window.requestAnimationFrame(update);
+  beat.update(delta);
+}
+update();
 ```
 
 ## fps
@@ -230,6 +249,18 @@ xhr('test.html', 'text')
 ```
 
 ## input
+
+#### clickOutside
+
+[usfl/input/clickOutside](../input/clickOutside.js)
+
+```javascript
+import clickOutside from 'usfl/input/clickOutside';
+
+clickOutside(el, () => {
+    el.classList.remove('is-open');
+});
+```
 
 #### keyboard
 
@@ -357,8 +388,13 @@ list.add(itemFactory('b'));
 list.add(itemFactory('c'));
 
 list.getCount(); // 3
+list.length; // 3
+
 list.getFirst().name; // 'a'
+list.first.name; // 'a'
+
 list.getLast().name; // 'c'
+list.last.name; // 'c'
 
 const item = list.getFirst();
 while(item) {
@@ -375,11 +411,11 @@ const newList = list.map((item) => Object.assign(item, {
 }));
 
 // remove 2nd item
-const item = list.remove(list.getFirst().next);
+const item = list.remove(list.first.next);
 // insert it at the beginning
-list.insertBefore(item, list.getFirst());
+list.insertBefore(item, list.first);
 // move it to the end
-list.insertAfter(item, list.getLast());
+list.insertAfter(item, list.last);
 ```
 
 ## math
@@ -635,6 +671,7 @@ import string from 'usfl/string';
 
 string.countOf('Hello World', 'l'); // 3
 string.endsWith('Hello World', 'ld'); // true
+string.escapeHtml('<p>Hello World</p>'); // 
 string.hasText('Hello World'); // true
 string.isNumeric('Hello World'); // false
 string.isNumeric('68769123214'); // true
