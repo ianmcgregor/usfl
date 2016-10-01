@@ -1,4 +1,4 @@
-export default function linkedList() {
+export default function linkedList(arr = []) {
 
     let first,
         last;
@@ -81,21 +81,6 @@ export default function linkedList() {
         return item;
     }
 
-    // function forEach(callback, callbackContext) {
-    //     if (!first) {
-    //         return;
-    //     }
-    //     const args = Array.prototype.splice.call(arguments, 2);
-    //     args.unshift(null); // make space for item
-    //
-    //     let item = first;
-    //     while (item) {
-    //         args[0] = item;
-    //         callback.apply(callbackContext, args);
-    //         item = item.next;
-    //     }
-    // }
-
     function forEach(fn) {
         let item = first;
         while (item) {
@@ -114,12 +99,23 @@ export default function linkedList() {
         return list;
     }
 
+    arr.forEach((item) => add(item));
+
     return {
+        get first () {
+            return first;
+        },
         getFirst () {
             return first;
         },
+        get last () {
+            return last;
+        },
         getLast () {
             return last;
+        },
+        get length () {
+            return this.getCount();
         },
         getCount () {
             let count = 0;
