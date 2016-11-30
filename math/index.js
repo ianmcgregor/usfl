@@ -14,9 +14,11 @@ import getOverlapX from './getOverlapX';
 import getOverlapY from './getOverlapY';
 import lerp from './lerp';
 import map from './map';
+import orientation from './orientation';
 import percentRemaining from './percentRemaining';
 import radians from './radians';
 import random from './random';
+import randomSign from './randomSign';
 import rotateToDeg from './rotateToDeg';
 import rotateToRad from './rotateToRad';
 import roundTo from './roundTo';
@@ -44,9 +46,11 @@ export default {
     getOverlapY,
     lerp,
     map,
+    orientation,
     percentRemaining,
     radians,
     random,
+    randomSign,
     rotateToDeg,
     rotateToRad,
     roundTo,

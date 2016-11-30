@@ -66,6 +66,11 @@ describe('math utils', () => {
         expect(math.map(0.75, 0, 1, -100, 100)).to.eql(50);
     });
 
+    it('should orient', () => {
+        console.log(math.orientation(1, 1), Math.PI / 4);
+        expect(math.orientation(1, 1)).to.eql(Math.PI / 4);
+    });
+
     it('should get percent remaining', () => {
         expect(math.percentRemaining(3, 4)).to.eql(0.75);
     });
@@ -76,6 +81,14 @@ describe('math utils', () => {
 
     it('should get random range', () => {
         expect(math.random(0, 100)).to.be.within(0, 100);
+    });
+
+    it('should get random sign', () => {
+        expect(math.randomSign()).to.be.within(-1, 1);
+        expect(Math.abs(math.randomSign())).to.eql(1);
+        expect(Math.abs(math.randomSign())).to.satisfy((value) => {
+            return value === -1 || value === 1;
+        });
     });
 
     it('should rotate to deg', () => {
