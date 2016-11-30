@@ -1,5 +1,8 @@
-export default function sortNumeric(arr) {
-    return arr.sort(function(a, b) {
-        return a - b;
-    });
+export default function sortNumeric(a, b) {
+    if (arguments.length === 1) {
+        return function(x, y) {
+            return Number(x[a]) - Number(y[a]);
+        };
+    }
+    return Number(a) - Number(b);
 }
