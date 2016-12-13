@@ -20,7 +20,7 @@ export default function heartbeat(interval) {
         return beat;
     }
 
-    function update(dt) {
+    function update(dt = 1) {
         if (!running) {
             return beat;
         }
