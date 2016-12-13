@@ -12,8 +12,11 @@ array.array(5); // [0,1,2,3,4]
 array.clone([2,1,3]); // [2,1,3]
 array.nearest(2.3, [2,1,3]); // 2
 array.randomChoice([2,1,3]); // 1
-array.sortNumeric([2,1,3]); // [1,2,3]
-array.sortRandom([2,1,3]); // [1,3,2]
+['b', 'a'].sort(array.sortAlpha); // ['a', 'b']
+[{n: 'b'}, {n: 'a'}].sort(array.sortAlpha('n')); // [{n: 'a'}, {n: 'b'}]);
+[2, 1].sort(array.sortNumeric); // [1, 2]
+[{n: 2}, {n: 1}].sort(array.sortNumeric('n')); // [{n: 1}, {n: 2}]
+[2, 1, 3].sort(array.sortRandom); // [1, 3, 2]
 
 import randomChoice from 'usfl/array/randomChoice';
 
@@ -181,37 +184,45 @@ fullscreen.enabled;
 [usfl/graphics](../graphics/index.js)
 
 ```javascript
-import graphics from 'usfl/graphics';
+import Graphics from 'usfl/graphics';
 
-graphics(myCanvas)
+const graphics = new Graphics(document.querySelector('canvas'));
+const graphics = new Graphics(w, h);
+
+graphics
     .size(640, 360)
-    .background('#FFFF00')
-    .background(255, 255, 0, 0.5)
+    .clear('#ffff00')
+    .clear(255, 255, 0, 0.5)
     .fill('#00FF00')
     .circle(200, 200, 10)
     .clear('#0000FF')
     .clear()
     .stroke('#FFFF00')
-    .strokeWeight(2)
+    .lineWidth(2)
     .move(0, 0)
     .line(0, 0, 100, 100)
     .rect(0, 0, 100, 100)
-    .triangle(x, y, width, height, angle)
-    .triangleABC(x1, y1, x2, y2, x3, y3)
     .image(img, x, y, angle)
-    .cross(radius)
     .text(str, x, y)
-    .textFont(font)
-    .textSize(size)
-    .openImage()
-    .downloadImage()
-    .getImageData()
+    .setFontStyle(font, size)
+    .getImageData(x, y, w, h)
     .getPixel(x, y)
     .setPixel(x, y, r, g, b, a)
-    .eachPixel((x, y, r, g, b, a) => {
+    .destroy();
 
-    });
+import downloadImage from 'usfl/graphics/downloadImage';
+downloadImage(canvas);
 
+import getImageDataURL from 'usfl/graphics/getImageDataURL';
+getImageDataURL(img, w, h);
+
+import openImage from 'usfl/graphics/openImage';
+openImage(canvas);
+
+import shape from 'usfl/graphics/shape';
+shape.triangle(ctx, x, y, width, height, angle);
+shape.triangleABC(ctx, x1, y1, x2, y2, x3, y3)
+shape.cross(ctx, radius);
 ```
 
 ## http
@@ -438,7 +449,8 @@ math.getIntersectionArea(0, 0, 2, 2, 0, 1, 2, 2); // 2
 math.lerp(0, 1, 0.2); // 0.2
 math.map(0.75, 0, 1, -100, 100)); // 50
 math.radians(180); // Math.PI
-math.random(0, 100); // 45
+math.random(-1, 1); // -0.45
+math.randomInt(0, 100); // 45
 math.rotateToDeg(359, 1); // 361
 math.rotateToRad(Math.PI * 2, Math.PI) // 9.42477796076938 (Math.PI * 3)
 math.roundTo(1.23456, 2); // 1.23
@@ -671,7 +683,7 @@ import string from 'usfl/string';
 
 string.countOf('Hello World', 'l'); // 3
 string.endsWith('Hello World', 'ld'); // true
-string.escapeHTML('<p>Hello World</p>'); // 
+string.escapeHTML('<p>Hello World</p>'); //
 string.hasText('Hello World'); // true
 string.isNumeric('Hello World'); // false
 string.isNumeric('68769123214'); // true
