@@ -1,8 +1,8 @@
-import graphics from '../graphics';
+import Graphics from '../graphics';
 import getImageDataURL from '../graphics/getImageDataURL';
 
 describe('graphics', () => {
-    const gfx = graphics();
+    const gfx = new Graphics();
 
     it('should construct successfully', () => {
         expect(gfx).to.exist;
