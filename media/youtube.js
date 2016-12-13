@@ -1,18 +1,23 @@
-import emitter from '../events/emitter';
-
 // https://developers.google.com/youtube/iframe_api_reference#Events
+import {EventEmitter} from 'events';
 
 export default function youtube(el) {
-    let player, ytPlayer, paused = false;
+    let emitter = null, player = null, paused = false;
 
     function play() {
         paused = false;
-        ytPlayer.playVideo();
+        player.playVideo();
+        return emitter;
     }
 
     function pause() {
         paused = true;
-        ytPlayer.pauseVideo();
+        player.pauseVideo();
+        return emitter;
+    }
+
+    function onReady() {
+        emitter.emit('ready');
     }
 
     function onStateChange(event) {
@@ -20,53 +25,61 @@ export default function youtube(el) {
 
         switch (event.data) {
             case PlayerState.CUED:
-                player.emit('ready');
+            case PlayerState.BUFFERING:
                 break;
             case PlayerState.PLAYING:
                 paused = false;
-                player.emit('play');
+                emitter.emit('play');
                 break;
             case PlayerState.PAUSED:
                 paused = true;
-                player.emit('pause');
+                emitter.emit('pause');
                 break;
             case PlayerState.ENDED:
-                player.emit('ended');
+                emitter.emit('ended');
                 break;
             default: break;
         }
-
-        // YT.PlayerState.BUFFERING
     }
 
     function destroy() {}
 
-    window.onYouTubeIframeAPIReady = () => {
-        if (ytPlayer) {
+    function createPlayer() {
+        if (player) {
             return;
         }
 
-        ytPlayer = window.YT.Player(el, {
+        player = new window.YT.Player(el, {
             events: {
+                onReady,
                 onStateChange
             }
         });
-    };
+    }
+
+
 
     if (window.YT) {
-        window.onYouTubeIframeAPIReady();
+        createPlayer();
+    } else if (window.ytPlayerCalls) {
+        window.ytPlayerCalls.push(createPlayer);
     } else {
+        window.ytPlayerCalls = [createPlayer];
+        window.onYouTubeIframeAPIReady = function() {
+            window.ytPlayerCalls.forEach((call) => call());
+        };
         const script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
         document.body.appendChild(script);
     }
 
-    player = Object.assign(Object.create(emitter.prototype), {
+    emitter = Object.assign(Object.create(EventEmitter.prototype), {
+        _events: {},
         play,
         pause,
         paused: () => paused,
         destroy
     });
 
-    return player;
+    return emitter;
 }
