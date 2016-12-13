@@ -1,4 +1,4 @@
-module.exports = function mouseLeftWindow(cb) {
+export default function mouseLeftWindow(cb) {
     function handler(event) {
         const from = event.relatedTarget || event.toElement;
         if (!from || from.nodeName === 'HTML') {
@@ -13,4 +13,4 @@ module.exports = function mouseLeftWindow(cb) {
             document.removeEventListener('mouseout', handler);
         }
     };
-};
+}

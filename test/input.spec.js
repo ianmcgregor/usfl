@@ -30,7 +30,7 @@ describe('input', () => {
 
     describe('mouseLeftWindow', () => {
         expect(input.mouseLeftWindow).to.be.a('function');
-        expect(input.mouseLeftWindow().destroy).to.be.a('function');
+        expect(input.mouseLeftWindow(() => {}).destroy).to.be.a('function');
     });
 
     describe('mouseWheel', () => {
