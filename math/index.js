@@ -18,6 +18,7 @@ import orientation from './orientation';
 import percentRemaining from './percentRemaining';
 import radians from './radians';
 import random from './random';
+import randomInt from './randomInt';
 import randomSign from './randomSign';
 import rotateToDeg from './rotateToDeg';
 import rotateToRad from './rotateToRad';
@@ -50,6 +51,7 @@ export default {
     percentRemaining,
     radians,
     random,
+    randomInt,
     randomSign,
     rotateToDeg,
     rotateToRad,

@@ -83,6 +83,12 @@ describe('math utils', () => {
         expect(math.random(0, 100)).to.be.within(0, 100);
     });
 
+    it('should get random int', () => {
+        const rndInt = math.randomInt(0, 100);
+        expect(rndInt).to.be.within(0, 100);
+        expect(rndInt).to.eql(Math.floor(rndInt));
+    });
+
     it('should get random sign', () => {
         expect(math.randomSign()).to.be.within(-1, 1);
         expect(Math.abs(math.randomSign())).to.eql(1);
