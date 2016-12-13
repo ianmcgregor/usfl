@@ -1,6 +1,6 @@
 import eventBus from '../events/eventBus';
 
-export default function resize() {
+export default function resize(debouceDelay = 500) {
 
     let timeoutId;
 
@@ -8,6 +8,6 @@ export default function resize() {
 
     window.addEventListener('resize', () => {
         clearTimeout(timeoutId);
-        timeoutId = window.setTimeout(() => eventBus.emit('resize'), 500);
+        timeoutId = window.setTimeout(() => eventBus.emit('resize'), debouceDelay);
     });
 }
