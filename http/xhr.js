@@ -1,7 +1,13 @@
 export default function xhr(url, type = 'json') {
     const p = new Promise((resolve, reject) => {
         const req = new XMLHttpRequest();
-        req.addEventListener('load', () => resolve(req.response));
+        req.addEventListener('load', () => {
+            let response = req.response;
+            if (type === 'json' && typeof response === 'string') {
+                response = JSON.parse(response);
+            }
+            resolve(response);
+        });
         req.addEventListener('error', () => reject(req.status));
         req.open('GET', url);
         req.responseType = type;
