@@ -20,6 +20,7 @@ import radians from './radians';
 import random from './random';
 import randomInt from './randomInt';
 import randomSign from './randomSign';
+import rotatePoint from './rotatePoint';
 import rotateToDeg from './rotateToDeg';
 import rotateToRad from './rotateToRad';
 import roundTo from './roundTo';
@@ -53,6 +54,7 @@ export default {
     random,
     randomInt,
     randomSign,
+    rotatePoint,
     rotateToDeg,
     rotateToRad,
     roundTo,
