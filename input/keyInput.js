@@ -72,6 +72,7 @@ export default function keyInput() {
     add();
 
     return Object.assign(api, {
+        keyboard,
         enable,
         isDown,
         left,
