@@ -1,5 +1,6 @@
 import angle from './angle';
 import cerp from './cerp';
+import circleDistribution from './circleDistribution';
 import clamp from './clamp';
 import coinToss from './coinToss';
 import crossProduct2d from './crossProduct2d';
@@ -14,6 +15,7 @@ import getOverlapX from './getOverlapX';
 import getOverlapY from './getOverlapY';
 import lerp from './lerp';
 import map from './map';
+import normalize from './normalize';
 import orientation from './orientation';
 import percentRemaining from './percentRemaining';
 import radians from './radians';
@@ -30,10 +32,12 @@ import smerp from './smerp';
 import smoothstep from './smoothstep';
 import splitValueAndUnit from './splitValueAndUnit';
 import weightedAverage from './weightedAverage';
+import weightedDistribution from './weightedDistribution';
 
 export default {
     angle,
     cerp,
+    circleDistribution,
     clamp,
     coinToss,
     crossProduct2d,
@@ -48,6 +52,7 @@ export default {
     getOverlapY,
     lerp,
     map,
+    normalize,
     orientation,
     percentRemaining,
     radians,
@@ -63,5 +68,6 @@ export default {
     smoothstep,
     size,
     splitValueAndUnit,
-    weightedAverage
+    weightedAverage,
+    weightedDistribution
 };
