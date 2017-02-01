@@ -22,7 +22,8 @@
     "url": "https://github.com/ianmcgregor/usfl"
   },
   "dependencies": {
-    "events": "^1.1.0"
+    "events": "^1.1.0",
+    "mini-signals": "^1.1.1"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",
