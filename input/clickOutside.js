@@ -1,4 +1,4 @@
-export default function clickOutside(el, cb) {
+export default function clickOutside(el, fn) {
     function onClickOutside(event) {
         let target = event.target;
         let inside = false;
@@ -13,16 +13,24 @@ export default function clickOutside(el, cb) {
         }
 
         if (!inside) {
-            cb();
+            fn(event);
         }
     }
-    document.body.addEventListener('mousedown', onClickOutside);
-    document.body.addEventListener('touchstart', onClickOutside);
+
+    function onTouchOutside(event) {
+        document.body.removeEventListener('click', onClickOutside);
+        onClickOutside(event);
+    }
+
+    function destroy() {
+        document.body.removeEventListener('click', onClickOutside);
+        document.body.removeEventListener('touchstart', onTouchOutside);
+    }
+
+    document.body.addEventListener('click', onClickOutside);
+    document.body.addEventListener('touchstart', onTouchOutside);
 
     return {
-        destroy() {
-            document.body.removeEventListener('mousedown', onClickOutside);
-            document.body.removeEventListener('touchstart', onClickOutside);
-        }
+        destroy
     };
 }
