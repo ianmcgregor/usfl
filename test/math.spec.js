@@ -10,6 +10,13 @@ describe('math utils', () => {
         expect(math.cerp(0, 100, 0.5)).to.be.a('number');
     });
 
+    it('should distribute in circle', () => {
+        const p = math.circleDistribution(10);
+        expect(p).to.be.an('object');
+        expect(p.x).to.be.a('number');
+        expect(p.y).to.be.a('number');
+    });
+
     it('should find clamp number', () => {
         expect(math.clamp(100, 0, 50)).to.eql(50);
     });
@@ -64,6 +71,11 @@ describe('math utils', () => {
 
     it('should map range', () => {
         expect(math.map(0.75, 0, 1, -100, 100)).to.eql(50);
+    });
+
+    it('should normalize', () => {
+        expect(math.normalize(0.75, 0, 1)).to.eql(0.75);
+        expect(math.normalize(50, 0, 100)).to.eql(0.5);
     });
 
     it('should orient', () => {
@@ -169,6 +181,12 @@ describe('math utils', () => {
 
     it('should interpolate using weighted average', () => {
         expect(math.weightedAverage(0, 100, 20)).to.be.a('number');
+    });
+
+    it('should get weighted distribution', () => {
+        const d = math.weightedDistribution(0, 10, 5);
+        expect(d).to.be.a('number');
+        expect(d).to.be.within(0, 10);
     });
 
 });

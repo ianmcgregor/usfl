@@ -18,6 +18,8 @@ import map from './map';
 import normalize from './normalize';
 import orientation from './orientation';
 import percentRemaining from './percentRemaining';
+import perspective from './perspective';
+import quadraticCurve from './quadraticCurve';
 import radians from './radians';
 import random from './random';
 import randomInt from './randomInt';
@@ -55,6 +57,8 @@ export default {
     normalize,
     orientation,
     percentRemaining,
+    perspective,
+    quadraticCurve,
     radians,
     random,
     randomInt,
