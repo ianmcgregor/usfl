@@ -142,16 +142,36 @@ export default class Particle {
         return sqrt(dx * dx + dy * dy);
     }
 
+    moveTo(p, thrust = 0.005) {
+        const dx = p.x - this.x;
+        const dy = p.y - this.y;
+
+        this.vx += dx * thrust;
+        this.vy += dy * thrust;
+
+        if (abs(this.vx) > abs(dx)) {
+            this.vx = dx;
+        }
+
+        if (abs(this.vy) > abs(dy)) {
+            this.vy = dy;
+        }
+
+        return this;
+    }
+
     gravitateTo(p) {
         const dx = p.x - this.x;
         const dy = p.y - this.y;
         const distSq = dx * dx + dy * dy;
-        const dist = sqrt(distSq);
-        const force = p.mass / distSq;
-        const ax = dx / dist * force;
-        const ay = dy / dist * force;
-        this.vx += ax;
-        this.vy += ay;
+        if (distSq > 0) {
+            const dist = sqrt(distSq);
+            const force = p.mass / distSq;
+            const ax = dx / dist * force;
+            const ay = dy / dist * force;
+            this.vx += ax;
+            this.vy += ay;
+        }
 
         return this;
     }

@@ -6,6 +6,7 @@ import events from './events';
 import fps from './fps';
 import fullscreen from './fullscreen';
 import graphics from './graphics';
+import gui from './gui';
 import http from './http';
 import input from './input';
 import linkedList from './linked-list';
@@ -33,6 +34,7 @@ export default {
     fps,
     fullscreen,
     graphics,
+    gui,
     http,
     input,
     linkedList,

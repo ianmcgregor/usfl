@@ -1,19 +1,22 @@
 import {easeOutQuad} from '../ease/quad';
 
 export default class Tween {
-    constructor(ob, props, duration, ease = easeOutQuad, onComplete = null) {
+    constructor(ob, props, duration, options) {
         this.ob = ob;
 
         if (props) {
-            this.to(props, duration, ease, onComplete);
+            this.to(props, duration, options);
         }
     }
 
-    to(props, duration, ease = easeOutQuad, onComplete = null) {
+    to(props, duration, options = {}) {
         this.duration = duration;
-        this.ease = ease;
-        this.onComplete = onComplete;
+        this.ease = options.ease || easeOutQuad;
+        this.delay = options.delay || 0;
+        this.onUpdate = options.onUpdate;
+        this.onComplete = options.onComplete;
         this.time = 0;
+        this.complete = false;
 
         this._props = Object.keys(props);
         this._beginVals = {};
@@ -31,6 +34,11 @@ export default class Tween {
             return;
         }
 
+        if (this.delay > 0) {
+            this.delay -= dt;
+            return;
+        }
+
         this.time += dt;
 
         if (this.time > this.duration) {
@@ -42,12 +50,21 @@ export default class Tween {
             this.ob[prop] = this.ease(this.time, this._beginVals[prop], this._changeVals[prop], this.duration);
         }
 
-        if (this.time === this.duration && this.onComplete) {
-            this.onComplete();
+        if (this.onUpdate) {
+            this.onUpdate(this.ob);
+        }
+
+        if (this.time === this.duration) {
+            this.complete = true;
+
+            if (this.onComplete) {
+                this.onComplete(this.ob);
+            }
         }
     }
 
     reset() {
         this.time = 0;
+        this.complete = false;
     }
 }
