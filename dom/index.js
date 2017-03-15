@@ -1,4 +1,5 @@
 import blockScrolling from './blockScrolling';
+import elCoords from './elCoords';
 import forceRedraw from './forceRedraw';
 import getPageHeight from './getPageHeight';
 import getScrollPercentage from './getScrollPercentage';
@@ -14,6 +15,7 @@ import transitionEnd from './transitionEnd';
 
 export default {
     blockScrolling,
+    elCoords,
     forceRedraw,
     getPageHeight,
     getScrollPercentage,
