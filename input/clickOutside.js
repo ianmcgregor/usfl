@@ -27,6 +27,8 @@ export default function clickOutside(el, fn) {
         document.body.removeEventListener('touchstart', onTouchOutside);
     }
 
+    destroy();
+
     document.body.addEventListener('click', onClickOutside);
     document.body.addEventListener('touchstart', onTouchOutside);
 

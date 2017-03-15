@@ -1,6 +1,6 @@
 import eventBus from '../events/eventBus';
 
-export default function scroll() {
+export default function scroll(callNow = false) {
 
     let lastScrollY = 0,
         ticking = false,
@@ -28,4 +28,8 @@ export default function scroll() {
     }
 
     window.addEventListener('scroll', onScroll, false);
+
+    if (callNow) {
+        onScroll();
+    }
 }
