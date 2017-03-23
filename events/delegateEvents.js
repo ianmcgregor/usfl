@@ -1,13 +1,17 @@
-export default function delegateEvents(parentEl, eventType, tagName, cb) {
-    tagName = tagName.toUpperCase();
+export default function delegateEvents(parentEl, eventType, filter, fn) {
+
+    if (typeof filter === 'string') {
+        const tagName = filter.toUpperCase();
+        filter = target => target.tagName === tagName;
+    }
 
     parentEl.addEventListener(eventType, (event) => {
         let target = event.target;
 
         while (target !== parentEl) {
-            if (target.tagName === tagName) {
+            if (filter(target)) {
                 event.stopImmediatePropagation();
-                cb(target, event);
+                fn(target, event);
                 break;
             }
             target = target.parentNode;
