@@ -49,7 +49,7 @@ describe('media', () => {
 
         const videoPlayer = media.videoPlayer(),
             ext = mp4 ? 'mp4' : 'webm',
-            file = `https://dl.dropboxusercontent.com/u/15470024/prototypes/video/counter.${ext}`;
+            file = `https://ianmcgregor.co/prototypes/video/counter.${ext}`;
 
         let ready = false;
 

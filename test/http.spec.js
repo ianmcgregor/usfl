@@ -31,7 +31,7 @@ describe('http.xhr', function() {
     });
 
     beforeEach((done) => {
-        http.xhr('https://dl.dropboxusercontent.com/u/15470024/prototypes/test/test.json')
+        http.xhr('https://ianmcgregor.co/prototypes/test/test.json')
             .then((response) => (res = response))
             .then(() => done())
             .catch((err) => console.log('err', err));
