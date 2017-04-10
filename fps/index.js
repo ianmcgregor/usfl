@@ -7,6 +7,7 @@ export default function FPS(style = {}) {
     let totalFps = 0;
     let lastFps = 0;
     let lastAverage = 0;
+    let logMsg = null;
 
     const el = document.createElement('div');
     el.setAttribute('id', 'fps');
@@ -26,12 +27,13 @@ export default function FPS(style = {}) {
     });
 
     function report() {
-        if (currentFps === lastFps && averageFps === lastAverage) {
-            return;
-        }
         lastFps = currentFps;
         lastAverage = averageFps;
         el.innerHTML = `FPS: ${currentFps}<br />AVE: ${averageFps}`;
+
+        if (logMsg) {
+            el.innerHTML = `${el.innerHTML}<br />MSG: ${logMsg}`;
+        }
     }
 
     function update(now) {
@@ -53,7 +55,10 @@ export default function FPS(style = {}) {
                 totalFps += currentFps;
                 averageFps = Math.floor(totalFps / ticks);
             }
-            report();
+
+            if (currentFps !== lastFps || averageFps !== lastAverage) {
+                report();
+            }
         }
 
         fps++;
@@ -65,9 +70,15 @@ export default function FPS(style = {}) {
         update();
     }
 
+    function log(value) {
+        logMsg = String(value);
+        report();
+    }
+
     return {
         auto,
         el,
+        log,
         update
     };
 }

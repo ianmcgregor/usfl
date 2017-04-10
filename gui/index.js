@@ -1,4 +1,5 @@
 import loadScript from '../http/loadScript';
+import isLocalHost from '../platform/isLocalHost';
 
 // example usage:
 //
@@ -14,7 +15,7 @@ import loadScript from '../http/loadScript';
 //     .catch((err) => console.error(err));
 
 export default function gui(localhostOnly = false) {
-    if (localhostOnly && !/^(?:https?:\/\/)?(?:localhost|192\.168)/.test(window.location.href)) {
+    if (localhostOnly && !isLocalHost()) {
         return new Promise(() => {});
     }
     return new Promise((resolve, reject) => {
@@ -33,3 +34,5 @@ export default function gui(localhostOnly = false) {
         });
     });
 }
+
+gui.isLocalHost = isLocalHost;
