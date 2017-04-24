@@ -1,8 +1,8 @@
-export default function mouseLeftWindow(cb) {
+export default function mouseLeftWindow(fn) {
     function handler(event) {
         const from = event.relatedTarget || event.toElement;
         if (!from || from.nodeName === 'HTML') {
-            cb();
+            fn(event);
         }
     }
 
