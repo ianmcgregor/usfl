@@ -15,6 +15,7 @@ function save(key, item) {
     } catch (err) {
         console.error('Couldn\'t save in localStorage');
     }
+    return false;
 }
 
 function loadJSON(key) {

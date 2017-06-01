@@ -1,7 +1,6 @@
 import storage from '../storage';
 
-describe('storage utils', function() {
-    this.timeout(10000);
+describe('storage utils', () => {
 
     const key = 'testData',
         testData = {
