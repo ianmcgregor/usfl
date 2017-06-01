@@ -16,6 +16,11 @@ describe('array utils', () => {
         expect(array.nearest(-10, [-9, 10])).to.eql(-9);
     });
 
+    it('should move element', () => {
+        expect(array.moveElement([1, 2, 3], 0, 1)).to.eql([2, 1, 3]);
+        expect(array.moveElement([1, 2, 3], 2, 0)).to.eql([3, 1, 2]);
+    });
+
     it('should return random element', () => {
         expect(array.randomChoice([3, 2, 1, 0])).to.be.a('number');
     });
