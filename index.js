@@ -12,6 +12,7 @@ import input from './input';
 import linkedList from './linked-list';
 import math from './math';
 import media from './media';
+import object from './object';
 import objectPool from './object-pool';
 import Particle from './particle';
 import ParticleGroup from './particle';
@@ -40,6 +41,7 @@ export default {
     linkedList,
     math,
     media,
+    object,
     objectPool,
     Particle,
     ParticleGroup,
