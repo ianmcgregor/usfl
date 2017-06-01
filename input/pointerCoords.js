@@ -1,18 +1,28 @@
+import getPageHeight from '../dom/getPageHeight';
+
 export default function pointerCoords() {
-    let self;
+    let self = null;
 
     function calculateCoords(event) {
-        const pX = event.clientX || 0;
-        const pY = event.clientY || 0;
-        const sX = window.pageXOffset;
-        const sY = window.pageYOffset;
-        self.x = pX + sX;
-        self.y = pY + sY;
+        const touch = event.touches && event.touches.length;
+        const p = touch ? event.touches[0] : event;
+        const cX = p.clientX || 0;
+        const cY = p.clientY || 0;
+        const pX = window.pageXOffset;
+        const pY = window.pageYOffset;
+        self.event = event;
+        self.clientX = cX;
+        self.clientY = cY;
+        self.x = cX + pX;
+        self.y = cY + pY;
         self.percentX = self.x / window.innerWidth;
-        self.percentY = self.y / window.innerHeight;
+        self.percentY = self.y / getPageHeight();
     }
 
     self = {
+        event: null,
+        clientX: 0,
+        clientY: 0,
         x: 0,
         y: 0,
         percentX: 0,
