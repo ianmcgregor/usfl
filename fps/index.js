@@ -19,6 +19,7 @@ el.style.zIndex = '99999';
 el.style.background = '#000';
 el.style.color = '#fff';
 el.style.fontSize = '10px';
+el.style.userSelect = 'none';
 document.body.appendChild(el);
 
 function report() {
