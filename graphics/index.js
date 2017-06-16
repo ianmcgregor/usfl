@@ -79,14 +79,17 @@ export default class Graphics {
         return this;
     }
 
-    image(el, x, y, angle = 0) {
+    image(el, x, y, options) {
         const {ctx} = this;
-        if (angle !== 0) {
+        if (options) {
+            const {alpha = 1, rotation = 0, scale = 1} = options;
             const offsetX = el.width / 2;
             const offsetY = el.height / 2;
             ctx.save();
             ctx.translate(x + offsetX, y + offsetY);
-            ctx.rotate(angle);
+            ctx.rotate(rotation);
+            ctx.scale(scale, scale);
+            ctx.globalAlpha = alpha;
             ctx.drawImage(el, -offsetX, -offsetY);
             ctx.restore();
         } else {

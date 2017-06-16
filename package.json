@@ -1,6 +1,6 @@
 {
   "name": "usfl",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "A collection of tested, reusable JS utilities and snippets.",
   "keywords": [
     "lib",
@@ -14,6 +14,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
+    "start": "gulp",
+    "build": "gulp bundle",
     "test": "./node_modules/.bin/karma start --single-run --browsers Firefox"
   },
   "readmeFilename": "README.md",
