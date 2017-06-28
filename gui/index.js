@@ -26,10 +26,14 @@ export default function gui(localhostOnly = false) {
                 return;
             }
             const g = new window.dat.GUI({autoPlace: true});
-            const s = document.styleSheets[0];
-            s.insertRule('.dg.ac {z-index:10000 !important}', 0);
+
+            const style = document.createElement('style');
+            document.head.appendChild(style);
+            const s = style.sheet;
+            s.insertRule('.dg.ac {overflow: visible !important; z-index:10000 !important}', 0);
             s.insertRule('.dg * {font-size:11px !important}', 0);
             s.insertRule('.dg input {font:11px Lucida Grande,sans-serif !important}', 0);
+
             resolve(g);
         });
     });
