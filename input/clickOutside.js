@@ -15,7 +15,7 @@ export default function clickOutside(el, fn) {
         let target = event.target;
         let inside = false;
 
-        while (target !== document.body) {
+        while (target && target !== document.body) {
             if (test(target)) {
                 event.stopImmediatePropagation();
                 inside = true;
