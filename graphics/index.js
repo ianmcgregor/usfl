@@ -19,6 +19,22 @@ export default class Graphics {
         this.ctx = this.canvas.getContext('2d');
     }
 
+    get alpha() {
+        return this.ctx.globalAlpha;
+    }
+
+    set alpha(value) {
+        this.ctx.globalAlpha = value;
+    }
+
+    get blendMode() {
+        return this.ctx.globalCompositeOperation;
+    }
+
+    set blendMode(value) {
+        this.ctx.globalCompositeOperation = value;
+    }
+
     get context() {
         return this.ctx;
     }
