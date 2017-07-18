@@ -32,6 +32,14 @@ describe('array utils', () => {
             .to.eql([{n: 'thing1'}, {n: 'thing2'}, {n: 'thing3'}]);
     });
 
+    it('should return numbered ordered array', () => {
+        expect(['Item 10', 'Item 2', 'Item 1'].sort(array.sortNumbered)).to.eql(['Item 1', 'Item 2', 'Item 10']);
+        expect(['val=20', 'val=1', 'val=0.3'].sort(array.sortNumbered)).to.eql(['val=0.3', 'val=1', 'val=20']);
+        expect(['val=-1', 'val=-3', 'val=-2'].sort(array.sortNumbered)).to.eql(['val=-3', 'val=-2', 'val=-1']);
+        expect([{n: 'Item 2'}, {n: 'Item 3'}, {n: 'Item 1'}].sort(array.sortNumbered('n')))
+            .to.eql([{n: 'Item 1'}, {n: 'Item 2'}, {n: 'Item 3'}]);
+    });
+
     it('should return numeric ordered array', () => {
         expect([3, 2, 1, 0].sort(array.sortNumeric)).to.eql([0, 1, 2, 3]);
         expect([20, -1, 0.3].sort(array.sortNumeric)).to.eql([-1, 0.3, 20]);

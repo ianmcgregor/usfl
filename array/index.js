@@ -4,6 +4,7 @@ import moveElement from './moveElement';
 import nearest from './nearest';
 import randomChoice from './randomChoice';
 import sortAlpha from './sortAlpha';
+import sortNumbered from './sortNumbered';
 import sortNumeric from './sortNumeric';
 import sortRandom from './sortRandom';
 
@@ -14,6 +15,7 @@ export default {
     nearest,
     randomChoice,
     sortAlpha,
+    sortNumbered,
     sortNumeric,
     sortRandom
 };
