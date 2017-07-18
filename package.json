@@ -1,6 +1,6 @@
 {
   "name": "usfl",
-  "version": "2.2.12",
+  "version": "2.2.20",
   "description": "A collection of tested, reusable JS utilities and snippets.",
   "keywords": [
     "lib",
@@ -12,7 +12,7 @@
   ],
   "author": "ianmcgregor",
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/usfl.min.js",
   "scripts": {
     "start": "gulp",
     "build": "gulp bundle",
