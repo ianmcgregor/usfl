@@ -79,7 +79,6 @@ describe('math utils', () => {
     });
 
     it('should orient', () => {
-        console.log(math.orientation(1, 1), Math.PI / 4);
         expect(math.orientation(1, 1)).to.eql(Math.PI / 4);
     });
 

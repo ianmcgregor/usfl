@@ -46,6 +46,8 @@ const chosen = usfl.array.randomChoice([1, 2, 3]);
 
 [usfl/linked-list](docs/README.md#linkedlist)
 
+[usfl/loop](docs/README.md#loop)
+
 [usfl/math](docs/README.md#math)
 
 [usfl/media](docs/README.md#media)

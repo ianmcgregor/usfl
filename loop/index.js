@@ -1,14 +1,18 @@
-// import Signal from 'signals';
 import MiniSignal from 'mini-signals';
 
-export default class Ticker {
+export default class Loop {
     constructor() {
         this.update = this.update.bind(this);
-        // this.onUpdate = new Signal();
         this.onUpdate = new MiniSignal();
 
+        this.raf = null;
         this.running = false;
         this.last = 0;
+        this.delta = 0;
+        this.elasped = 0;
+        this.deltaSecs = 0;
+        this.elaspedSecs = 0;
+
         // this.accumulated = 0;
         // this.step = 1000 / 60;
     }
@@ -26,8 +30,9 @@ export default class Ticker {
         if (!this.running) {
             return;
         }
-
+        this.last = 0;
         this.running = false;
+        window.cancelAnimationFrame(this.raf);
     }
 
     update() {
@@ -35,14 +40,20 @@ export default class Ticker {
             return;
         }
 
-        window.requestAnimationFrame(this.update);
+        this.raf = window.requestAnimationFrame(this.update);
 
         const now = Date.now();
-        let dt = now - this.last;
-        if (dt > 20) {
-            dt = 20;
+        let deltaMs = now - this.last;
+        if (deltaMs > 20) {
+            deltaMs = 20;
         }
         this.last = now;
+
+        this.delta = deltaMs * 0.06;
+        this.elasped += this.delta;
+
+        this.deltaSecs = deltaMs * 0.001;
+        this.elaspedSecs += this.deltaSecs;
 
         //  // fixed step:
         // this.accumulated += dt;
@@ -52,7 +63,7 @@ export default class Ticker {
         //     this.onUpdate.dispatch(this.step);
         // }
 
-        this.onUpdate.dispatch(dt * 0.001);
+        this.onUpdate.dispatch(this.delta, this.elasped);
     }
 
     add(fn, context) {
@@ -62,8 +73,4 @@ export default class Ticker {
     remove(binding) {
         this.onUpdate.detach(binding);
     }
-
-    // remove(fn, context) {
-    //     this.onUpdate.remove(fn, context);
-    // }
 }

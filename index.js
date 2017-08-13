@@ -10,6 +10,7 @@ import gui from './gui';
 import http from './http';
 import input from './input';
 import linkedList from './linked-list';
+import Loop from './loop';
 import math from './math';
 import media from './media';
 import object from './object';
@@ -22,7 +23,6 @@ import QuadTree from './quad-tree';
 import share from './share';
 import storage from './storage';
 import string from './string';
-import Ticker from './ticker';
 import track from './track';
 import Tween from './tween';
 import visibility from './visibility';
@@ -39,6 +39,7 @@ export default {
     http,
     input,
     linkedList,
+    Loop,
     math,
     media,
     object,
@@ -51,7 +52,6 @@ export default {
     share,
     storage,
     string,
-    Ticker,
     Tween,
     track,
     visibility

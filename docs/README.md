@@ -429,6 +429,26 @@ list.insertBefore(item, list.first);
 list.insertAfter(item, list.last);
 ```
 
+## loop
+
+[usfl/loop](../loop/index.js)
+
+```javascript
+import Loop from 'usfl/loop';
+
+const loop = new Loop();
+const listener = loop.add((deltaTime, elapsedTime) => {
+    something.update(deltaTime);
+});
+loop.start();
+
+// stop
+loop.stop();
+
+// remove listener
+loop.remove(listener);
+```
+
 ## math
 
 [usfl/math](../math/index.js)
