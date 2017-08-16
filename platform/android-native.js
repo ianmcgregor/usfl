@@ -1,4 +1,4 @@
-import android from '../os/android';
+import android from './android';
 
 //http://stackoverflow.com/questions/14403766/how-to-detect-the-stock-android-browser
 export default function androidNative(ua = navigator.userAgent) {

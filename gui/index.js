@@ -1,5 +1,5 @@
 import loadScript from '../http/loadScript';
-import isLocalHost from '../platform/isLocalHost';
+import localHost from '../platform/local-host';
 
 // example usage:
 //
@@ -15,7 +15,7 @@ import isLocalHost from '../platform/isLocalHost';
 //     .catch((err) => console.error(err));
 
 export default function gui(localhostOnly = false) {
-    if (localhostOnly && !isLocalHost()) {
+    if (localhostOnly && !localHost()) {
         return new Promise(() => {});
     }
     return new Promise((resolve, reject) => {

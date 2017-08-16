@@ -1,5 +1,5 @@
 import media from '../media';
-import mp4 from '../platform/supports/mp4';
+import mp4 from '../platform/mp4';
 
 describe('media', () => {
 

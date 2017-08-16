@@ -604,19 +604,34 @@ pool.getPool().length // 0
 [usfl/platform](../platform/index.js)
 
 ```javascript
-platform.os.ios(); // boolean
-platform.os.android(); // boolean
-platform.os.androidVersion(); // boolean
-platform.os.iosVersion(); // number
-platform.browser.androidNative(); // boolean
-platform.browser.ieVersion(); // number
-platform.screen.width(); // number
-platform.screen.dpr(); // number
-platform.screen.retina(); // boolean
-platform.device.mobile(); // boolean
-platform.device.ipad(); // boolean
-platform.supports.webgl(); // boolean
-platform.supports.webm(); // boolean
+platform.android; // boolean
+platform.androidNative; // boolean
+platform.androidVersion; // number
+platform.chromeIOS; // boolean
+platform.desktop; // boolean
+platform.deviceOrientation; // boolean
+platform.firefox; // boolean
+platform.ie; // boolean
+platform.ieVersion; // number
+platform.ios; // boolean
+platform.iosVersion; // number
+platform.ipad; // boolean
+platform.iphone; // boolean
+platform.linux; // boolean
+platform.localHost; // boolean
+platform.mac; // boolean
+platform.mobile; // boolean
+platform.mp4; // boolean
+platform.safari; // boolean
+platform.safariIOS; // boolean
+platform.screen.width; // number
+platform.screen.height; // number
+platform.screen.dpr; // number
+platform.screen.retina; // boolean
+platform.webgl; // boolean
+platform.webm; // boolean
+platform.windows; // boolean
+platform.windowsPhone; // boolean
 ```
 
 ## polyfill
