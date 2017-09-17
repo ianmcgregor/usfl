@@ -39,4 +39,4 @@ export default function gui(localhostOnly = false) {
     });
 }
 
-gui.isLocalHost = isLocalHost;
+gui.localHost = localHost;
