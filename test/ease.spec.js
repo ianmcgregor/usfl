@@ -1,4 +1,4 @@
-import * as ease from '../ease';
+import ease from '../src/ease';
 
 describe('Ease', () => {
 

@@ -3,7 +3,7 @@ import emitter from '../events/emitter';
 export default function mouseWheel(speed) {
     speed = speed || 2;
 
-    let wheel;
+    let wheel = null;
 
     function wheelHandler(event) {
         const direction = (event.detail < 0 || event.wheelDelta > 0) ? 1 : -1;

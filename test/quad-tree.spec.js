@@ -1,4 +1,4 @@
-import QuadTree from '../quad-tree';
+import QuadTree from '../src/quad-tree';
 
 describe('QuadTree', () => {
 

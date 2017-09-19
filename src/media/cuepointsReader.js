@@ -1,6 +1,6 @@
 export default function cuepointsReader() {
     const list = [];
-    let reader;
+    let reader = null;
     let dispatch;
     let currentPosition = 0;
     let lastPosition = -1;
@@ -62,11 +62,12 @@ export default function cuepointsReader() {
             return;
         }
 
-        list.some((item) => {
+        list.some(item => {
             if (inRange(item.position, currentPos, lastPos)) {
                 dispatch(item);
                 return true;
             }
+            return false;
         });
     }
 

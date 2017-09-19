@@ -1,4 +1,4 @@
-import fps from '../fps';
+import fps from '../src/fps';
 
 describe('fps', () => {
 

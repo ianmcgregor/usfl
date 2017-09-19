@@ -3,7 +3,7 @@
 
 ## array
 
-[usfl/array](../array/index.js)
+[usfl/array](../src/array/index.js)
 
 ```javascript
 import array from 'usfl/array';
@@ -25,7 +25,7 @@ const choice = randomChoice([2,1,3]);
 
 ## dom
 
-[usfl/dom](../dom/index.js)
+[usfl/dom](../src/dom/index.js)
 
 ```javascript
 import dom from 'usfl/dom';
@@ -78,11 +78,11 @@ dom.transitionEnd(el, cb, timeout = 1000);
 
 ## events
 
-[usfl/events/debounce](../events/debounce.js)  
-[usfl/events/delegateEvents](../events/delegateEvents.js)  
-[usfl/events/emitter](../events/emitter.js)  
-[usfl/events/eventBus](../events/eventBus.js)
-[usfl/events/heartbeat](../events/heartbeat.js)
+[usfl/events/debounce](../src/events/debounce.js)  
+[usfl/events/delegateEvents](../src/events/delegateEvents.js)  
+[usfl/events/emitter](../src/events/emitter.js)  
+[usfl/events/eventBus](../src/events/eventBus.js)
+[usfl/events/heartbeat](../src/events/heartbeat.js)
 
 ```javascript
 // debounce(handler)
@@ -135,7 +135,7 @@ update();
 
 ## fps
 
-[usfl/fps](../fps/index.js)
+[usfl/fps](../src/fps/index.js)
 
 ```javascript
 import fps from 'usfl/fps';
@@ -159,7 +159,7 @@ fps().auto();
 
 ## fullscreen
 
-[usfl/fullscreen](../fullscreen/index.js)
+[usfl/fullscreen](../src/fullscreen/index.js)
 
 ```javascript
 import fullscreen from 'usfl/fullscreen';
@@ -181,7 +181,7 @@ fullscreen.enabled;
 
 ## graphics
 
-[usfl/graphics](../graphics/index.js)
+[usfl/graphics](../src/graphics/index.js)
 
 ```javascript
 import Graphics from 'usfl/graphics';
@@ -227,7 +227,7 @@ shape.cross(ctx, radius);
 
 ## http
 
-[usfl/http](../http/index.js)
+[usfl/http](../src/http/index.js)
 
 ```javascript
 import getLocation from 'usfl/http/getLocation';
@@ -263,7 +263,7 @@ xhr('test.html', 'text')
 
 #### clickOutside
 
-[usfl/input/clickOutside](../input/clickOutside.js)
+[usfl/input/clickOutside](../src/input/clickOutside.js)
 
 ```javascript
 import clickOutside from 'usfl/input/clickOutside';
@@ -275,7 +275,7 @@ clickOutside(el, () => {
 
 #### keyboard
 
-[usfl/input/keyboard](../input/keyboard.js)
+[usfl/input/keyboard](../src/input/keyboard.js)
 
 ```javascript
 import keyboard from 'usfl/input/keyboard';
@@ -290,7 +290,7 @@ function onKeyDown(event) {
 
 #### key input
 
-[usfl/input/keyInput](../input/keyInput.js)
+[usfl/input/keyInput](../src/input/keyInput.js)
 
 ```javascript
 import KeyInput from 'usfl/KeyInput';
@@ -304,7 +304,7 @@ keyInput.on(); // start listening again
 
 #### microphone
 
-[usfl/input/microphone](../input/microphone.js)
+[usfl/input/microphone](../src/input/microphone.js)
 
 ```javascript
 import microphone from 'usfl/input/microphone';
@@ -324,7 +324,7 @@ mic.disconnect();
 
 #### mouseLeftWindow
 
-[usfl/input/mouseLeftWindow](../input/mouseLeftWindow.js)
+[usfl/input/mouseLeftWindow](../src/input/mouseLeftWindow.js)
 
 ```javascript
 import mouseLeftWindow from 'usfl/input/mouseLeftWindow';
@@ -334,7 +334,7 @@ mouseLeftWindow(() => console.log('Mouse left window'));
 
 #### mouse wheel
 
-[usfl/input/mouseWheel](../input/mouseWheel.js)
+[usfl/input/mouseWheel](../src/input/mouseWheel.js)
 
 ```javascript
 import mouseWheel from 'usfl/input/mouseWheel';
@@ -353,7 +353,7 @@ mouseWheel(5)
 
 #### pointer coords
 
-[usfl/input/pointerCoords](../input/pointerCoords.js)
+[usfl/input/pointerCoords](../src/input/pointerCoords.js)
 
 ```javascript
 import pointerCoords from 'usfl/input/pointerCoords';
@@ -367,7 +367,7 @@ const {x, y, percentX, percentY} = coords;
 
 #### touchInput
 
-[usfl/input/touchInput](../input/touchInput.js)
+[usfl/input/touchInput](../src/input/touchInput.js)
 
 ```javascript
 const touch = touchInput(el);
@@ -384,7 +384,7 @@ update();
 
 ## linked list
 
-[usfl/linkedList](../linkedList/index.js)
+[usfl/linkedList](../src/linkedList/index.js)
 
 ```javascript
 import linkedList from 'usfl/linkedList';
@@ -431,7 +431,7 @@ list.insertAfter(item, list.last);
 
 ## loop
 
-[usfl/loop](../loop/index.js)
+[usfl/loop](../src/loop/index.js)
 
 ```javascript
 import Loop from 'usfl/loop';
@@ -451,7 +451,7 @@ loop.remove(listener);
 
 ## math
 
-[usfl/math](../math/index.js)
+[usfl/math](../src/math/index.js)
 
 ```javascript
 import math from 'usfl/math';
@@ -487,7 +487,7 @@ math.weightedAverage(0, 1, 20); // 0.05
 
 #### cue points reader
 
-[usfl/media/cuePointsReader](../media/cuePointsReader.js)
+[usfl/media/cuePointsReader](../src/media/cuePointsReader.js)
 
 ```javascript
 const reader = cuepointsReader();
@@ -504,7 +504,7 @@ update();
 
 #### iOSPlayVideoInline
 
-[usfl/media/iOSPlayVideoInline](../media/iOSPlayVideoInline.js)
+[usfl/media/iOSPlayVideoInline](../src/media/iOSPlayVideoInline.js)
 
 ```javascript
 import iOSPlayVideoInline from 'usfl/media/iOSPlayVideoInline';
@@ -516,7 +516,7 @@ video.pause();
 
 #### video player
 
-[usfl/media/videoPlayer](../media/videoPlayer.js)
+[usfl/media/videoPlayer](../src/media/videoPlayer.js)
 
 ```javascript
 import videoPlayer from 'usfl/media/videoPlayer';
@@ -533,7 +533,7 @@ videoPlayer(el)
 
 #### vimeo
 
-[usfl/media/vimeo](../media/vimeo.js)
+[usfl/media/vimeo](../src/media/vimeo.js)
 
 ```javascript
 import vimeo from 'usfl/media/vimeo';
@@ -548,7 +548,7 @@ vimeo(iframe)
 
 #### youtube
 
-[usfl/media/youtube](../media/youtube.js)
+[usfl/media/youtube](../src/media/youtube.js)
 
 ```javascript
 import youtube from 'usfl/media/youtube';
@@ -563,7 +563,7 @@ youtube(iframe)
 
 #### youtube basic (only play/pause but no need to load JS api)
 
-[usfl/media/youtubeBasic](../media/youtubeBasic.js)
+[usfl/media/youtubeBasic](../src/media/youtubeBasic.js)
 
 ```javascript
 import youtubeBasic from 'usfl/media/youtubeBasic';
@@ -574,7 +574,7 @@ video.pause();
 
 ## object pool
 
-[usfl/object-pool](../object-pool/index.js)
+[usfl/object-pool](../src/object-pool/index.js)
 
 ```javascript
 import objectPool from 'usfl/object-pool';
@@ -601,7 +601,7 @@ pool.getPool().length // 0
 
 ## platform
 
-[usfl/platform](../platform/index.js)
+[usfl/platform](../src/platform/index.js)
 
 ```javascript
 platform.android; // boolean
@@ -636,7 +636,7 @@ platform.windowsPhone; // boolean
 
 ## polyfill
 
-[usfl/polyfill](../polyfill/index.js)
+[usfl/polyfill](../src/polyfill/index.js)
 
 ```javascript
 // all
@@ -657,7 +657,7 @@ import 'usfl/polyfill/requestAnimationFrame';
 
 ## popup
 
-[usfl/popup](../popup/index.js)
+[usfl/popup](../src/popup/index.js)
 
 ```javascript
 // popup(url, width = 800, height = 600, name = '')
@@ -668,7 +668,7 @@ popup('http://www.example.com');
 
 ## share
 
-[usfl/share](../share/index.js)
+[usfl/share](../src/share/index.js)
 
 ```javascript
 import share from 'usfl/share';
@@ -682,7 +682,7 @@ whatsapp('http://www.example.com', 'Example');
 
 ## storage
 
-[usfl/storage](../storage/index.js)
+[usfl/storage](../src/storage/index.js)
 
 ```javascript
 import storage from 'usfl/storage';
@@ -711,7 +711,7 @@ img.src = 'http://www.example.com/foo.jpg';
 
 ## string
 
-[usfl/string](../string/index.js)
+[usfl/string](../src/string/index.js)
 
 ```javascript
 import string from 'usfl/string';
@@ -760,7 +760,7 @@ editDistance('Hello', 'Helllo'); // 1
 
 ## track
 
-[usfl/track](../track/index.js)
+[usfl/track](../src/track/index.js)
 
 ```javascript
 import track from 'usfl/track';
@@ -773,7 +773,7 @@ track.event(category, action, label, value);
 
 ## visibility
 
-[usfl/visibility](../visibility/index.js)
+[usfl/visibility](../src/visibility/index.js)
 
 ```javascript
 const visibility from 'usfl/visibility';

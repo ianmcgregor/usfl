@@ -1,9 +1,9 @@
 export default function iOSPlayVideoInline(el, loop = true) {
     const frameTime = 1 / 25;
 
-    let self,
-        lastTime = 0,
-        playing = false;
+    let self = null;
+    let lastTime = 0;
+    let playing = false;
 
     // This can (and should) be put in a css file instead of doing styleSheets[0].insertRule:
     const cssRule = '.iOSPlayVideoInline::-webkit-media-controls { display:none !important; }';

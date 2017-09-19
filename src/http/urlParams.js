@@ -1,4 +1,4 @@
-const plus = /\+/g;  // match '+' symbol
+const plus = /\+/g; // match '+' symbol
 const search = /([^&=]+)=?([^&]*)/g;
 
 function decode(str) {

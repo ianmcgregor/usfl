@@ -1,6 +1,6 @@
 export default function transitionEnd(el, cb, timeout = 1000) {
 
-    let timeoutId;
+    let timeoutId = null;
 
     function handler() {
         window.clearTimeout(timeoutId);

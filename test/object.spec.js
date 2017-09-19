@@ -1,4 +1,4 @@
-import object from '../object';
+import object from '../src/object';
 
 describe('object utils', () => {
 

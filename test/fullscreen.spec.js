@@ -1,4 +1,4 @@
-import fullscreen from '../fullscreen';
+import fullscreen from '../src/fullscreen';
 
 describe('fullscreen', function() {
 

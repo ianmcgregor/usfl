@@ -1,6 +1,5 @@
 import email from './email';
 import facebook from './facebook';
-import facebookFeedDialog from './facebookFeedDialog';
 import googleplus from './googleplus';
 import linkedin from './linkedin';
 import pinterest from './pinterest';
@@ -15,7 +14,6 @@ import whatsapp from './whatsapp';
 export default {
     email,
     facebook,
-    facebookFeedDialog,
     googleplus,
     linkedin,
     pinterest,

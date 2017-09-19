@@ -1,6 +1,6 @@
-import {EventEmitter} from 'events';
+import events from 'events';
 
-export default class emitter extends EventEmitter {
+export default class emitter extends events.EventEmitter {
     constructor() {
         super();
 

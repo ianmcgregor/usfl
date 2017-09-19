@@ -1,5 +1,5 @@
-import api from '../visibility/api';
-import visibility from '../visibility';
+import api from '../src/visibility/api';
+import visibility from '../src/visibility';
 
 describe('visibility', () => {
 

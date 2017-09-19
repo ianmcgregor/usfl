@@ -1,8 +1,8 @@
-import platform from '../platform';
-import androidNative from '../platform/android-native';
-import ieVersion from '../platform/ie-version';
-import iosVersion from '../platform/ios-version';
-import androidVersion from '../platform/android-version';
+import platform from '../src/platform';
+import androidNative from '../src/platform/android-native';
+import ieVersion from '../src/platform/ie-version';
+import iosVersion from '../src/platform/ios-version';
+import androidVersion from '../src/platform/android-version';
 
 describe('platform', () => {
 

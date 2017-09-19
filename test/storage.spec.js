@@ -1,4 +1,4 @@
-import storage from '../storage';
+import storage from '../src/storage';
 
 describe('storage utils', () => {
 

@@ -1,4 +1,4 @@
-import dom from '../dom';
+import dom from '../src/dom';
 
 describe('dom', () => {
 

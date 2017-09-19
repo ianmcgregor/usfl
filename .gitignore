@@ -1,6 +1,7 @@
 # OS
 
 .*
+!/.babelrc
 !/.gitignore
 !/.gitattributes
 !/.travis.yml

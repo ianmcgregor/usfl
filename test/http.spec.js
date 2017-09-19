@@ -1,4 +1,4 @@
-import http from '../http';
+import http from '../src/http';
 
 describe('http', () => {
 

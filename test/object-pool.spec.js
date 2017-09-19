@@ -1,4 +1,4 @@
-import objectPool from '../object-pool';
+import objectPool from '../src/object-pool';
 
 describe('object pool', function() {
     let newlyCreated = 0;

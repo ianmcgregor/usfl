@@ -1,5 +1,5 @@
-import Particle from '../particle';
-import ParticleGroup from '../particle/ParticleGroup';
+import Particle from '../src/particle';
+import ParticleGroup from '../src/particle/ParticleGroup';
 
 describe('Particle', () => {
 

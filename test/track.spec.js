@@ -1,4 +1,4 @@
-import track from '../track';
+import track from '../src/track';
 
 describe('track', () => {
 

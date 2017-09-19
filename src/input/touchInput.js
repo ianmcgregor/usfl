@@ -14,7 +14,7 @@ export default function touchInput(el) {
         originalEvent: null
     };
 
-    let self;
+    let self = null;
 
     function touchHandler(event) {
         if (!(event && event.touches)) {

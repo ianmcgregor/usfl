@@ -10,7 +10,7 @@ import quart, {easeInQuart, easeOutQuart, easeInOutQuart} from './quart';
 import quint, {easeInQuint, easeOutQuint, easeInOutQuint} from './quint';
 import sine, {easeInSine, easeOutSine, easeInOutSine} from './sine';
 
-export {
+export default {
     back,
     bounce,
     circular,

@@ -1,4 +1,4 @@
-import popup from '../popup';
+import popup from '../src/popup';
 
 describe('popup', () => {
 

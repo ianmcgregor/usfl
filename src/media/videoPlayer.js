@@ -2,7 +2,7 @@ import emitter from '../events/emitter';
 
 export default function videoPlayer(videoEl) {
     let el = videoEl || document.createElement('video');
-    let player;
+    let player = null;
 
     function metadataHandler() {
         player.emit('metadata', {

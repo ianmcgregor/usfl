@@ -1,4 +1,4 @@
-import Tween from '../tween';
+import Tween from '../src/tween';
 
 describe('Tween', () => {
     const ob = {x: 0};

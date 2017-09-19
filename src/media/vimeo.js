@@ -5,7 +5,9 @@ import emitter from '../events/emitter';
 export default function vimeo(el) {
     const vimeoPlayer = el.contentWindow;
     const re = /^https?:\/\/player.vimeo.com/;
-    let player, origin = '*', paused = false;
+    let player = null;
+    let origin = '*';
+    let paused = false;
 
     function sendCommand(method, value = '') {
         const data = {

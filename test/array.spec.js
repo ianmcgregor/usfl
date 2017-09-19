@@ -1,4 +1,4 @@
-import array from '../array';
+import array from '../src/array';
 
 describe('array utils', () => {
 

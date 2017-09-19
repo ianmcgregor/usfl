@@ -1,4 +1,4 @@
-import string from '../string';
+import string from '../src/string';
 
 describe('string utils', function() {
 

@@ -1,4 +1,4 @@
-import linkedList from '../linked-list';
+import linkedList from '../src/linked-list';
 
 describe('linked list', () => {
     const list = linkedList();
