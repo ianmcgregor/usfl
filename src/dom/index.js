@@ -1,17 +1,17 @@
-import blockScrolling from './blockScrolling';
-import elCoords from './elCoords';
-import forceRedraw from './forceRedraw';
-import getPageHeight from './getPageHeight';
-import getScrollPercentage from './getScrollPercentage';
-import getScrollRemaining from './getScrollRemaining';
-import getScrollTop from './getScrollTop';
-import getSrcsetImage from './getSrcsetImage';
-import isElementInViewport from './isElementInViewport';
-import isPageEnd from './isPageEnd';
+import blockScrolling from './block-scrolling';
+import elCoords from './el-coords';
+import forceRedraw from './force-redraw';
+import getPageHeight from './get-page-height';
+import getScrollPercentage from './get-scroll-percentage';
+import getScrollRemaining from './get-scroll-remaining';
+import getScrollTop from './get-scroll-top';
+import getSrcsetImage from './get-srcset-image';
+import isElementInViewport from './is-element-in-viewport';
+import isPageEnd from './is-page-end';
 import resize from './resize';
 import scroll from './scroll';
-import setStyle from './setStyle';
-import transitionEnd from './transitionEnd';
+import setStyle from './set-style';
+import transitionEnd from './transition-end';
 
 export default {
     blockScrolling,

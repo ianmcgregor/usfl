@@ -1,4 +1,4 @@
-import getScrollTop from './getScrollTop';
+import getScrollTop from './get-scroll-top';
 
 export default function getScrollRemaining() {
     const b = document.body;

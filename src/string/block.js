@@ -1,4 +1,4 @@
-import escapePattern from './escapePattern';
+import escapePattern from './escape-pattern';
 import truncate from './truncate';
 // Utility method that intelligently breaks up your string,
 // allowing you to create blocks of readable text.

@@ -1,4 +1,4 @@
-import getPageHeight from '../dom/getPageHeight';
+import getPageHeight from '../dom/get-page-height';
 
 export default function pointerCoords() {
     let self = null;

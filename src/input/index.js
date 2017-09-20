@@ -1,11 +1,11 @@
-import clickOutside from './clickOutside';
+import clickOutside from './click-outside';
 import keyboard from './keyboard';
-import keyInput from './keyInput';
+import keyInput from './key-input';
 import microphone from './microphone';
-import mouseLeftWindow from './mouseLeftWindow';
-import mouseWheel from './mouseWheel';
-import pointerCoords from './pointerCoords';
-import touchInput from './touchInput';
+import mouseLeftWindow from './mouse-left-window';
+import mouseWheel from './mouse-wheel';
+import pointerCoords from './pointer-coords';
+import touchInput from './touch-input';
 
 export default {
     clickOutside,

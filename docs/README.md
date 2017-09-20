@@ -18,7 +18,7 @@ array.randomChoice([2,1,3]); // 1
 [{n: 2}, {n: 1}].sort(array.sortNumeric('n')); // [{n: 1}, {n: 2}]
 [2, 1, 3].sort(array.sortRandom); // [1, 3, 2]
 
-import randomChoice from 'usfl/array/randomChoice';
+import randomChoice from 'usfl/array/random-choice';
 
 const choice = randomChoice([2,1,3]);
 ```
@@ -79,9 +79,9 @@ dom.transitionEnd(el, cb, timeout = 1000);
 ## events
 
 [usfl/events/debounce](../src/events/debounce.js)  
-[usfl/events/delegateEvents](../src/events/delegateEvents.js)  
+[usfl/events/delegate-events](../src/events/delegate-events.js)  
 [usfl/events/emitter](../src/events/emitter.js)  
-[usfl/events/eventBus](../src/events/eventBus.js)
+[usfl/events/event-bus](../src/events/event-bus.js)
 [usfl/events/heartbeat](../src/events/heartbeat.js)
 
 ```javascript
@@ -93,7 +93,7 @@ document.body.addEventListener('touchmove', debounce((event) =>{
 ```
 ```javascript
 // delegateEvents(parentEl, eventType, tagName, cb)
-import delegateEvents from 'usfl/events/delegateEvents';
+import delegateEvents from 'usfl/events/delegate-events';
 delegateEvents(parentEl, 'click', 'li', (target, event) => {
     event.preventDefault();
     console.log(target, event);
@@ -117,7 +117,7 @@ foo.off('hello');
 ```
 ```javascript
 // singleton eventBus
-import eventBus from 'usfl/events/eventBus';
+import eventBus from 'usfl/events/event-bus';
 eventBus.on('foo', () => doSomething());
 eventBus.emit('bar');
 ```
@@ -140,21 +140,23 @@ update();
 ```javascript
 import fps from 'usfl/fps';
 
-const fpsCounter = fps();
-
+// manual update
 function update() {
   window.requestAnimationFrame(update);
-  // update stuff
-  fpsCounter.update();
+  fps.update();
 }
 update();
 
-// use pre-existing element
-const el = document.querySelector('.Fps');
-const fpsCounter = fps(el);
-
 // auto update
-fps().auto();
+fps.auto();
+
+// log
+fps.log(x);
+
+// style
+fps.style({
+    right: 0
+});
 ```
 
 ## fullscreen
@@ -210,13 +212,13 @@ graphics
     .setPixel(x, y, r, g, b, a)
     .destroy();
 
-import downloadImage from 'usfl/graphics/downloadImage';
+import downloadImage from 'usfl/graphics/download-image';
 downloadImage(canvas);
 
-import getImageDataURL from 'usfl/graphics/getImageDataURL';
+import getImageDataURL from 'usfl/graphics/get-image-data-url';
 getImageDataURL(img, w, h);
 
-import openImage from 'usfl/graphics/openImage';
+import openImage from 'usfl/graphics/open-image';
 openImage(canvas);
 
 import shape from 'usfl/graphics/shape';
@@ -230,14 +232,14 @@ shape.cross(ctx, radius);
 [usfl/http](../src/http/index.js)
 
 ```javascript
-import getLocation from 'usfl/http/getLocation';
+import getLocation from 'usfl/http/get-location';
 
 getLocation('http://www.example.com/path').hostname; // www.example.com
 getLocation('http://www.example.com/path').pathname; // /path
 getLocation('http://www.example.com/path').protocol; // http:
 ```
 ```javascript
-import urlParams from 'usfl/http/urlParams';
+import urlParams from 'usfl/http/url-params';
 
 urlParams('foo=bar&hello=world'); // {foo: 'bar', hello: 'world'}
 ```
@@ -263,10 +265,10 @@ xhr('test.html', 'text')
 
 #### clickOutside
 
-[usfl/input/clickOutside](../src/input/clickOutside.js)
+[usfl/input/click-outside](../src/input/click-outside.js)
 
 ```javascript
-import clickOutside from 'usfl/input/clickOutside';
+import clickOutside from 'usfl/input/click-outside';
 
 clickOutside(el, () => {
     el.classList.remove('is-open');
@@ -290,10 +292,10 @@ function onKeyDown(event) {
 
 #### key input
 
-[usfl/input/keyInput](../src/input/keyInput.js)
+[usfl/input/key-input](../src/input/key-input.js)
 
 ```javascript
-import KeyInput from 'usfl/KeyInput';
+import KeyInput from 'usfl/key-input';
 
 const keyInput = new KeyInput();
 const p = keyInput.isDown(keyboard.P); // P key is pressed
@@ -324,20 +326,20 @@ mic.disconnect();
 
 #### mouseLeftWindow
 
-[usfl/input/mouseLeftWindow](../src/input/mouseLeftWindow.js)
+[usfl/input/mouse-left-window](../src/input/mouse-left-window.js)
 
 ```javascript
-import mouseLeftWindow from 'usfl/input/mouseLeftWindow';
+import mouseLeftWindow from 'usfl/input/mouse-left-window';
 
 mouseLeftWindow(() => console.log('Mouse left window'));
 ```
 
 #### mouse wheel
 
-[usfl/input/mouseWheel](../src/input/mouseWheel.js)
+[usfl/input/mouse-wheel](../src/input/mouse-wheel.js)
 
 ```javascript
-import mouseWheel from 'usfl/input/mouseWheel';
+import mouseWheel from 'usfl/input/mouse-wheel';
 
 mouseWheel(5)
     .on('update', (delta) => {
@@ -353,10 +355,10 @@ mouseWheel(5)
 
 #### pointer coords
 
-[usfl/input/pointerCoords](../src/input/pointerCoords.js)
+[usfl/input/pointer-coords](../src/input/pointer-coords.js)
 
 ```javascript
-import pointerCoords from 'usfl/input/pointerCoords';
+import pointerCoords from 'usfl/input/pointer-coords';
 
 const coords = pointerCoords();
 coords.on(); // start listening
@@ -367,7 +369,7 @@ const {x, y, percentX, percentY} = coords;
 
 #### touchInput
 
-[usfl/input/touchInput](../src/input/touchInput.js)
+[usfl/input/touch-input](../src/input/touch-input.js)
 
 ```javascript
 const touch = touchInput(el);
@@ -384,10 +386,10 @@ update();
 
 ## linked list
 
-[usfl/linkedList](../src/linkedList/index.js)
+[usfl/linked-list](../src/linked-list/index.js)
 
 ```javascript
-import linkedList from 'usfl/linkedList';
+import linkedList from 'usfl/linked-list';
 
 function itemFactory(name) {
     return {name, next: null, prev: null};
@@ -487,7 +489,7 @@ math.weightedAverage(0, 1, 20); // 0.05
 
 #### cue points reader
 
-[usfl/media/cuePointsReader](../src/media/cuePointsReader.js)
+[usfl/media/cuepoints-reader](../src/media/cuepoints-reader.js)
 
 ```javascript
 const reader = cuepointsReader();
@@ -504,10 +506,10 @@ update();
 
 #### iOSPlayVideoInline
 
-[usfl/media/iOSPlayVideoInline](../src/media/iOSPlayVideoInline.js)
+[usfl/media/ios-play-video-inline](../src/media/ios-play-video-inline.js)
 
 ```javascript
-import iOSPlayVideoInline from 'usfl/media/iOSPlayVideoInline';
+import iOSPlayVideoInline from 'usfl/media/ios-play-video-inline';
 
 const video = iOSPlayVideoInline(videoEl);
 video.play();
@@ -516,10 +518,10 @@ video.pause();
 
 #### video player
 
-[usfl/media/videoPlayer](../src/media/videoPlayer.js)
+[usfl/media/video-player](../src/media/video-player.js)
 
 ```javascript
-import videoPlayer from 'usfl/media/videoPlayer';
+import videoPlayer from 'usfl/media/video-player';
 videoPlayer(el)
     .on('ready', () => console.log('ready'))
     .on('timeupdate', (time) => console.log('timeupdate', time))
@@ -563,10 +565,10 @@ youtube(iframe)
 
 #### youtube basic (only play/pause but no need to load JS api)
 
-[usfl/media/youtubeBasic](../src/media/youtubeBasic.js)
+[usfl/media/youtube-basic](../src/media/youtube-basic.js)
 
 ```javascript
-import youtubeBasic from 'usfl/media/youtubeBasic';
+import youtubeBasic from 'usfl/media/youtube-basic';
 const video = youtubeBasic(iframe);
 video.play();
 video.pause();
@@ -753,7 +755,7 @@ string.timeCode(217.8); // '00:03:37'
 
 string.preventWidow('Hello World'); // Hello&nbsp;World
 
-import editDistance from 'usfl/string/editDistance';
+import editDistance from 'usfl/string/edit-distance';
 editDistance('Hello', 'Helllo'); // 1
 ```
 

@@ -1,4 +1,4 @@
-import editDistance from './editDistance';
+import editDistance from './edit-distance';
 
 // percentage of similiarity from 0 to 1
 export default function similarity(a, b) {

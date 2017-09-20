@@ -3,7 +3,6 @@ import array from './array';
 import dom from './dom';
 import ease from './ease';
 import events from './events';
-import fps from './fps';
 import fullscreen from './fullscreen';
 import graphics from './graphics';
 import gui from './gui';
@@ -16,7 +15,7 @@ import media from './media';
 import object from './object';
 import objectPool from './object-pool';
 import Particle from './particle';
-import ParticleGroup from './particle';
+import ParticleGroup from './particle/particle-group';
 import platform from './platform';
 import popup from './popup';
 import QuadTree from './quad-tree';
@@ -32,7 +31,6 @@ export default {
     dom,
     ease,
     events,
-    fps,
     fullscreen,
     graphics,
     gui,

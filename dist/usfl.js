@@ -1386,92 +1386,6 @@ var events$2 = {
     heartbeat: heartbeat
 };
 
-var time = 0;
-var fps = 0;
-var currentFps = 0;
-var averageFps = 0;
-var ticks = 0;
-var totalFps = 0;
-var lastFps = 0;
-var lastAverage = 0;
-var logMsg = null;
-
-var el = document.createElement('div');
-el.setAttribute('id', 'fps');
-el.style.fontFamily = 'monospace';
-el.style.position = 'fixed';
-el.style.left = '0';
-el.style.top = '0';
-el.style.padding = '2px 6px';
-el.style.zIndex = '99999';
-el.style.background = '#000';
-el.style.color = '#fff';
-el.style.fontSize = '10px';
-el.style.userSelect = 'none';
-document.body.appendChild(el);
-
-function report() {
-    lastFps = currentFps;
-    lastAverage = averageFps;
-    el.innerHTML = 'FPS: ' + currentFps + '<br />AVE: ' + averageFps;
-
-    if (logMsg) {
-        el.innerHTML = el.innerHTML + '<br />MSG: ' + logMsg;
-    }
-}
-
-function update(now) {
-    if (typeof now === 'undefined') {
-        now = Date.now();
-    }
-
-    if (time === 0) {
-        time = now;
-    }
-
-    if (now - 1000 > time) {
-        time = now;
-        currentFps = fps;
-        fps = 0;
-
-        if (currentFps > 1) {
-            ticks++;
-            totalFps += currentFps;
-            averageFps = Math.floor(totalFps / ticks);
-        }
-
-        if (currentFps !== lastFps || averageFps !== lastAverage) {
-            report();
-        }
-    }
-
-    fps++;
-}
-
-function auto() {
-    window.requestAnimationFrame(auto);
-    update();
-}
-
-function log(value) {
-    logMsg = String(value);
-    report();
-}
-
-function style(props) {
-    Object.keys(props).forEach(function (prop) {
-        el.style[prop] = props[prop];
-    });
-}
-
-var fps$1 = {
-    auto: auto,
-    el: el,
-    log: log,
-    style: style,
-    update: update
-};
-
 var request = null;
 var exit = null;
 var change = null;
@@ -3310,13 +3224,13 @@ var math = {
     weightedDistribution: weightedDistribution
 };
 
-var el$1 = document.createElement('video');
+var el = document.createElement('video');
 
 var tests = [{ type: 'ogv', codec: 'video/ogg; codecs="theora"' }, { type: 'mp4', codec: 'video/mp4; codecs="avc1.42E01E"' }, // H.264 Constrained baseline profile level 3
 { type: 'webm', codec: 'video/webm; codecs="vp8, vorbis"' }, { type: 'vp9', codec: 'video/webm; codecs="vp9"' }, { type: 'hls', codec: 'application/x-mpegURL; codecs="avc1.42E01E"' }, { type: 'ogg', codec: 'audio/ogg; codecs="vorbis"' }, { type: 'mp3', codec: 'audio/mpeg;' }, { type: 'opus', codec: 'audio/ogg; codecs="opus"' }, { type: 'wav', codec: 'audio/wav; codecs="1"' }];
 
 var canPlay = tests.reduce(function (map, test) {
-    map[test.type] = !!(el$1 && el$1.canPlayType(test.codec));
+    map[test.type] = !!(el && el.canPlayType(test.codec));
     return map;
 }, {});
 
@@ -4304,6 +4218,62 @@ var Particle = function () {
     return Particle;
 }();
 
+var ParticleGroup = function () {
+    function ParticleGroup(factoryFn) {
+        classCallCheck(this, ParticleGroup);
+
+        if (!factoryFn) {
+            factoryFn = function factoryFn() {
+                return new Particle();
+            };
+        }
+        this.update = this.update.bind(this);
+        this.list = linkedList();
+        this.pool = objectPool(factoryFn);
+    }
+
+    ParticleGroup.prototype.create = function create(options) {
+        var p = this.pool.get();
+        p.reset(options);
+        this.list.add(p);
+        return p;
+    };
+
+    ParticleGroup.prototype.add = function add(p) {
+        this.list.add(p);
+    };
+
+    ParticleGroup.prototype.remove = function remove(p) {
+        this.list.remove(p);
+        this.pool.dispose(p);
+    };
+
+    ParticleGroup.prototype.forEach = function forEach(fn) {
+        var p = this.list.first;
+        while (p) {
+            fn(p);
+            p = p.next;
+        }
+    };
+
+    ParticleGroup.prototype.update = function update(fn) {
+        var p = this.list.first;
+        while (p) {
+            var next = p.next;
+            p.update();
+            if (typeof fn === 'function') {
+                fn(p);
+            }
+            if (!p.alive) {
+                this.remove(p);
+            }
+            p = next;
+        }
+    };
+
+    return ParticleGroup;
+}();
+
 var android = (function () {
   var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
   return (/Android/i.test(ua)
@@ -4358,9 +4328,10 @@ var chromeIOS = (function () {
 });
 
 var mobile = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
-  return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|SymbianOS/i.test(ua)
-  );
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+
+    return (/Android|webOS|iPhone|iP[ao]d|BlackBerry|IEMobile|Opera Mini|Windows Phone|SymbianOS/i.test(ua)
+    );
 });
 
 var desktop = (function () {
@@ -5379,7 +5350,6 @@ var index = {
     dom: dom,
     ease: ease,
     events: events$2,
-    fps: fps$1,
     fullscreen: fullscreen,
     graphics: Graphics,
     gui: gui,
@@ -5392,7 +5362,7 @@ var index = {
     object: object,
     objectPool: objectPool,
     Particle: Particle,
-    ParticleGroup: Particle,
+    ParticleGroup: ParticleGroup,
     platform: platform,
     popup: popup,
     QuadTree: QuadTree,

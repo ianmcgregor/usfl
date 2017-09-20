@@ -24,8 +24,9 @@ module.exports = function(config) {
         ],
 
         files: [
-            'dist/usfl.js',
-            'test/**/*.spec.js'
+            'dist/usfl.min.js',
+            // 'test/**/*.spec.js'
+            'test/bundle.spec.js'
         ],
 
         preprocessors: {'test/**/*.js': ['browserify']},

@@ -14,7 +14,7 @@ npm install usfl --save
 
 ```javascript
 // individual module
-import randomChoice from 'usfl/array/randomChoice';
+import randomChoice from 'usfl/array/random-choice';
 const chosen = randomChoice([1, 2, 3]);
 
 // group

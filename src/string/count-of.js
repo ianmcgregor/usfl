@@ -1,4 +1,4 @@
-import escapePattern from './escapePattern';
+import escapePattern from './escape-pattern';
 
 // the number of times substr appears within str
 export default function countOf(str, substr, caseSensitive) {

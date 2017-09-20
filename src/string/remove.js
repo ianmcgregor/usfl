@@ -1,4 +1,4 @@
-import escapePattern from './escapePattern';
+import escapePattern from './escape-pattern';
 
 // remove all instances of substr in str
 export default function remove(str, substr, caseSensitive = false) {

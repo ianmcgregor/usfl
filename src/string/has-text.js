@@ -1,4 +1,4 @@
-import removeExtraWhitespace from './removeExtraWhitespace';
+import removeExtraWhitespace from './remove-extra-whitespace';
 
 // whether str contains any text
 export default function hasText(str) {

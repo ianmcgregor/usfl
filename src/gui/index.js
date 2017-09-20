@@ -1,4 +1,4 @@
-import loadScript from '../http/loadScript';
+import loadScript from '../http/load-script';
 import localHost from '../platform/local-host';
 
 // example usage:

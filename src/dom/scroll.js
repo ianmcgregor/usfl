@@ -1,4 +1,4 @@
-import eventBus from '../events/eventBus';
+import eventBus from '../events/event-bus';
 
 export default function scroll({
     onScroll = lastScrollY => eventBus.emit('scroll', lastScrollY),

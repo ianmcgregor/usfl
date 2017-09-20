@@ -1,5 +1,5 @@
 import Graphics from '../src/graphics';
-import getImageDataURL from '../src/graphics/getImageDataURL';
+import getImageDataURL from '../src/graphics/get-image-data-url';
 
 describe('graphics', () => {
     const gfx = new Graphics();

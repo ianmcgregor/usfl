@@ -1,7 +1,7 @@
 import debounce from './debounce';
-import delegateEvents from './delegateEvents';
+import delegateEvents from './delegate-events';
 import emitter from './emitter';
-import eventBus from './eventBus';
+import eventBus from './event-bus';
 import heartbeat from './heartbeat';
 
 export default {

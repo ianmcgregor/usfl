@@ -1,7 +1,7 @@
-import getLocation from './getLocation';
+import getLocation from './get-location';
 import jsonp from './jsonp';
-import loadScript from './loadScript';
-import urlParams from './urlParams';
+import loadScript from './load-script';
+import urlParams from './url-params';
 import xhr from './xhr';
 
 export default {

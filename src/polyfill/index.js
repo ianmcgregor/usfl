@@ -1,3 +1,3 @@
-import './classList';
+import './class-list';
 import './console';
-import './requestAnimationFrame';
+import './request-animation-frame';
