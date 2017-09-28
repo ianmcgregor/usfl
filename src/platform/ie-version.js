@@ -1,4 +1,4 @@
-export default function ieVersion(ua = navigator.userAgent) {
+export default function ieVersion(ua = (typeof navigator !== 'undefined' && navigator.userAgent)) {
     let v = 0;
     if (/MSIE (\d+\.\d+);/.test(ua)) {
         v = parseInt(RegExp.$1, 10);

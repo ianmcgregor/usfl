@@ -1,7 +1,7 @@
 import android from './android';
 
 //http://stackoverflow.com/questions/14403766/how-to-detect-the-stock-android-browser
-export default function androidNative(ua = navigator.userAgent) {
+export default function androidNative(ua = (typeof navigator !== 'undefined' && navigator.userAgent)) {
     if (!android(ua)) {
         return false;
     }

@@ -1,4 +1,4 @@
-const el = document.createElement('video');
+const el = typeof document !== 'undefined' && document.createElement('video');
 
 const tests = [
     {type: 'ogv', codec: 'video/ogg; codecs="theora"'},
@@ -14,6 +14,6 @@ const tests = [
 ];
 
 export default tests.reduce((map, test) => {
-    map[test.type] = !!(el && el.canPlayType(test.codec));
+    map[test.type] = !!(el && el.canPlayType && el.canPlayType(test.codec));
     return map;
 }, {});

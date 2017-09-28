@@ -1,1 +1,1 @@
-export default () => !!window.DeviceOrientationEvent;
+export default () => !!(typeof window !== 'undefined' && window.DeviceOrientationEvent);

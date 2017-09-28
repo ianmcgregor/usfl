@@ -1,6 +1,6 @@
 {
   "name": "usfl",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A collection of tested, reusable JS utilities and snippets.",
   "keywords": [
     "lib",
@@ -17,7 +17,7 @@
     "postinstall": "babel src --out-dir ./",
     "start": "rollup -c -w",
     "build": "NODE_ENV=production rollup -c && rollup -c",
-    "test": "eslint 'src/**/*.js' && karma start --single-run --browsers Firefox",
+    "test": "eslint 'src/**/*.js' && mocha 'test/bundle-nodejs.spec.js' && karma start --single-run --browsers Firefox",
     "lint": "eslint 'src/**/*.js'; exit 0"
   },
   "readmeFilename": "README.md",

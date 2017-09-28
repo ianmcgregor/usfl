@@ -28,9 +28,11 @@ module.exports = function(config) {
             'test/**/*.spec.js'
         ],
 
-        preprocessors: {'test/**/*.js': ['browserify']},
+        exclude: [
+            'test/bundle-nodejs.spec.js'
+        ],
 
-        exclude: [],
+        preprocessors: {'test/**/*.js': ['browserify']},
 
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'

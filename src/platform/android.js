@@ -1,1 +1,1 @@
-export default (ua = navigator.userAgent) => /Android/i.test(ua);
+export default (ua = (typeof navigator !== 'undefined' && navigator.userAgent)) => /Android/i.test(ua);

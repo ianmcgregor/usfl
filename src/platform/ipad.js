@@ -1,1 +1,1 @@
-export default (ua = navigator.userAgent) => /iPad/i.test(ua);
+export default (ua = (typeof navigator !== 'undefined' && navigator.userAgent)) => /iPad/i.test(ua);

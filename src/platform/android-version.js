@@ -1,6 +1,6 @@
 import android from './android';
 
-export default function androidVersion(ua = navigator.userAgent) {
+export default function androidVersion(ua = (typeof navigator !== 'undefined' && navigator.userAgent)) {
     if (!android(ua)) {
         return 0;
     }

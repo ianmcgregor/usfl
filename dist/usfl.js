@@ -11,6 +11,10 @@
 
 (function () {
 
+    if (typeof document === 'undefined') {
+        return;
+    }
+
     var testElement = document.createElement('_');
 
     testElement.classList.add('c1', 'c2');
@@ -57,6 +61,10 @@
 })();
 
 (function (fn) {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
     window.console = window.console || {};
     var methods = ['assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'memory', 'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'timeStamp', 'timeline', 'timelineEnd', 'trace', 'warn'];
     methods.forEach(function (name) {
@@ -67,8 +75,10 @@
 /*
  * requestAnimationFrame (ios6 and android < 4.4)
  */
-
 (function () {
+    if (typeof window === 'undefined') {
+        return;
+    }
     if (!window.requestAnimationFrame) {
         var vendors = ['ms', 'moz', 'webkit', 'o'];
         for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -1393,7 +1403,7 @@ var error = null;
 var element = null;
 var enabled = null;
 
-var docEl = document.documentElement;
+var docEl = typeof document !== 'undefined' && document.documentElement || {};
 
 if (typeof docEl.requestFullscreen !== 'undefined') {
     request = 'requestFullscreen';
@@ -1436,13 +1446,15 @@ var api = {
 
 var fullscreen = Object.create(emitter.prototype);
 
-document.addEventListener(api.change, function (event) {
-    fullscreen.emit('change', event);
-});
+if (typeof document !== 'undefined') {
+    document.addEventListener(api.change, function (event) {
+        fullscreen.emit('change', event);
+    });
 
-document.addEventListener(api.error, function (event) {
-    fullscreen.emit('error', event);
-});
+    document.addEventListener(api.error, function (event) {
+        fullscreen.emit('error', event);
+    });
+}
 
 Object.defineProperties(fullscreen, {
     request: {
@@ -1750,8 +1762,9 @@ function loadScript(src, cb) {
 }
 
 var localHost = (function () {
-  return (/^(?:https?:\/\/)?(?:localhost|192\.168)/.test(window.location.href)
-  );
+    var href = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof window !== 'undefined' && window.location.href;
+    return (/^(?:https?:\/\/)?(?:localhost|192\.168)/.test(href)
+    );
 });
 
 // example usage:
@@ -3224,13 +3237,13 @@ var math = {
     weightedDistribution: weightedDistribution
 };
 
-var el = document.createElement('video');
+var el = typeof document !== 'undefined' && document.createElement('video');
 
 var tests = [{ type: 'ogv', codec: 'video/ogg; codecs="theora"' }, { type: 'mp4', codec: 'video/mp4; codecs="avc1.42E01E"' }, // H.264 Constrained baseline profile level 3
 { type: 'webm', codec: 'video/webm; codecs="vp8, vorbis"' }, { type: 'vp9', codec: 'video/webm; codecs="vp9"' }, { type: 'hls', codec: 'application/x-mpegURL; codecs="avc1.42E01E"' }, { type: 'ogg', codec: 'audio/ogg; codecs="vorbis"' }, { type: 'mp3', codec: 'audio/mpeg;' }, { type: 'opus', codec: 'audio/ogg; codecs="opus"' }, { type: 'wav', codec: 'audio/wav; codecs="1"' }];
 
 var canPlay = tests.reduce(function (map, test) {
-    map[test.type] = !!(el && el.canPlayType(test.codec));
+    map[test.type] = !!(el && el.canPlayType && el.canPlayType(test.codec));
     return map;
 }, {});
 
@@ -4275,14 +4288,14 @@ var ParticleGroup = function () {
 }();
 
 var android = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return (/Android/i.test(ua)
   );
 });
 
 //http://stackoverflow.com/questions/14403766/how-to-detect-the-stock-android-browser
 function androidNative() {
-    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
 
     if (!android(ua)) {
         return false;
@@ -4302,7 +4315,7 @@ function androidNative() {
 }
 
 function androidVersion() {
-    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
 
     if (!android(ua)) {
         return 0;
@@ -4317,40 +4330,40 @@ function androidVersion() {
 }
 
 var ios = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return (/iP[ao]d|iPhone/i.test(ua)
   );
 });
 
 var chromeIOS = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return ios(ua) && /CriOS/.test(ua);
 });
 
 var mobile = (function () {
-    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
 
     return (/Android|webOS|iPhone|iP[ao]d|BlackBerry|IEMobile|Opera Mini|Windows Phone|SymbianOS/i.test(ua)
     );
 });
 
 var desktop = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return !mobile(ua);
 });
 
 var deviceOrientation = (function () {
-  return !!window.DeviceOrientationEvent;
+  return !!(typeof window !== 'undefined' && window.DeviceOrientationEvent);
 });
 
 var firefox = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return (/Firefox/.test(ua)
   );
 });
 
 function ieVersion() {
-    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
 
     var v = 0;
     if (/MSIE (\d+\.\d+);/.test(ua)) {
@@ -4362,12 +4375,12 @@ function ieVersion() {
 }
 
 var ie = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return ieVersion(ua) > 0;
 });
 
 function iosVersion() {
-    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
 
     if (ios(ua)) {
         var _ua$match = ua.match(/OS (\d+)_(\d+)/i),
@@ -4382,47 +4395,49 @@ function iosVersion() {
 }
 
 var ipad = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return (/iPad/i.test(ua)
   );
 });
 
 var iphone = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return (/iPod|iPhone/i.test(ua)
   );
 });
 
 var linux = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return !android(ua) && /Linux/.test(ua);
 });
 
 var mac = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return !ios(ua) && /Mac OS/.test(ua);
 });
 
-var videoEl = document.createElement('video');
 var mp4 = (function () {
-  return !!(videoEl.canPlayType && videoEl.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"'));
+    var el = typeof document !== 'undefined' && document.createElement('video');
+    return !!(el && el.canPlayType && el.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"'));
 });
 
 var safari = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
-  return !/Android/.test(ua) && !/Chrome/.test(ua) && /Safari/.test(ua);
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
+    return !/Android/.test(ua) && !/Chrome/.test(ua) && /Safari/.test(ua);
 });
 
 var safariIOS = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return ios(ua) && /AppleWebKit/.test(ua);
 });
 
+var hasWin = typeof window !== 'undefined';
+
 var screen = {
-    width: Math.max(window.outerWidth, window.screen.width),
-    height: Math.max(window.outerHeight, window.screen.height),
-    dpr: window.devicePixelRatio || 1,
-    retina: window.devicePixelRatio > 1
+    width: hasWin ? Math.max(window.outerWidth, window.screen.width) : 0,
+    height: hasWin ? Math.max(window.outerHeight, window.screen.height) : 0,
+    dpr: hasWin ? window.devicePixelRatio || 1 : 1,
+    retina: hasWin ? window.devicePixelRatio > 1 : false
 };
 
 function webgl() {
@@ -4435,20 +4450,20 @@ function webgl() {
     }
 }
 
-var videoEl$1 = document.createElement('video');
 var webm = (function () {
-  return !!(videoEl$1.canPlayType && videoEl$1.canPlayType('video/webm; codecs="vp8, vorbis"'));
+    var el = typeof document !== 'undefined' && document.createElement('video');
+    return !!(el && el.canPlayType && el.canPlayType('video/webm; codecs="vp8, vorbis"'));
 });
 
 var windowsPhone = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
+  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
   return (/Windows Phone/i.test(ua)
   );
 });
 
 var windows = (function () {
-  var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : navigator.userAgent;
-  return !windowsPhone(ua) && /Windows/.test(ua);
+    var ua = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : typeof navigator !== 'undefined' && navigator.userAgent;
+    return !windowsPhone(ua) && /Windows/.test(ua);
 });
 
 var platform = {
@@ -5303,21 +5318,23 @@ var Tween = function () {
     return Tween;
 }();
 
-var hidden = void 0;
-var change$1 = void 0;
+var hidden = null;
+var change$1 = null;
 
-if (typeof document.hidden !== 'undefined') {
-    hidden = 'hidden';
-    change$1 = 'visibilitychange';
-} else if (typeof document.mozHidden !== 'undefined') {
-    hidden = 'mozHidden';
-    change$1 = 'mozvisibilitychange';
-} else if (typeof document.msHidden !== 'undefined') {
-    hidden = 'msHidden';
-    change$1 = 'msvisibilitychange';
-} else if (typeof document.webkitHidden !== 'undefined') {
-    hidden = 'webkitHidden';
-    change$1 = 'webkitvisibilitychange';
+if (typeof document !== 'undefined') {
+    if (typeof document.hidden !== 'undefined') {
+        hidden = 'hidden';
+        change$1 = 'visibilitychange';
+    } else if (typeof document.mozHidden !== 'undefined') {
+        hidden = 'mozHidden';
+        change$1 = 'mozvisibilitychange';
+    } else if (typeof document.msHidden !== 'undefined') {
+        hidden = 'msHidden';
+        change$1 = 'msvisibilitychange';
+    } else if (typeof document.webkitHidden !== 'undefined') {
+        hidden = 'webkitHidden';
+        change$1 = 'webkitvisibilitychange';
+    }
 }
 
 var api$1 = {

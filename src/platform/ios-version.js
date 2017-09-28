@@ -1,6 +1,6 @@
 import ios from './ios';
 
-export default function iosVersion(ua = navigator.userAgent) {
+export default function iosVersion(ua = (typeof navigator !== 'undefined' && navigator.userAgent)) {
     if (ios(ua)) {
         const [, b, c] = ua.match(/OS (\d+)_(\d+)/i);
         if (b && c) {

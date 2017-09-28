@@ -1,4 +1,8 @@
 (function(fn) {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
     window.console = window.console || {};
     const methods = [
         'assert',

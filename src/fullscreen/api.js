@@ -5,7 +5,7 @@ let request = null,
     element = null,
     enabled = null;
 
-const docEl = document.documentElement;
+const docEl = (typeof document !== 'undefined' && document.documentElement) || {};
 
 if (typeof docEl.requestFullscreen !== 'undefined') {
     request = 'requestFullscreen';

@@ -1,1 +1,1 @@
-export default (ua = navigator.userAgent) => /Windows Phone/i.test(ua);
+export default (ua = (typeof navigator !== 'undefined' && navigator.userAgent)) => /Windows Phone/i.test(ua);

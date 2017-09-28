@@ -5,6 +5,10 @@
 
 (function() {
 
+    if (typeof document === 'undefined') {
+        return;
+    }
+
     let testElement = document.createElement('_');
 
     testElement.classList.add('c1', 'c2');
