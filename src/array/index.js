@@ -7,6 +7,7 @@ import sortAlpha from './sort-alpha';
 import sortNumbered from './sort-numbered';
 import sortNumeric from './sort-numeric';
 import sortRandom from './sort-random';
+import unique from './unique';
 
 export default {
     array,
@@ -17,5 +18,6 @@ export default {
     sortAlpha,
     sortNumbered,
     sortNumeric,
-    sortRandom
+    sortRandom,
+    unique
 };
