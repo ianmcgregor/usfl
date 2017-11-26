@@ -1,9 +1,15 @@
-import MiniSignal from 'mini-signals';
+import EventEmitter from 'eventemitter3';
 
-export default class Loop {
+if (typeof window !== 'undefined' && (!window.perfomance || !window.perfomance.now)) {
+    const offset = Date.now();
+    window.performance.now = function now() {
+        return Date.now() - offset;
+    };
+}
+
+export class Loop {
     constructor() {
         this.update = this.update.bind(this);
-        this.onUpdate = new MiniSignal();
 
         this.raf = null;
         this.running = false;
@@ -12,6 +18,8 @@ export default class Loop {
         this.elasped = 0;
         this.deltaSecs = 0;
         this.elaspedSecs = 0;
+
+        this.emitter = new EventEmitter();
 
         // this.accumulated = 0;
         // this.step = 1000 / 60;
@@ -42,7 +50,8 @@ export default class Loop {
 
         this.raf = window.requestAnimationFrame(this.update);
 
-        const now = Date.now();
+        // const now = Date.now();
+        const now = performance.now();
         let deltaMs = now - this.last;
         if (deltaMs > 20) {
             deltaMs = 20;
@@ -63,14 +72,18 @@ export default class Loop {
         //     this.onUpdate.dispatch(this.step);
         // }
 
-        this.onUpdate.dispatch(this.delta, this.elasped);
+        this.emitter.emit('update', this.delta, this.elasped);
     }
 
-    add(fn, context) {
-        return this.onUpdate.add(fn, context);
+    add(fn) {
+        this.emitter.on('update', fn);
+        return this;
     }
 
-    remove(binding) {
-        this.onUpdate.detach(binding);
+    remove(fn) {
+        this.emitter.removeListener('update', fn);
+        return this;
     }
 }
+
+export default new Loop();
