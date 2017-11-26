@@ -1,5 +1,5 @@
 // https://developers.google.com/youtube/iframe_api_reference#Events
-import events from 'events';
+import EventEmitter from 'eventemitter3';
 
 export default function youtube(el) {
     let emitter = null;
@@ -75,8 +75,7 @@ export default function youtube(el) {
         document.body.appendChild(script);
     }
 
-    emitter = Object.assign(Object.create(events.EventEmitter.prototype), {
-        _events: {},
+    emitter = Object.assign(new EventEmitter(), {
         play,
         pause,
         paused: () => paused,

@@ -1,4 +1,4 @@
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
 export default function mouseWheel(speed) {
     speed = speed || 2;
@@ -36,17 +36,10 @@ export default function mouseWheel(speed) {
 
     add();
 
-    wheel = Object.create(emitter.prototype, {
-        _events: {
-            value: {}
-        },
-        add: {
-            value: add
-        },
-        remove: {
-            value: remove
-        }
+    wheel = Object.assign(new Emitter(), {
+        add,
+        remove
     });
 
-    return Object.freeze(wheel);
+    return wheel;
 }

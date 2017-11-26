@@ -67,9 +67,6 @@ export default function iOSPlayVideoInline(el, loop = true) {
 
     // self = Object.create(Emitter.prototype, {
     self = Object.create(null, {
-        _events: {
-            value: {}
-        },
         destroy: {
             value: destroy
         },

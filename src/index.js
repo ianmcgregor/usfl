@@ -9,7 +9,7 @@ import gui from './gui';
 import http from './http';
 import input from './input';
 import linkedList from './linked-list';
-import Loop from './loop';
+import loop, {Loop} from './loop';
 import math from './math';
 import media from './media';
 import object from './object';
@@ -37,6 +37,7 @@ export default {
     http,
     input,
     linkedList,
+    loop,
     Loop,
     math,
     media,

@@ -1,4 +1,4 @@
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
 export default function touchInput(el) {
     el = el || document.body;
@@ -66,27 +66,12 @@ export default function touchInput(el) {
 
     listen(el);
 
-    self = Object.create(emitter.prototype, {
-        _events: {
-            value: {}
-        },
-        listen: {
-            value: listen
-        },
-        isDown: {
-            value: function() {
-                return data.touching;
-            }
-        },
-        getTouch: {
-            value: function() {
-                return data;
-            }
-        },
-        destroy: {
-            value: destroy
-        }
+    self = Object.assign(new Emitter(), {
+        listen,
+        isDown: () => data.touching,
+        getTouch: () => data,
+        destroy
     });
 
-    return Object.freeze(self);
+    return self;
 }

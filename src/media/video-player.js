@@ -1,4 +1,4 @@
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
 export default function videoPlayer(videoEl) {
     let el = videoEl || document.createElement('video');
@@ -120,52 +120,31 @@ export default function videoPlayer(videoEl) {
 
     addEventListeners();
 
-    player = Object.create(emitter.prototype, {
-        _events: {
-            value: {}
+    player = Object.assign(new Emitter(), {
+        destroy,
+        load,
+        pause,
+        play,
+        seek,
+        get el() {
+            return el;
         },
-        destroy: {
-            value: destroy
+        get currentTime() {
+            return el.currentTime;
         },
-        load: {
-            value: load
+        set currentTime(value) {
+            el.currentTime = value;
         },
-        pause: {
-            value: pause
+        get duration() {
+            return el.duration;
         },
-        play: {
-            value: play
+        get volume() {
+            return el.volume;
         },
-        seek: {
-            value: seek
-        },
-        el: {
-            get: function() {
-                return el;
-            }
-        },
-        currentTime: {
-            get: function() {
-                return el.currentTime;
-            },
-            set: function(value) {
-                el.currentTime = value;
-            }
-        },
-        duration: {
-            get: function() {
-                return el.duration;
-            }
-        },
-        volume: {
-            get: function() {
-                return el.volume;
-            },
-            set: function(value) {
-                el.volume = value;
-            }
+        set volume(value) {
+            el.volume = value;
         }
     });
 
-    return Object.freeze(player);
+    return player;
 }

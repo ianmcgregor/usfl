@@ -51,4 +51,12 @@ describe('array utils', () => {
         expect([3, 2, 1, 0].sort(array.sortRandom)).to.be.instanceof(Array);
         expect([3, 2, 1, 0].sort(array.sortRandom)).to.have.property('length', 4);
     });
+
+    it('should return unique array', () => {
+        expect(array.unique([3, 2, 1, 0])).to.be.instanceof(Array);
+        expect(array.unique([3, 2, 1, 0])).to.eql([3, 2, 1, 0]);
+        expect(array.unique([3, 3, 1, 1])).to.eql([3, 1]);
+        expect(array.unique([3, 3, 3, 3])).to.eql([3]);
+        expect(array.unique([3, 3, 3, 2])).to.eql([3, 2]);
+    });
 });

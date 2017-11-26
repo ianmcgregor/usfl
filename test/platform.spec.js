@@ -27,6 +27,10 @@ describe('platform', () => {
         expect(platform.ie).to.be.false;
     });
 
+    it('should get language', () => {
+        expect(platform.language).to.be.a('string');
+    });
+
     it('should get screen props', () => {
         expect(platform.screen.width).to.eql(window.screen.width);
         expect(platform.screen.height).to.eql(window.screen.height);

@@ -1,10 +1,8 @@
-import events from 'events';
+import EventEmitter from 'eventemitter3';
 
-export default class emitter extends events.EventEmitter {
+export default class Emitter extends EventEmitter {
     constructor() {
         super();
-
-        this.setMaxListeners(20);
     }
 
     off (type, listener) {

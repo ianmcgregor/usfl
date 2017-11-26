@@ -1,4 +1,4 @@
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
 // https://developer.vimeo.com/player/js-api
 
@@ -102,8 +102,7 @@ export default function vimeo(el) {
 
     window.addEventListener('message', onMessage);
 
-    player = Object.assign(Object.create(emitter.prototype), {
-        _events: {},
+    player = Object.assign(new Emitter(), {
         play,
         pause,
         paused: () => paused,

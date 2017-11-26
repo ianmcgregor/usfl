@@ -1,5 +1,6 @@
 import Graphics from '../src/graphics';
 import getImageDataURL from '../src/graphics/get-image-data-url';
+import SpritesheetPlayer from '../src/graphics/spritesheet-player';
 
 describe('graphics', () => {
     const gfx = new Graphics();
@@ -56,4 +57,12 @@ describe('graphics', () => {
     // setPixel,
     // eachPixel
 
+});
+
+describe('spritesheet player', () => {
+    it('should construct', () => {
+        const p = new SpritesheetPlayer();
+        expect(p).to.exist;
+        expect(p.update).to.be.a('function');
+    });
 });

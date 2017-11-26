@@ -24,7 +24,7 @@ module.exports = function(config) {
         ],
 
         files: [
-            'dist/usfl.min.js',
+            'dist/usfl.js',
             'test/**/*.spec.js'
         ],
 

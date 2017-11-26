@@ -1,4 +1,4 @@
-import Loop from '../src/loop';
+import {Loop} from '../src/loop';
 
 describe('Loop', () => {
     const loop = new Loop();

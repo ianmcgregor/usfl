@@ -23,8 +23,7 @@ export default {
         commonjs({
             include: [
                 'node_modules/core-js/**',
-                'node_modules/mini-signals/**',
-                'node_modules/events/**'
+                'node_modules/eventemitter3/**'
             ]
         }),
         babel({
