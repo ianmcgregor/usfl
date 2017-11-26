@@ -11,6 +11,7 @@ import ios from './ios';
 import iosVersion from './ios-version';
 import ipad from './ipad';
 import iphone from './iphone';
+import language from './language';
 import linux from './linux';
 import localHost from './local-host';
 import mac from './mac';
@@ -38,6 +39,7 @@ export default {
     iosVersion: iosVersion(),
     ipad: ipad(),
     iphone: iphone(),
+    language: language(),
     linux: linux(),
     localHost: localHost(),
     mac: mac(),
