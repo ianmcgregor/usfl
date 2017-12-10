@@ -125,24 +125,35 @@ export default function videoPlayer(videoEl) {
         load,
         pause,
         play,
-        seek,
-        get el() {
-            return el;
+        seek
+    });
+
+    Object.defineProperties(player, {
+        el: {
+            get() {
+                return el;
+            }
         },
-        get currentTime() {
-            return el.currentTime;
+        currentTime: {
+            get() {
+                return el.currentTime;
+            },
+            set(value) {
+                el.currentTime = value;
+            }
         },
-        set currentTime(value) {
-            el.currentTime = value;
+        duration: {
+            get() {
+                return el.duration;
+            }
         },
-        get duration() {
-            return el.duration;
-        },
-        get volume() {
-            return el.volume;
-        },
-        set volume(value) {
-            el.volume = value;
+        volume: {
+            get() {
+                return el.volume;
+            },
+            set(value) {
+                el.volume = value;
+            }
         }
     });
 

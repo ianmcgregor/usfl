@@ -1,3 +1,3 @@
-import emitter from './emitter';
+import Emitter from './emitter';
 
-export default Object.create(emitter.prototype);
+export default new Emitter();

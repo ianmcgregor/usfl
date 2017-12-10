@@ -1,6 +1,15 @@
 // https://developers.google.com/youtube/iframe_api_reference#Events
 import EventEmitter from 'eventemitter3';
 
+export const getYouTubeId = url => {
+    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length === 11) {
+        return match[2];
+    }
+    return null;
+};
+
 export default function youtube(el) {
     let emitter = null;
     let player = null;

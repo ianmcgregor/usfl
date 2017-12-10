@@ -1,7 +1,7 @@
 import api from './api';
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
-const fullscreen = Object.create(emitter.prototype);
+const fullscreen = new Emitter();
 
 if (typeof document !== 'undefined') {
     document.addEventListener(api.change, (event) => {

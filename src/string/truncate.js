@@ -6,7 +6,7 @@ export default function truncate(str, len, suffix = '...') {
         trunc = trunc.substr(0, len);
         const r = /[^\s]/;
         if (r.test(str.charAt(len))) {
-            trunc = trunc.replace(/\w+$|\s+$/, '').trimRight();
+            trunc = trunc.replace(/\w+$|\s+$/, '').trim();
         }
         trunc += suffix;
     }

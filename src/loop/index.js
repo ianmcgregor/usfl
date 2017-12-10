@@ -1,28 +1,14 @@
 import EventEmitter from 'eventemitter3';
 
-if (typeof window !== 'undefined' && (!window.perfomance || !window.perfomance.now)) {
-    const offset = Date.now();
-    window.performance.now = function now() {
-        return Date.now() - offset;
-    };
-}
-
 export class Loop {
     constructor() {
         this.update = this.update.bind(this);
 
+        this.last = 0;
         this.raf = null;
         this.running = false;
-        this.last = 0;
-        this.delta = 0;
-        this.elasped = 0;
-        this.deltaSecs = 0;
-        this.elaspedSecs = 0;
 
         this.emitter = new EventEmitter();
-
-        // this.accumulated = 0;
-        // this.step = 1000 / 60;
     }
 
     start() {
@@ -30,6 +16,7 @@ export class Loop {
             return;
         }
 
+        this.last = 0;
         this.running = true;
         this.update();
     }
@@ -38,7 +25,7 @@ export class Loop {
         if (!this.running) {
             return;
         }
-        this.last = 0;
+
         this.running = false;
         window.cancelAnimationFrame(this.raf);
     }
@@ -50,29 +37,12 @@ export class Loop {
 
         this.raf = window.requestAnimationFrame(this.update);
 
-        // const now = Date.now();
-        const now = performance.now();
-        let deltaMs = now - this.last;
-        if (deltaMs > 20) {
-            deltaMs = 20;
-        }
+        const now = Date.now();
+        const deltaTime = now - this.last;
+        const deltaFrames = deltaTime * 0.06;
         this.last = now;
 
-        this.delta = deltaMs * 0.06;
-        this.elasped += this.delta;
-
-        this.deltaSecs = deltaMs * 0.001;
-        this.elaspedSecs += this.deltaSecs;
-
-        //  // fixed step:
-        // this.accumulated += dt;
-        //
-        // while (this.accumulated >= this.step) {
-        //     this.accumulated -= this.step;
-        //     this.onUpdate.dispatch(this.step);
-        // }
-
-        this.emitter.emit('update', this.delta, this.elasped);
+        this.emitter.emit('update', deltaFrames, deltaTime);
     }
 
     add(fn) {
@@ -82,7 +52,6 @@ export class Loop {
 
     remove(fn) {
         this.emitter.removeListener('update', fn);
-        return this;
     }
 }
 

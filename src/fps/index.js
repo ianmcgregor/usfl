@@ -20,7 +20,6 @@ el.style.background = '#000';
 el.style.color = '#fff';
 el.style.fontSize = '10px';
 el.style.userSelect = 'none';
-document.body.appendChild(el);
 
 function report() {
     lastFps = currentFps;
@@ -33,6 +32,10 @@ function report() {
 }
 
 function update(now) {
+    if (!el.parentElement) {
+        document.body.appendChild(el);
+    }
+
     if (typeof now === 'undefined') {
         now = Date.now();
     }

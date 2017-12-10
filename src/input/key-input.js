@@ -1,9 +1,9 @@
 import array from '../array/array';
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 import keyboard from './keyboard';
 
 export default function keyInput() {
-    const api = Object.create(emitter.prototype);
+    const api = new Emitter();
     const keys = array(256, false);
 
     function emitKey(keyCode) {

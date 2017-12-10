@@ -798,7 +798,7 @@ var Emitter = function (_EventEmitter) {
     return Emitter;
 }(eventemitter3);
 
-var eventBus = Object.create(Emitter.prototype);
+var eventBus = new Emitter();
 
 function resize() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -1416,17 +1416,22 @@ function heartbeat(interval) {
         return beat;
     }
 
-    beat = Object.assign(Object.create(Emitter.prototype), {
+    beat = Object.assign(new Emitter(), {
         start: start,
         stop: stop,
         update: update,
-        get interval() {
-            return interval;
-        },
-        set interval(value) {
-            interval = value;
-        },
         setInterval: setInterval
+    });
+
+    Object.defineProperties(beat, {
+        interval: {
+            get: function get() {
+                return interval;
+            },
+            set: function set(value) {
+                interval = value;
+            }
+        }
     });
 
     return beat;
@@ -1488,7 +1493,7 @@ var api = {
     enabled: enabled
 };
 
-var fullscreen = Object.create(Emitter.prototype);
+var fullscreen = new Emitter();
 
 if (typeof document !== 'undefined') {
     document.addEventListener(api.change, function (event) {
@@ -1868,28 +1873,34 @@ function getLocation(href) {
     };
 }
 
-function jsonp(url, cb) {
-    var timeout = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 5000;
+function jsonp(url) {
+    var timeout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10000;
 
-    var script = document.createElement('script');
-    var callback = 'jsonp_callback_' + Math.round(100000 * Math.random());
-    var separator = url.indexOf('?') >= 0 ? '&' : '?';
+    return new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        var callback = 'jsonp_callback_' + Math.round(100000 * Math.random());
+        var separator = url.indexOf('?') >= 0 ? '&' : '?';
 
-    var timeoutId = window.setTimeout(function () {
-        window[callback](null, 'jsonp error');
-    }, timeout);
+        var timeoutId = window.setTimeout(function () {
+            window[callback](null, 'jsonp error');
+        }, timeout);
 
-    window[callback] = function (data) {
-        var err = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        window[callback] = function (data) {
+            var err = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
-        window.clearTimeout(timeoutId);
-        delete window[callback];
-        document.body.removeChild(script);
-        cb(data, err);
-    };
+            window.clearTimeout(timeoutId);
+            delete window[callback];
+            document.body.removeChild(script);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        };
 
-    script.src = '' + url + separator + 'callback=' + callback;
-    document.body.appendChild(script);
+        script.src = '' + url + separator + 'callback=' + callback;
+        document.body.appendChild(script);
+    });
 }
 
 var plus = /\+/g; // match '+' symbol
@@ -2101,7 +2112,7 @@ var keyboard = {
 };
 
 function keyInput() {
-    var api = Object.create(Emitter.prototype);
+    var api = new Emitter();
     var keys = array$1(256, false);
 
     function emitKey(keyCode) {
@@ -2184,7 +2195,7 @@ function keyInput() {
 }
 
 function microphone() {
-    var mic = Object.create(Emitter.prototype);
+    var mic = new Emitter();
     var _stream = null;
 
     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -2592,31 +2603,17 @@ function linkedList() {
     };
 }
 
-if (typeof window !== 'undefined' && (!window.perfomance || !window.perfomance.now)) {
-    var offset = Date.now();
-    window.performance.now = function now() {
-        return Date.now() - offset;
-    };
-}
-
 var Loop = function () {
     function Loop() {
         classCallCheck(this, Loop);
 
         this.update = this.update.bind(this);
 
+        this.last = 0;
         this.raf = null;
         this.running = false;
-        this.last = 0;
-        this.delta = 0;
-        this.elasped = 0;
-        this.deltaSecs = 0;
-        this.elaspedSecs = 0;
 
         this.emitter = new eventemitter3();
-
-        // this.accumulated = 0;
-        // this.step = 1000 / 60;
     }
 
     Loop.prototype.start = function start() {
@@ -2624,6 +2621,7 @@ var Loop = function () {
             return;
         }
 
+        this.last = 0;
         this.running = true;
         this.update();
     };
@@ -2632,7 +2630,7 @@ var Loop = function () {
         if (!this.running) {
             return;
         }
-        this.last = 0;
+
         this.running = false;
         window.cancelAnimationFrame(this.raf);
     };
@@ -2644,29 +2642,12 @@ var Loop = function () {
 
         this.raf = window.requestAnimationFrame(this.update);
 
-        // const now = Date.now();
-        var now = performance.now();
-        var deltaMs = now - this.last;
-        if (deltaMs > 20) {
-            deltaMs = 20;
-        }
+        var now = Date.now();
+        var deltaTime = now - this.last;
+        var deltaFrames = deltaTime * 0.06;
         this.last = now;
 
-        this.delta = deltaMs * 0.06;
-        this.elasped += this.delta;
-
-        this.deltaSecs = deltaMs * 0.001;
-        this.elaspedSecs += this.deltaSecs;
-
-        //  // fixed step:
-        // this.accumulated += dt;
-        //
-        // while (this.accumulated >= this.step) {
-        //     this.accumulated -= this.step;
-        //     this.onUpdate.dispatch(this.step);
-        // }
-
-        this.emitter.emit('update', this.delta, this.elasped);
+        this.emitter.emit('update', deltaFrames, deltaTime);
     };
 
     Loop.prototype.add = function add(fn) {
@@ -2676,7 +2657,6 @@ var Loop = function () {
 
     Loop.prototype.remove = function remove(fn) {
         this.emitter.removeListener('update', fn);
-        return this;
     };
 
     return Loop;
@@ -2813,11 +2793,39 @@ function lerp(from, to) {
 }
 
 function map(v, a, b, x, y) {
-    // value, min expected, max expected, map min, map max
+    var clamp = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : true;
+
+    // value, min expected, max expected, map min, map max, clamp
     // e.g. map some value between 0 to 100 to -50 to 50
     // map(50, 0, 100, -50, 50) // 0
     // map(25, 0, 100, -50, 50) // -25
-    return v === a ? x : (v - a) * (y - x) / (b - a) + x;
+    if (v === a) {
+        return x;
+    }
+
+    var val = (v - a) * (y - x) / (b - a) + x;
+
+    if (!clamp) {
+        return val;
+    }
+
+    if (y > x) {
+        if (val > y) {
+            val = y;
+        }
+        if (val < x) {
+            val = x;
+        }
+    } else {
+        if (val < y) {
+            val = y;
+        }
+        if (val > x) {
+            val = x;
+        }
+    }
+
+    return val;
 }
 
 function normalize(value, min, max) {
@@ -3219,7 +3227,6 @@ function iOSPlayVideoInline(el) {
         return self;
     }
 
-    // self = Object.create(Emitter.prototype, {
     self = Object.create(null, {
         destroy: {
             value: destroy
@@ -3391,24 +3398,35 @@ function videoPlayer(videoEl) {
         load: load,
         pause: pause,
         play: play,
-        seek: seek,
-        get el() {
-            return el;
+        seek: seek
+    });
+
+    Object.defineProperties(player, {
+        el: {
+            get: function get() {
+                return el;
+            }
         },
-        get currentTime() {
-            return el.currentTime;
+        currentTime: {
+            get: function get() {
+                return el.currentTime;
+            },
+            set: function set(value) {
+                el.currentTime = value;
+            }
         },
-        set currentTime(value) {
-            el.currentTime = value;
+        duration: {
+            get: function get() {
+                return el.duration;
+            }
         },
-        get duration() {
-            return el.duration;
-        },
-        get volume() {
-            return el.volume;
-        },
-        set volume(value) {
-            el.volume = value;
+        volume: {
+            get: function get() {
+                return el.volume;
+            },
+            set: function set(value) {
+                el.volume = value;
+            }
         }
     });
 
@@ -3532,6 +3550,8 @@ function vimeo(el) {
 }
 
 // https://developers.google.com/youtube/iframe_api_reference#Events
+
+
 function youtube(el) {
     var emitter = null;
     var player = null;
@@ -4701,7 +4721,7 @@ function truncate(str, len) {
         trunc = trunc.substr(0, len);
         var r = /[^\s]/;
         if (r.test(str.charAt(len))) {
-            trunc = trunc.replace(/\w+$|\s+$/, '').trimRight();
+            trunc = trunc.replace(/\w+$|\s+$/, '').trim();
         }
         trunc += suffix;
     }
@@ -5134,7 +5154,9 @@ var api$1 = {
     change: change$1
 };
 
-var visibility = Object.create(Emitter.prototype, {
+var visibility = new Emitter();
+
+Object.defineProperties(visibility, {
     hidden: {
         get: function get() {
             return document[api$1.hidden];

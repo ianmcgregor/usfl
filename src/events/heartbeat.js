@@ -1,4 +1,4 @@
-import emitter from './emitter';
+import Emitter from './emitter';
 
 export default function heartbeat(interval) {
     let beat = null,
@@ -46,17 +46,22 @@ export default function heartbeat(interval) {
         return beat;
     }
 
-    beat = Object.assign(Object.create(emitter.prototype), {
+    beat = Object.assign(new Emitter(), {
         start,
         stop,
         update,
-        get interval() {
-            return interval;
-        },
-        set interval(value) {
-            interval = value;
-        },
         setInterval
+    });
+
+    Object.defineProperties(beat, {
+        interval: {
+            get() {
+                return interval;
+            },
+            set(value) {
+                interval = value;
+            }
+        }
     });
 
     return beat;

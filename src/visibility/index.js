@@ -1,9 +1,11 @@
 import api from './api';
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
-const visibility = Object.create(emitter.prototype, {
+const visibility = new Emitter();
+
+Object.defineProperties(visibility, {
     hidden: {
-        get: function() {
+        get() {
             return document[api.hidden];
         }
     }

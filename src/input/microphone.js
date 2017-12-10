@@ -1,7 +1,7 @@
-import emitter from '../events/emitter';
+import Emitter from '../events/emitter';
 
 export default function microphone() {
-    const mic = Object.create(emitter.prototype);
+    const mic = new Emitter();
     let stream = null;
 
     const getUserMedia = (navigator.getUserMedia ||

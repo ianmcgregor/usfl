@@ -1,4 +1,6 @@
-import loop from '../loop';
+import looper from '../loop';
+
+const dpr = Math.min(2, typeof window !== 'undefined' && (window.devicePixelRatio || 1));
 
 export default class SpritesheetPlayer {
     constructor({
@@ -6,7 +8,11 @@ export default class SpritesheetPlayer {
         data = null,
         image,
         fps = 12,
-        trim = true
+        trim = true,
+        delay = 0,
+        repeatDelay = 0,
+        scale = 1,
+        loop = true
     } = {}) {
         this.canvas = canvas;
         this.data = data;
@@ -16,6 +22,11 @@ export default class SpritesheetPlayer {
         this.last = 0;
         this.currentFrame = 0;
         this.playing = false;
+        this.delay = delay;
+        this.loop = loop;
+        this.repeatDelay = repeatDelay;
+        this.remainingDelay = delay;
+        this.scale = scale * dpr;
 
         this.update = this.update.bind(this);
 
@@ -25,15 +36,41 @@ export default class SpritesheetPlayer {
     }
 
     play() {
-        loop.add(this.update);
-        loop.start();
+        if (this.playing) {
+            return;
+        }
+        this.remainingDelay = this.delay;
+        this.elapsed = 0;
+        looper.add(this.update);
+        looper.start();
         this.playing = true;
     }
 
     pause() {
-        loop.remove(this.looper);
+        looper.remove(this.looper);
         // loop.stop();
         this.playing = false;
+    }
+
+    reset() {
+        this.currentFrame = 0;
+        this.remainingDelay = this.delay;
+        this.elapsed = 0;
+        this.pause();
+        this.draw(0);
+    }
+
+    updateDimensions() {
+        this.canvas.width = this.w * this.scale;
+        this.canvas.height = this.h * this.scale;
+        this.canvas.style.width = `${this.w * this.scale / dpr}px`;
+        this.canvas.style.height = `${this.h * this.scale / dpr}px`;
+    }
+
+    setScale(value) {
+        this.scale = value * dpr;
+        this.updateDimensions();
+        this.reset();
     }
 
     init(data) {
@@ -45,20 +82,16 @@ export default class SpritesheetPlayer {
             ty: f.spriteSourceSize.y - trimY
         }));
 
-        let w = 0;
-        let h = 0;
-
         if (this.trim) {
-            w = Math.max(...frames.map(f => f.tx + f.w));
-            h = Math.max(...frames.map(f => f.ty + f.h));
+            this.w = Math.max(...frames.map(f => f.tx + f.w));
+            this.h = Math.max(...frames.map(f => f.ty + f.h));
         } else {
-            w = Math.max(...rawFrames.map(f => f.sourceSize.w));
-            h = Math.max(...rawFrames.map(f => f.sourceSize.h));
+            this.w = Math.max(...rawFrames.map(f => f.sourceSize.w));
+            this.h = Math.max(...rawFrames.map(f => f.sourceSize.h));
         }
 
         this.frames = frames;
-        this.canvas.width = w;
-        this.canvas.height = h;
+        this.updateDimensions();
         this.ctx = this.canvas.getContext('2d');
 
         if (typeof this.image === 'string') {
@@ -75,19 +108,29 @@ export default class SpritesheetPlayer {
         this.draw(0);
     }
 
-    update() {
-        const now = Date.now();
-        if (now - this.last < this.interval) {
+    update(df, dt) {
+        this.elapsed += dt;
+        if (this.elapsed < this.interval) {
             return;
         }
-        this.last = now;
+        this.elapsed = 0;
+
+        if (this.remainingDelay > 0) {
+            this.remainingDelay -= this.interval;
+            return;
+        }
 
         if (!this.img) {
             return;
         }
 
         let currentFrame = this.currentFrame + 1;
+
         if (currentFrame === this.frames.length) {
+            if (!this.loop) {
+                return;
+            }
+            this.remainingDelay = this.repeatDelay;
             currentFrame = 0;
         }
 
@@ -109,10 +152,10 @@ export default class SpritesheetPlayer {
             frame.y,
             frame.w,
             frame.h,
-            frame.tx,
-            frame.ty,
-            frame.w,
-            frame.h
+            frame.tx * this.scale,
+            frame.ty * this.scale,
+            frame.w * this.scale,
+            frame.h * this.scale
         );
     }
 }
