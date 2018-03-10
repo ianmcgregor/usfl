@@ -1,0 +1,9 @@
+/src/
+/docs/
+.babelrc
+.eslintrc
+.editorconfig
+.gitattributes
+.travis.yml
+karma.conf.js
+rollup.config.js
